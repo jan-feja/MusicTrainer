@@ -137,6 +137,11 @@ GRID_DECODER = "grid"
 NO_HINTS = BeatGridHints()
 
 
+def is_current_analysis(analysis: BeatAnalysis) -> bool:
+    """False for grids from the first version (peak picking: bars of uneven length)."""
+    return analysis.analyzer.endswith(f"+{GRID_DECODER}")
+
+
 def decode_grid(activations: BeatActivations, hints: BeatGridHints = NO_HINTS) -> DecodedBeats:
     """Decode the network output with the tempo and meter hints (not the bar starts)."""
     return decode_beats(

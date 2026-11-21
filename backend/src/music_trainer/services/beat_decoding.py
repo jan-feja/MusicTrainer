@@ -135,14 +135,24 @@ def place_bar_starts(decoded: DecodedBeats, bar_starts: Sequence[float]) -> Deco
     """Count the bars from each given bar start on (snapped to the nearest beat).
 
     The number of beats per bar stays; only where the bars begin changes, from
-    each given time up to the next one.
+    each given time up to the next one. The bar before a given start ends early;
+    if that leaves it shorter than half a bar, it joins the bar before it (one
+    long bar is likelier than a one-beat bar), or becomes a pickup at the start.
     """
-    if not bar_starts or len(decoded.beats) == 0 or not decoded.beats_per_bar:
+    per_bar = decoded.beats_per_bar
+    if not bar_starts or len(decoded.beats) == 0 or not per_bar:
         return decoded
     positions = decoded.beat_in_bar.copy()
     for start in sorted(bar_starts):
         first = int(np.argmin(np.abs(decoded.beats - start)))
-        positions[first:] = np.arange(len(positions) - first) % decoded.beats_per_bar
+        positions[first:] = np.arange(len(positions) - first) % per_bar
+        earlier = np.flatnonzero(positions[:first] == 0)
+        if len(earlier) and first - earlier[-1] < per_bar / 2:
+            if len(earlier) > 1:  # merge into the bar before
+                positions[earlier[-2] : first] = np.arange(first - earlier[-2])
+            else:  # pickup before the first bar
+                short = first - earlier[-1]
+                positions[earlier[-1] : first] = per_bar - short + np.arange(short)
     return replace(decoded, downbeats=decoded.beats[positions == 0], beat_in_bar=positions)
 
 

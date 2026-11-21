@@ -10,7 +10,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
-from music_trainer.models import AnalysisStatus, BeatGridHints, BeatTrackingState
+from music_trainer.models import AnalysisStatus, BeatAnalysis, BeatGridHints, BeatTrackingState
 from music_trainer.services.audio import AudioDecodeError
 from music_trainer.services.beat_decoding import DecodedBeats
 from music_trainer.services.beats import (
@@ -18,6 +18,7 @@ from music_trainer.services.beats import (
     BeatTrackingError,
     decode_grid,
     grid_analysis,
+    is_current_analysis,
 )
 from music_trainer.services.library import Library, VideoNotInLibraryError
 from music_trainer.video_ids import require_valid_video_id
@@ -63,7 +64,7 @@ class BeatAnalysisManager:
             job = self._jobs.get(video_id)
             if job is not None and job.status.is_active:
                 return self._state_of(job)
-            analysis = self._library.read_beat_analysis(video_id)
+            analysis = self._current_analysis(video_id)
             if not force and hints is None and analysis is not None:
                 return BeatTrackingState(
                     video_id=video_id, status=AnalysisStatus.COMPLETED, analysis=analysis
@@ -81,7 +82,7 @@ class BeatAnalysisManager:
             job = self._jobs.get(video_id)
             if job is not None and job.status is not AnalysisStatus.COMPLETED:
                 return self._state_of(job)
-        analysis = self._library.read_beat_analysis(video_id)
+        analysis = self._current_analysis(video_id)
         if analysis is not None:
             return BeatTrackingState(
                 video_id=video_id, status=AnalysisStatus.COMPLETED, analysis=analysis
@@ -137,6 +138,11 @@ class BeatAnalysisManager:
                 "Beats of %s: %d beats, %s BPM", job.video_id, len(analysis.beats), analysis.bpm
             )
             self._update(job, status=AnalysisStatus.COMPLETED)
+
+    def _current_analysis(self, video_id: str) -> BeatAnalysis | None:
+        """The stored grid, unless an older method made it (then it is detected again)."""
+        analysis = self._library.read_beat_analysis(video_id)
+        return analysis if analysis is not None and is_current_analysis(analysis) else None
 
     def _remember(self, key: _DecodingKey, decoded: DecodedBeats) -> None:
         with self._lock:

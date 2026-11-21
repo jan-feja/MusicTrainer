@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from music_trainer.app import create_app
 from music_trainer.config import Settings
+from music_trainer.models import BeatAnalysis
 from music_trainer.services.beats import (
     BeatTrackingError,
     CheckpointSource,
@@ -154,7 +155,8 @@ class TestBeatsApi:
         hints = {"beatsPerBar": None, "tempoBpm": None, "barStarts": [beats[5] + 0.01]}
         client.post(f"/api/library/{VIDEO_ID}/beats", json=hints)
         analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
-        assert analysis["downbeats"] == [beats[0], beats[4], beats[5], beats[9], beats[13]]
+        # the one-beat bar this would leave (beat 4 to 5) joins the bar before: 5 beats
+        assert analysis["downbeats"] == [beats[0], beats[5], beats[9], beats[13]]
         assert analysis["hints"]["barStarts"] == [beats[5] + 0.01]
         assert analysis["beatsPerBar"] == 4
         assert len(fake_beat_tracker.analyzed) == 1
@@ -190,6 +192,19 @@ class TestBeatsApi:
         for hints in ({"beatsPerBar": 1}, {"tempoBpm": 1000}, {"barStarts": [-1]}):
             response = client.post(f"/api/library/{VIDEO_ID}/beats", json=hints)
             assert response.status_code == 422, hints
+
+    def test_grids_of_the_old_method_are_detected_again(
+        self, client: TestClient, settings: Settings, fake_beat_tracker: FakeBeatTracker
+    ) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        old = BeatAnalysis(
+            bpm=75.0, beats_per_bar=4, beats=[1.0], downbeats=[1.0], analyzer="beat_this:final0"
+        )
+        (settings.library_dir / VIDEO_ID / "analysis.json").write_text(old.model_dump_json())
+        assert client.get(f"/api/library/{VIDEO_ID}/beats").json()["status"] == "not_started"
+        client.post(f"/api/library/{VIDEO_ID}/beats")
+        assert wait_for_beats(client, VIDEO_ID)["analysis"]["analyzer"] == "fake+grid"
 
     def test_failure_is_reported_and_can_be_retried(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker

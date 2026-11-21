@@ -91,6 +91,15 @@ def test_place_bar_starts_counts_from_each_given_start() -> None:
     assert place_bar_starts(decoded, []) is decoded
 
 
+def test_a_one_beat_bar_before_a_given_bar_start_joins_the_bar_before() -> None:
+    beats, downbeats = grid(120, 4, 6)
+    decoded = decode_beats(*network_output(beats, downbeats, 14))
+    later = place_bar_starts(decoded, [beats[5]])  # one beat after the bar start at beat 4
+    assert np.allclose(later.downbeats, [beats[i] for i in (0, 5, 9, 13, 17, 21)], atol=0.005)
+    pickup = place_bar_starts(decoded, [beats[1]])  # the first beat becomes a pickup
+    assert np.allclose(pickup.downbeats, [beats[i] for i in (1, 5, 9, 13, 17, 21)], atol=0.005)
+
+
 def test_beats_per_bar_can_be_set() -> None:
     beats, downbeats = grid(120, 4, 16)
     result = decode_beats(*network_output(beats, downbeats, 35), DecodingOptions(beats_per_bar=3))
