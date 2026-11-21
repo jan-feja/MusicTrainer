@@ -1,9 +1,10 @@
-"""Beat and bar detection with Beat This! (Foscarin, Schlüter, Widmer, ISMIR 2024).
+"""Beat and bar detection: Beat This! (Foscarin, Schlüter, Widmer, ISMIR 2024) + grid decoding.
 
-Chosen after testing (docs/implementation-report.md, experiments/test_beats_followup.py):
-on real songs it finds 86 % of beats and 82 % of bar starts, and both ends of
-a 1-4 bar loop land on the right bar lines in ~87 % of cases; it is weakest in
-soft intros without drums. A 4-minute song takes about 9 s on a laptop CPU.
+The network says, 50 times per second, how likely a beat and a bar start are
+(about 9 s for a 4-minute song on a laptop CPU). beat_decoding.py turns that
+into a beat grid with steady bars. The network output is stored with the video,
+so the grid can be decoded again in a moment with the user's hints.
+Measured in experiments/test_beat_tracking.py.
 """
 
 import hashlib
@@ -19,8 +20,16 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
-from music_trainer.models import BeatAnalysis
+from music_trainer.models import BeatAnalysis, BeatGridHints
 from music_trainer.services.audio import decode_audio
+from music_trainer.services.beat_decoding import (
+    FRAMES_PER_SECOND,
+    BeatActivations,
+    DecodedBeats,
+    DecodingOptions,
+    decode_beats,
+    place_bar_starts,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +46,14 @@ class BeatTrackingError(Exception):
 
 
 class BeatTracker(Protocol):
-    """Finds beats and bar starts in a media file. Tests replace it with a fake."""
+    """Runs the beat network on a media file. Tests replace it with a fake."""
 
-    def analyze(self, media_path: Path) -> BeatAnalysis: ...
+    @property
+    def model(self) -> str:
+        """Name of the network, stored with its output, e.g. 'beat_this:final0'."""
+        ...
+
+    def activations(self, media_path: Path) -> BeatActivations: ...
 
 
 @dataclass(frozen=True)
@@ -81,7 +95,7 @@ def ensure_checkpoint(source: CheckpointSource, target: Path) -> Path:
 
 
 class BeatThisTracker:
-    """BeatTracker using a Beat This! model; the model loads on first use."""
+    """BeatTracker using a Beat This! network; it loads on first use."""
 
     def __init__(
         self, model_name: str, models_dir: Path, device: str = "cpu", ffmpeg: str = "ffmpeg"
@@ -93,37 +107,83 @@ class BeatThisTracker:
         self._model = None
         self._lock = threading.Lock()
 
-    def analyze(self, media_path: Path) -> BeatAnalysis:
+    @property
+    def model(self) -> str:
+        return f"beat_this:{self._model_name}"
+
+    def activations(self, media_path: Path) -> BeatActivations:
         samples = decode_audio(media_path, SAMPLE_RATE, self._ffmpeg)
         with self._lock:  # one inference at a time; the model is not thread-safe
-            beats, downbeats = self._load_model()(samples, SAMPLE_RATE)
-        return beat_analysis_from_times(beats, downbeats, f"beat_this:{self._model_name}")
+            beat, downbeat = self._load_model()(samples, SAMPLE_RATE)
+        return BeatActivations(
+            beat=beat.cpu().numpy(),
+            downbeat=downbeat.cpu().numpy(),
+            fps=FRAMES_PER_SECOND,
+            model=self.model,
+        )
 
     def _load_model(self):
         if self._model is None:
-            from beat_this.inference import (
-                Audio2Beats,
-            )  # imports PyTorch: slow, so only when needed
+            # imports PyTorch: slow, so only when needed
+            from beat_this.inference import Audio2Frames
 
             checkpoint = ensure_checkpoint(beat_this_checkpoint(self._model_name), self._checkpoint)
-            self._model = Audio2Beats(str(checkpoint), device=self._device, dbn=False)
+            self._model = Audio2Frames(str(checkpoint), device=self._device)
         return self._model
 
 
-def beat_analysis_from_times(
-    beats: Sequence[float], downbeats: Sequence[float], analyzer: str
+GRID_DECODER = "grid"
+"""Suffix of the analyzer name for grids from beat_decoding.py."""
+NO_HINTS = BeatGridHints()
+
+
+def decode_grid(activations: BeatActivations, hints: BeatGridHints = NO_HINTS) -> DecodedBeats:
+    """Decode the network output with the tempo and meter hints (not the bar starts)."""
+    return decode_beats(
+        activations.beat,
+        activations.downbeat,
+        DecodingOptions(beats_per_bar=hints.beats_per_bar, tempo_bpm=hints.tempo_bpm),
+        fps=activations.fps,
+    )
+
+
+def grid_analysis(decoded: DecodedBeats, model: str, hints: BeatGridHints) -> BeatAnalysis:
+    """The stored beat grid: a decoded grid with the user's bar starts placed."""
+    placed = place_bar_starts(decoded, hints.bar_starts)
+    return beat_analysis_from_times(
+        placed.beats,
+        placed.downbeats,
+        analyzer=f"{model}+{GRID_DECODER}",
+        beats_per_bar=placed.beats_per_bar,
+        hints=hints,
+    )
+
+
+def analyze_activations(
+    activations: BeatActivations, hints: BeatGridHints = NO_HINTS
 ) -> BeatAnalysis:
-    """Build the stored beat grid from raw detector output."""
+    """Decode the network output into the stored beat grid."""
+    return grid_analysis(decode_grid(activations, hints), activations.model, hints)
+
+
+def beat_analysis_from_times(
+    beats: Sequence[float],
+    downbeats: Sequence[float],
+    analyzer: str,
+    beats_per_bar: int | None = None,
+    hints: BeatGridHints = NO_HINTS,
+) -> BeatAnalysis:
+    """Build the stored beat grid from beat and bar-start times."""
     beat_times = sorted(round(float(t), 3) for t in beats)
-    # bar starts must be beats (the UI snaps to both); the detector already does this,
-    # snapping again only guards against rounding
+    # bar starts must be beats (the UI snaps to both); snapping guards against rounding
     bar_starts = sorted({_nearest(beat_times, float(t)) for t in downbeats}) if beat_times else []
     return BeatAnalysis(
         bpm=estimate_bpm(beat_times),
-        beats_per_bar=most_common_bar_length(beat_times, bar_starts),
+        beats_per_bar=beats_per_bar or most_common_bar_length(beat_times, bar_starts),
         beats=beat_times,
         downbeats=bar_starts,
         analyzer=analyzer,
+        hints=hints,
     )
 
 

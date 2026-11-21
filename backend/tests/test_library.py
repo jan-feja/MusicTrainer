@@ -1,8 +1,10 @@
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from music_trainer.models import BeatAnalysis, VideoMetadata
+from music_trainer.services.beat_decoding import BeatActivations
 from music_trainer.services.library import Library, VideoNotInLibraryError
 from music_trainer.video_ids import InvalidVideoIdError, watch_url
 
@@ -98,6 +100,33 @@ def test_beat_analysis_needs_the_video(library: Library) -> None:
     analysis = BeatAnalysis(bpm=None, beats_per_bar=None, beats=[], downbeats=[], analyzer="t")
     with pytest.raises(VideoNotInLibraryError):
         library.write_beat_analysis(VIDEO_ID, analysis)
+
+
+def test_beat_activations_roundtrip(library: Library) -> None:
+    add_video(library)
+    assert library.read_beat_activations(VIDEO_ID) is None
+    beat = np.linspace(-8, 4, 500, dtype=np.float32)
+    activations = BeatActivations(beat=beat, downbeat=-beat, fps=50.0, model="beat_this:final0")
+    library.write_beat_activations(VIDEO_ID, activations)
+    loaded = library.read_beat_activations(VIDEO_ID)
+    assert loaded is not None
+    assert loaded.model == "beat_this:final0"
+    assert loaded.fps == 50.0
+    assert np.allclose(loaded.beat, beat, atol=0.01)
+    assert np.allclose(loaded.downbeat, -beat, atol=0.01)
+    assert not (library.root / VIDEO_ID / "beat_activations.npz.part").exists()
+
+
+def test_beat_activations_need_the_video(library: Library) -> None:
+    activations = BeatActivations(beat=np.zeros(3), downbeat=np.zeros(3), fps=50.0, model="m")
+    with pytest.raises(VideoNotInLibraryError):
+        library.write_beat_activations(VIDEO_ID, activations)
+
+
+def test_unreadable_beat_activations_are_ignored(library: Library) -> None:
+    add_video(library)
+    (library.root / VIDEO_ID / "beat_activations.npz").write_bytes(b"not a zip")
+    assert library.read_beat_activations(VIDEO_ID) is None
 
 
 def test_unreadable_beat_analysis_is_ignored(library: Library) -> None:

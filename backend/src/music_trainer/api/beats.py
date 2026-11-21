@@ -2,10 +2,10 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, Body, HTTPException, Query, status
 
 from music_trainer.api.dependencies import BeatAnalysisDependency, VideoIdParameter
-from music_trainer.models import BeatTrackingState
+from music_trainer.models import BeatGridHints, BeatTrackingState
 from music_trainer.services.library import VideoNotInLibraryError
 
 router = APIRouter(prefix="/api/library", tags=["beats"])
@@ -26,10 +26,16 @@ def get_beats(video_id: VideoIdParameter, analysis: BeatAnalysisDependency) -> B
 def detect_beats(
     video_id: VideoIdParameter,
     analysis: BeatAnalysisDependency,
-    force: Annotated[bool, Query(description="Detect again even if a result exists")] = False,
+    force: Annotated[bool, Query(description="Run the beat network again")] = False,
+    hints: Annotated[
+        BeatGridHints | None,
+        Body(
+            description="Decode the grid again with these hints (fast: the network output is kept)"
+        ),
+    ] = None,
 ) -> BeatTrackingState:
     """Start beat detection (runs in the background; poll GET for the result)."""
     try:
-        return analysis.start(video_id, force=force)
+        return analysis.start(video_id, force=force, hints=hints)
     except VideoNotInLibraryError as error:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(error)) from error

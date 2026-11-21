@@ -7,6 +7,7 @@ because they are mainly read by Python code.
 
 from datetime import date, datetime
 from enum import StrEnum
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
@@ -94,6 +95,17 @@ class DownloadRequest(ApiModel):
     """Title from the search result, shown while the download runs."""
 
 
+class BeatGridHints(ApiModel):
+    """What the user knows about a song's beat grid; None leaves it to the detection."""
+
+    beats_per_bar: int | None = Field(default=None, ge=2, le=12)
+    """Every bar has this many beats."""
+    tempo_bpm: float | None = Field(default=None, ge=30, le=300)
+    """The tempo is near this; decides between e.g. 75 and 150 BPM."""
+    bar_starts: list[Annotated[float, Field(ge=0)]] = Field(default_factory=list, max_length=500)
+    """Times (s) where a bar starts; from each one on, bars are counted from there."""
+
+
 class BeatAnalysis(ApiModel):
     """The beat grid of a song; stored as analysis.json in the video's folder."""
 
@@ -106,7 +118,9 @@ class BeatAnalysis(ApiModel):
     downbeats: list[float]
     """Bar starts in seconds; each one is also in `beats`."""
     analyzer: str
-    """Which method produced the grid, e.g. 'beat_this:final0'."""
+    """Which method produced the grid, e.g. 'beat_this:final0+grid'."""
+    hints: BeatGridHints = Field(default_factory=BeatGridHints)
+    """The user's hints the grid was decoded with."""
 
 
 class AnalysisStatus(StrEnum):

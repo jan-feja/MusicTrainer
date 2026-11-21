@@ -4,20 +4,52 @@ import threading
 import time
 from pathlib import Path
 
+import numpy as np
 from fastapi.testclient import TestClient
 
-from music_trainer.models import BeatAnalysis, SearchResult, VideoMetadata
-from music_trainer.services.beats import BeatTrackingError, beat_analysis_from_times
+from music_trainer.models import SearchResult, VideoMetadata
+from music_trainer.services.beat_decoding import FRAMES_PER_SECOND, BeatActivations
+from music_trainer.services.beats import BeatTrackingError, analyze_activations
 from music_trainer.services.youtube import DownloadProgress, ProgressCallback, YouTubeError
 from music_trainer.video_ids import watch_url
 
 VIDEO_ID = "jNQXAC9IVRw"
 OTHER_VIDEO_ID = "dQw4w9WgXcQ"
 FAKE_MEDIA = bytes(range(256)) * 40  # 10 240 bytes
+
+
+def network_output(
+    beats: list[float],
+    downbeats: list[float],
+    seconds: float,
+    beat_strength: float = 0.95,
+    extra_downbeats: dict[float, float] | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Logits like the beat network gives: a short bump at every beat, another at bar starts.
+
+    `extra_downbeats` adds false bar starts {time: probability}.
+    """
+    t = np.arange(int(seconds * FRAMES_PER_SECOND)) / FRAMES_PER_SECOND
+    beat = np.full_like(t, 0.002)  # what the network outputs between beats
+    bar = np.full_like(t, 0.002)
+    bump = lambda at, height: height * np.exp(-0.5 * ((t - at) * FRAMES_PER_SECOND / 0.8) ** 2)  # noqa: E731
+    for b in beats:
+        beat = np.maximum(beat, bump(b, beat_strength))
+    for d in downbeats:
+        bar = np.maximum(bar, bump(d, 0.9))
+    for d, height in (extra_downbeats or {}).items():
+        bar = np.maximum(bar, bump(d, height))
+    logit = lambda p: np.log(p / (1 - p))  # noqa: E731
+    return logit(np.clip(beat, 1e-6, 1 - 1e-6)), logit(np.clip(bar, 1e-6, 1 - 1e-6))
+
+
 # 120 BPM, 4/4: 16 beats, bars starting every 2 s
-FAKE_BEATS = beat_analysis_from_times(
-    [0.5 + 0.5 * i for i in range(16)], [0.5 + 2.0 * i for i in range(4)], analyzer="fake"
+FAKE_ACTIVATIONS = BeatActivations(
+    *network_output([0.5 + 0.5 * i for i in range(16)], [0.5 + 2.0 * i for i in range(4)], 9.0),
+    fps=FRAMES_PER_SECOND,
+    model="fake",
 )
+FAKE_BEATS = analyze_activations(FAKE_ACTIVATIONS)
 
 
 class FakeYouTubeClient:
@@ -64,22 +96,23 @@ class FakeYouTubeClient:
 
 
 class FakeBeatTracker:
-    """Stands in for BeatThisTracker: no model, instant result."""
+    """Stands in for BeatThisTracker: no network, instant result."""
 
     def __init__(self) -> None:
+        self.model = "fake"
         self.analyzed: list[Path] = []
         self.error: str | None = None
-        """When set, analyze() raises BeatTrackingError with this message."""
+        """When set, activations() raises BeatTrackingError with this message."""
         self.release = threading.Event()
-        """analyze() waits for this event; set by default so it finishes at once."""
+        """activations() waits for this event; set by default so it finishes at once."""
         self.release.set()
 
-    def analyze(self, media_path: Path) -> BeatAnalysis:
+    def activations(self, media_path: Path) -> BeatActivations:
         self.analyzed.append(media_path)
         self.release.wait(timeout=10)
         if self.error:
             raise BeatTrackingError(self.error)
-        return FAKE_BEATS
+        return FAKE_ACTIVATIONS
 
 
 def wait_for_download(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:

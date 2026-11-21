@@ -78,9 +78,13 @@ class TestBeatsApi:
             "beatsPerBar": 4,
             "beats": FAKE_BEATS.beats,
             "downbeats": FAKE_BEATS.downbeats,
-            "analyzer": "fake",
+            "analyzer": "fake+grid",
+            "hints": {"beatsPerBar": None, "tempoBpm": None, "barStarts": []},
         }
+        assert len(FAKE_BEATS.beats) == 16
+        assert FAKE_BEATS.downbeats == [0.5, 2.5, 4.5, 6.5]
         assert (settings.library_dir / VIDEO_ID / "analysis.json").is_file()
+        assert (settings.library_dir / VIDEO_ID / "beat_activations.npz").is_file()
 
     def test_detection_can_be_started_by_hand(
         self, tmp_path: Path, fake_beat_tracker: FakeBeatTracker
@@ -122,6 +126,70 @@ class TestBeatsApi:
         client.post(f"/api/library/{VIDEO_ID}/beats", params={"force": True})
         assert wait_for_beats(client, VIDEO_ID)["status"] == "completed"
         assert len(fake_beat_tracker.analyzed) == 2
+
+    def test_hints_decode_again_without_the_network(
+        self, client: TestClient, fake_beat_tracker: FakeBeatTracker
+    ) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        response = client.post(f"/api/library/{VIDEO_ID}/beats", json={"beatsPerBar": 3})
+        assert response.status_code == 202
+        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        assert analysis["beatsPerBar"] == 3
+        assert analysis["hints"] == {"beatsPerBar": 3, "tempoBpm": None, "barStarts": []}
+        assert analysis["downbeats"] == analysis["beats"][::3]
+        assert len(fake_beat_tracker.analyzed) == 1  # the stored network output was reused
+
+        client.post(f"/api/library/{VIDEO_ID}/beats", json={"tempoBpm": 240})
+        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        assert analysis["bpm"] == pytest.approx(240, abs=8)
+        assert analysis["hints"] == {"beatsPerBar": None, "tempoBpm": 240, "barStarts": []}
+
+    def test_bar_starts_move_the_bars_without_decoding_again(
+        self, client: TestClient, fake_beat_tracker: FakeBeatTracker
+    ) -> None:
+        download(client)
+        beats = wait_for_beats(client, VIDEO_ID)["analysis"]["beats"]
+        # "a bar starts on the 6th beat": from there on, bars are counted from it
+        hints = {"beatsPerBar": None, "tempoBpm": None, "barStarts": [beats[5] + 0.01]}
+        client.post(f"/api/library/{VIDEO_ID}/beats", json=hints)
+        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        assert analysis["downbeats"] == [beats[0], beats[4], beats[5], beats[9], beats[13]]
+        assert analysis["hints"]["barStarts"] == [beats[5] + 0.01]
+        assert analysis["beatsPerBar"] == 4
+        assert len(fake_beat_tracker.analyzed) == 1
+
+        client.post(f"/api/library/{VIDEO_ID}/beats", json={**hints, "barStarts": []})
+        assert wait_for_beats(client, VIDEO_ID)["analysis"]["downbeats"] == FAKE_BEATS.downbeats
+
+    def test_running_the_network_again_keeps_the_hints(
+        self, client: TestClient, fake_beat_tracker: FakeBeatTracker
+    ) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        client.post(f"/api/library/{VIDEO_ID}/beats", json={"beatsPerBar": 3})
+        wait_for_beats(client, VIDEO_ID)
+        client.post(f"/api/library/{VIDEO_ID}/beats", params={"force": True})
+        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        assert analysis["hints"]["beatsPerBar"] == 3
+        assert len(fake_beat_tracker.analyzed) == 2
+
+    def test_output_of_another_network_is_not_reused(
+        self, client: TestClient, fake_beat_tracker: FakeBeatTracker
+    ) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        fake_beat_tracker.model = "fake-v2"
+        client.post(f"/api/library/{VIDEO_ID}/beats", json={"beatsPerBar": 4})
+        wait_for_beats(client, VIDEO_ID)
+        assert len(fake_beat_tracker.analyzed) == 2
+
+    def test_invalid_hints_are_rejected(self, client: TestClient) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        for hints in ({"beatsPerBar": 1}, {"tempoBpm": 1000}, {"barStarts": [-1]}):
+            response = client.post(f"/api/library/{VIDEO_ID}/beats", json=hints)
+            assert response.status_code == 422, hints
 
     def test_failure_is_reported_and_can_be_retried(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker

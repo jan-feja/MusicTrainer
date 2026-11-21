@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from music_trainer.config import Settings
-from music_trainer.services.beats import BeatThisTracker
+from music_trainer.services.beats import BeatThisTracker, analyze_activations
 
 pytestmark = pytest.mark.network
 
@@ -66,7 +66,7 @@ def test_detects_tempo_beats_and_bars(tmp_path: Path) -> None:
     true_beats = write_drum_loop(tmp_path / "groove.wav")
     tracker = BeatThisTracker("final0", Settings().models_dir)
 
-    analysis = tracker.analyze(tmp_path / "groove.wav")
+    analysis = analyze_activations(tracker.activations(tmp_path / "groove.wav"))
 
     assert analysis.bpm == pytest.approx(BPM, abs=2)
     assert analysis.beats_per_bar == BEATS_PER_BAR

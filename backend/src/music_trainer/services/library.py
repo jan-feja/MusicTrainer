@@ -4,6 +4,7 @@
     <library>/<video_id>/video.mp4       media file (its name is stored in meta.json)
     <library>/<video_id>/thumbnail.jpg   optional
     <library>/<video_id>/analysis.json   BeatAnalysis (beats and bar starts), once detected
+    <library>/<video_id>/beat_activations.npz  beat network output, to decode again with new hints
     <library>/.staging/<video_id>/       downloads in progress, moved into place when done
 
 Later features (stems, loops.json, ...) belong in the same folder.
@@ -16,9 +17,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import TypeVar
 
+import numpy as np
 from pydantic import BaseModel, ValidationError
 
 from music_trainer.models import BeatAnalysis, VideoMetadata
+from music_trainer.services.beat_decoding import BeatActivations
 from music_trainer.video_ids import require_valid_video_id
 
 logger = logging.getLogger(__name__)
@@ -38,6 +41,7 @@ class VideoNotInLibraryError(LibraryError, LookupError):
 class Library:
     METADATA_FILE = "meta.json"
     ANALYSIS_FILE = "analysis.json"
+    ACTIVATIONS_FILE = "beat_activations.npz"
     STAGING_DIR = ".staging"
 
     def __init__(self, root: Path) -> None:
@@ -86,6 +90,38 @@ class Library:
         partial = target.with_name(target.name + ".part")
         partial.write_text(analysis.model_dump_json(), encoding="utf-8")
         partial.replace(target)  # readers never see a half-written file
+
+    def read_beat_activations(self, video_id: str) -> BeatActivations | None:
+        """The stored beat network output, or None if missing or unreadable."""
+        path = self._video_dir(video_id) / self.ACTIVATIONS_FILE
+        try:
+            with np.load(path) as data:
+                return BeatActivations(
+                    beat=data["beat"].astype(np.float32),
+                    downbeat=data["downbeat"].astype(np.float32),
+                    fps=float(data["fps"]),
+                    model=str(data["model"]),
+                )
+        except FileNotFoundError:
+            return None
+        except (OSError, KeyError, ValueError) as error:
+            logger.warning("Ignoring unreadable %s: %s", path, error)
+            return None
+
+    def write_beat_activations(self, video_id: str, activations: BeatActivations) -> None:
+        if not self.contains(video_id):
+            raise VideoNotInLibraryError(video_id)
+        target = self._video_dir(video_id) / self.ACTIVATIONS_FILE
+        partial = target.with_name(target.name + ".part")
+        with partial.open("wb") as file:  # a file object keeps numpy from adding ".npz"
+            np.savez_compressed(
+                file,
+                beat=activations.beat.astype(np.float16),  # logits; 3 significant digits are plenty
+                downbeat=activations.downbeat.astype(np.float16),
+                fps=np.float64(activations.fps),
+                model=np.str_(activations.model),
+            )
+        partial.replace(target)
 
     def delete_video(self, video_id: str) -> bool:
         """Delete the video's folder. Returns False if there was nothing to delete."""
