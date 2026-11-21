@@ -1,4 +1,4 @@
-import type { DownloadJob, LibraryVideo, SearchResult } from './types'
+import type { BeatTrackingState, DownloadJob, LibraryVideo, SearchResult } from './types'
 
 const API_BASE = '/api'
 
@@ -77,5 +77,14 @@ export const api = {
 
   listDownloads(signal?: AbortSignal): Promise<DownloadJob[]> {
     return request('/downloads', { signal })
+  },
+
+  getBeats(videoId: string, signal?: AbortSignal): Promise<BeatTrackingState> {
+    return request(`${videoPath(videoId)}/beats`, { signal })
+  },
+
+  /** Start beat detection; `force` runs it again even if a result exists. */
+  detectBeats(videoId: string, force = false): Promise<BeatTrackingState> {
+    return request(`${videoPath(videoId)}/beats${force ? '?force=true' : ''}`, { method: 'POST' })
   },
 }

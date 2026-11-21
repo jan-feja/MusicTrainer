@@ -1,7 +1,7 @@
-import { type KeyboardEvent, useRef } from 'react'
+import { type KeyboardEvent, type ReactNode, useRef } from 'react'
 import { formatTime, formatTimePrecise } from '../../lib/format'
 import { clamp } from '../../lib/math'
-import { LOOP_NUDGE_SECONDS, type LoopState, getLoopRegion } from './loop'
+import { type LoopState, getLoopRegion } from './loop'
 import { usePointerDrag } from './usePointerDrag'
 import styles from './SeekBar.module.css'
 
@@ -12,6 +12,11 @@ interface SeekBarProps {
   onSeek: (time: number) => void
   onMoveLoopStart: (time: number) => void
   onMoveLoopEnd: (time: number) => void
+  /** Arrow keys on a focused handle: one step earlier (-1) or later (+1); Shift = bigger steps. */
+  onNudgeLoopStart: (direction: -1 | 1, coarse: boolean) => void
+  onNudgeLoopEnd: (direction: -1 | 1, coarse: boolean) => void
+  /** Drawn on the track, e.g. bar marks. */
+  markers?: ReactNode
 }
 
 /** Timeline: click or drag to seek; drag the A / B handles to adjust the loop. */
@@ -22,6 +27,9 @@ export function SeekBar({
   onSeek,
   onMoveLoopStart,
   onMoveLoopEnd,
+  onNudgeLoopStart,
+  onNudgeLoopEnd,
+  markers,
 }: SeekBarProps) {
   const barRef = useRef<HTMLDivElement>(null)
 
@@ -60,6 +68,7 @@ export function SeekBar({
           />
         )}
         <div className={styles.played} style={{ width: `${percent(currentTime)}%` }} />
+        {markers}
         <div className={styles.playhead} style={{ left: `${percent(currentTime)}%` }} />
       </div>
       {loop.start !== null && (
@@ -70,7 +79,7 @@ export function SeekBar({
           duration={duration}
           position={percent(loop.start)}
           drag={startDrag}
-          onMove={onMoveLoopStart}
+          onNudge={onNudgeLoopStart}
         />
       )}
       {loop.end !== null && (
@@ -81,7 +90,7 @@ export function SeekBar({
           duration={duration}
           position={percent(loop.end)}
           drag={endDrag}
-          onMove={onMoveLoopEnd}
+          onNudge={onNudgeLoopEnd}
         />
       )}
     </div>
@@ -96,7 +105,7 @@ interface LoopHandleProps {
   /** Horizontal position in percent of the bar. */
   position: number
   drag: ReturnType<typeof usePointerDrag>
-  onMove: (time: number) => void
+  onNudge: (direction: -1 | 1, coarse: boolean) => void
 }
 
 function LoopHandle({
@@ -106,14 +115,13 @@ function LoopHandle({
   duration,
   position,
   drag,
-  onMove,
+  onNudge,
 }: LoopHandleProps) {
   const handleKeyDown = (event: KeyboardEvent) => {
-    const step = event.shiftKey ? 1 : LOOP_NUDGE_SECONDS
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault()
       event.stopPropagation() // do not also seek the video
-      onMove(time + (event.key === 'ArrowLeft' ? -step : step))
+      onNudge(event.key === 'ArrowLeft' ? -1 : 1, event.shiftKey)
     }
   }
 

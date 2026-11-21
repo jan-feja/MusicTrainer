@@ -10,6 +10,7 @@ export const PLAYER_SHORTCUTS = [
   { id: 'setLoopEnd', keys: ['b'], label: 'B', description: 'Set loop end here' },
   { id: 'toggleLoop', keys: ['l'], label: 'L', description: 'Loop on / off' },
   { id: 'clearLoop', keys: ['c'], label: 'C', description: 'Clear loop' },
+  { id: 'cycleSnapMode', keys: ['g'], label: 'G', description: 'Snap loop: off / beats / bars' },
   { id: 'jumpToLoopStart', keys: ['Home'], label: 'Home', description: 'Go to loop start' },
   { id: 'toggleMute', keys: ['m'], label: 'M', description: 'Mute / unmute' },
   { id: 'toggleFullscreen', keys: ['f'], label: 'F', description: 'Full screen' },

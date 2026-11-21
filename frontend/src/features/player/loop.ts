@@ -29,6 +29,8 @@ export const LOOP_NUDGE_SECONDS = 0.05
 
 export type LoopAction =
   | { type: 'setStart' | 'setEnd' | 'moveStart' | 'moveEnd'; time: number; duration: number }
+  /** Replace both points at once (e.g. after snapping them to beats); keeps on/off. */
+  | { type: 'setRegion'; start: number; end: number; duration: number }
   | { type: 'toggle' }
   | { type: 'clear' }
 
@@ -55,6 +57,11 @@ export function loopReducer(state: LoopState, action: LoopAction): LoopState {
       const earliest = state.start !== null ? state.start + MIN_LOOP_LENGTH : 0
       return { ...state, end: clamp(action.time, earliest, action.duration) }
     }
+    case 'setRegion': {
+      const start = clamp(action.start, 0, action.duration)
+      const end = clamp(action.end, 0, action.duration)
+      return end - start >= MIN_LOOP_LENGTH ? { ...state, start, end } : state
+    }
     case 'toggle':
       return getLoopRegion(state) ? { ...state, enabled: !state.enabled } : state
     case 'clear':
@@ -66,8 +73,13 @@ export function getLoopRegion(state: LoopState): LoopRegion | null {
   return state.start !== null && state.end !== null ? { start: state.start, end: state.end } : null
 }
 
-/** The time playback should jump back to, or null to keep playing. */
-export function loopJumpTarget(state: LoopState, currentTime: number): number | null {
+/**
+ * The time playback should jump back to, or null to keep playing.
+ * With a `lead`, the jump happens that much earlier and lands that much before
+ * the start, so the loop keeps its length but includes the start's attack.
+ */
+export function loopJumpTarget(state: LoopState, currentTime: number, lead = 0): number | null {
   const region = getLoopRegion(state)
-  return state.enabled && region && currentTime >= region.end ? region.start : null
+  if (!state.enabled || !region || currentTime < region.end - lead) return null
+  return Math.max(0, region.start - lead)
 }

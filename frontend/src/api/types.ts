@@ -36,3 +36,24 @@ export interface DownloadJob {
   title: string | null
   error: string | null
 }
+
+/** The beat grid of a song. */
+export interface BeatAnalysis {
+  bpm: number | null
+  beatsPerBar: number | null
+  /** Beat times in seconds, ascending. */
+  beats: number[]
+  /** Bar starts in seconds; each one is also in `beats`. */
+  downbeats: number[]
+  analyzer: string
+}
+
+export type AnalysisStatus = 'not_started' | 'queued' | 'analyzing' | 'completed' | 'failed'
+
+export interface BeatTrackingState {
+  videoId: string
+  status: AnalysisStatus
+  /** Set once the status is 'completed'. */
+  analysis: BeatAnalysis | null
+  error: string | null
+}

@@ -9,6 +9,7 @@ import { useAsync } from '../../lib/useAsync'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
 import { useOnChange } from '../../lib/useOnChange'
 import { isValidVideoId } from '../../lib/youtube'
+import { useBeatTracking } from '../beats/useBeatTracking'
 import { useDownloadJob, useDownloads } from '../downloads/downloadsContext'
 import { DownloadPanel } from './DownloadPanel'
 import { VideoDetails } from './VideoDetails'
@@ -31,6 +32,7 @@ function WatchVideo({ videoId }: { videoId: string }) {
   const job = useDownloadJob(videoId)
   const video = useAsync((signal) => api.getVideo(videoId, signal), videoId)
   const [startError, setStartError] = useState<string | null>(null)
+  const beatTracking = useBeatTracking(videoId, video.status === 'success')
 
   const isMissing = video.status === 'error' && isNotFoundError(video.error)
   const title =
@@ -56,6 +58,7 @@ function WatchVideo({ videoId }: { videoId: string }) {
           key={video.data.videoId}
           src={video.data.mediaUrl}
           poster={video.data.thumbnailUrl ?? undefined}
+          beatTracking={beatTracking}
         />
         <VideoDetails video={video.data} />
       </article>

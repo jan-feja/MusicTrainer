@@ -97,3 +97,38 @@ describe('loopJumpTarget', () => {
     expect(getLoopRegion(apply(setEnd(5)))).toBeNull()
   })
 })
+
+describe('setRegion', () => {
+  const setRegion = (start: number, end: number): LoopAction => ({
+    type: 'setRegion',
+    start,
+    end,
+    duration: DURATION,
+  })
+
+  it('replaces both points and keeps the on/off state', () => {
+    const off = loopReducer(apply(setStart(10), setEnd(20)), { type: 'toggle' })
+    expect(loopReducer(off, setRegion(12, 18))).toEqual({ start: 12, end: 18, enabled: false })
+  })
+
+  it('ignores regions that are too short or reversed', () => {
+    const loop = apply(setStart(10), setEnd(20))
+    expect(loopReducer(loop, setRegion(15, 15))).toBe(loop)
+    expect(loopReducer(loop, setRegion(18, 12))).toBe(loop)
+  })
+})
+
+describe('loopJumpTarget with a lead', () => {
+  const loop = apply(setStart(10), setEnd(20))
+
+  it('jumps that much earlier and lands that much before the start', () => {
+    expect(loopJumpTarget(loop, 19.98, 0.03)).toBeCloseTo(9.97)
+    expect(loopJumpTarget(loop, 19.96, 0.03)).toBeNull()
+    expect(loopJumpTarget(loop, 19.98)).toBeNull()
+  })
+
+  it('never jumps before the beginning of the video', () => {
+    const fromZero = apply(setStart(0), setEnd(4))
+    expect(loopJumpTarget(fromZero, 4, 0.03)).toBe(0)
+  })
+})

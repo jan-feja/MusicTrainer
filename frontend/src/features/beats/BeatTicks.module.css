@@ -1,0 +1,26 @@
+.ticks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.beat,
+.bar {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.beat {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgb(255 255 255 / 30%);
+}
+
+.bar {
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  border-radius: 1px;
+  background: rgb(255 255 255 / 60%);
+}
