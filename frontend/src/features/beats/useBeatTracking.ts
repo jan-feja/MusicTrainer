@@ -4,6 +4,9 @@ import type { BeatAnalysis, BeatGridHints, BeatTrackingState } from '../../api/t
 import { errorMessage } from '../../lib/format'
 
 const POLL_INTERVAL_MS = 1000
+// new hints often finish in well under a second: ask again sooner at first
+const FIRST_POLL_INTERVAL_MS = 200
+const FIRST_POLLS = 5
 
 export interface BeatTracking {
   /** null until the first answer arrives */
@@ -39,6 +42,7 @@ export function useBeatTracking(videoId: string, enabled = true): BeatTracking {
     const controller = new AbortController()
     let timer: number | undefined
 
+    let polls = 0
     const poll = async () => {
       try {
         let current = await api.getBeats(videoId, controller.signal)
@@ -49,7 +53,9 @@ export function useBeatTracking(videoId: string, enabled = true): BeatTracking {
         setState(current)
         if (current.analysis) setFinished({ videoId, analysis: current.analysis })
         setRequestError(null)
-        if (isRunning(current)) timer = window.setTimeout(poll, POLL_INTERVAL_MS)
+        polls += 1
+        const delay = polls <= FIRST_POLLS ? FIRST_POLL_INTERVAL_MS : POLL_INTERVAL_MS
+        if (isRunning(current)) timer = window.setTimeout(poll, delay)
       } catch (error) {
         if (!controller.signal.aborted) setRequestError(errorMessage(error))
       }

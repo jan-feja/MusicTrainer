@@ -9,9 +9,12 @@ under a few musical assumptions (a bar-pointer model as in Krebs et al. 2015 and
 Böck et al. 2016, the "DBN" of madmom, written here in numpy):
 
 - tempo changes only gradually from beat to beat;
-- a song has a meter: every bar has the same number of beats (2-7), so bar
-  starts can never drift. Allowing an occasional bar of another length made
-  the results worse: the network's hesitations then turn into odd bars;
+- a song has a meter: every bar has the same number of beats (3-7; 2 or more
+  only when the user says so), so bar starts can never drift. Allowing an
+  occasional bar of another length made the results worse: the network's
+  hesitations then turn into odd bars;
+- if the network rates bar starts no higher than other beats (a click track),
+  there is no meter to find: 4 beats per bar;
 - a song stays in one tempo octave: if the best grid jumps between, say, 75 and
   150 BPM, the song is decoded once per octave and the more likely one is kept.
 
