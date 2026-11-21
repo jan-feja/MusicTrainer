@@ -126,6 +126,15 @@ def test_tempo_hint_picks_the_tempo_octave() -> None:
     assert np.median(np.diff(result.beats)) == pytest.approx(60 / 180, abs=0.01)
 
 
+def test_a_click_track_gets_four_beats_per_bar() -> None:
+    """Every click looks like a bar start: there is no meter, so the decoder uses 4."""
+    beats, _ = grid(100, 4, 20)
+    result = decode_beats(*network_output(beats, beats, 50))
+    assert result.beats_per_bar == 4
+    assert result.info["meter"] == "default"
+    assert len(result.beats) == len(beats)
+
+
 def test_silence_gives_no_beats() -> None:
     beat, bar = network_output([], [], 10)
     result = decode_beats(beat, bar)

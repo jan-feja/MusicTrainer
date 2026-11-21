@@ -27,7 +27,11 @@ from dataclasses import dataclass, field, replace
 import numpy as np
 
 FRAMES_PER_SECOND = 50  # Beat This! output rate
-METERS = (2, 3, 4, 5, 6, 7)  # beats per bar the decoder chooses from
+METERS = (3, 4, 5, 6, 7)  # beats per bar the decoder chooses from (2 only as a user hint:
+# on GTZAN it turned 13 % of 4/4 songs into half bars, and real 2/4 is rare)
+UNUSUAL_METER_COST = 0.0  # log-probability cost per bar of 5, 6 or 7 beats
+DEFAULT_METER = 4  # when the bar starts are no different from other beats (a click track)
+MIN_BAR_CONTRAST = 0.15  # bar-start probability at bar starts minus at other beats
 LONG_INPUT_METERS = (3, 4)  # for inputs whose back pointers would exceed MAX_POINTER_BYTES
 MAX_POINTER_BYTES = 150_000_000  # ~25 minutes of audio with all METERS
 MIN_BPM, MAX_BPM = 55.0, 215.0  # tempo grid of the decoder (as in madmom)
@@ -99,25 +103,28 @@ def decode_beats(
     meters = (options.beats_per_bar,) if options.beats_per_bar else METERS
     if len(beat_act) * sum(meters) * TEMPO_STEPS > MAX_POINTER_BYTES:
         meters = (options.beats_per_bar,) if options.beats_per_bar else LONG_INPUT_METERS
+    info: dict = {}
+    allowed = None
     if options.tempo_bpm:
         allowed = (options.tempo_bpm / OCTAVE_SPAN, options.tempo_bpm * OCTAVE_SPAN)
         path = _viterbi(beat_act, bar_act, fps, meters, allowed)
-        info = {"tempo_range": allowed}
     else:
         path = _viterbi(beat_act, bar_act, fps, meters)
-        info = {}
         slow, fast = _tempo_spread(path)
         if fast / slow > OCTAVE_CONFLICT:
             # two tempo octaves in one song (e.g. a double-time section): keep one of them
-            candidates = [
-                _viterbi(beat_act, bar_act, fps, meters, (t / OCTAVE_SPAN, t * OCTAVE_SPAN))
-                for t in (slow, fast)
-            ]
+            ranges = [(t / OCTAVE_SPAN, t * OCTAVE_SPAN) for t in (slow, fast)]
+            candidates = [_viterbi(beat_act, bar_act, fps, meters, r) for r in ranges]
             info["octaves"] = [
                 (round(t, 1), round(c.log_prob, 1))
                 for t, c in zip((slow, fast), candidates, strict=True)
             ]
-            path = max(candidates, key=lambda c: c.log_prob)
+            best = int(np.argmax([c.log_prob for c in candidates]))
+            path, allowed = candidates[best], ranges[best]
+    if not options.beats_per_bar and _bar_contrast(path, bar_act) < MIN_BAR_CONTRAST:
+        # bar starts look like any other beat (e.g. a click track): no meter to find
+        path = _viterbi(beat_act, bar_act, fps, (DEFAULT_METER,), allowed)
+        info["meter"] = "default"
     info["log_prob"] = path.log_prob
 
     times = _smooth((_refine(path.frames, beat_act + bar_act) + first) / fps)
@@ -246,6 +253,10 @@ def _viterbi(
 
     # a "row" is one beat of one meter; every row holds all tempi, every tempo `length` frames
     rows = [(m, b) for m, n in enumerate(meters) for b in range(n)]
+    # entering a bar of an unusual length costs a little (per bar, so it scales like the evidence)
+    entry_cost = np.array(
+        [UNUSUAL_METER_COST if b == 0 and meters[m] >= 5 else 0.0 for m, b in rows]
+    )[:, None]
     row_index = {row: r for r, row in enumerate(rows)}
     starts = np.zeros((len(rows), n_tempi), dtype=np.int64)
     ends = np.zeros_like(starts)
@@ -271,17 +282,25 @@ def _viterbi(
 
     between = np.maximum((1 - beat_act - bar_act) / (BEAT_WINDOW - 1), _EPSILON / 2)
     log_obs = np.log(np.stack([between, beat_act, bar_act], axis=1))
+    # every state gets the "between beats" term; the few on-beat states get the difference on top
+    on_beat, on_bar = np.flatnonzero(kind == 1), np.flatnonzero(kind == 2)
+    beat_extra = log_obs[:, 1] - log_obs[:, 0]
+    bar_extra = log_obs[:, 2] - log_obs[:, 0]
 
     tempo_pointer = np.zeros((n_frames, len(rows), n_tempi), dtype=np.uint8)
     score = np.full(len(kind), -np.log(len(kind))) + log_obs[0][kind]
     new = np.empty_like(score)
+    row_axis, tempo_axis = np.arange(len(rows))[:, None], np.arange(n_tempi)[None, :]
     for t in range(1, n_frames):
-        new[1:] = score[:-1]  # one frame further into the beat; beat starts are set below
+        between_t = log_obs[t, 0]
+        np.add(score[:-1], between_t, out=new[1:])  # one frame further into the beat
         candidates = score[ends][:, :, None] + tempo_change[None]  # [row, from tempo, to tempo]
-        best, best_from = candidates.max(axis=1), candidates.argmax(axis=1)
-        new[starts] = best[previous_row]
+        best_from = candidates.argmax(axis=1)
+        best = candidates[row_axis, best_from, tempo_axis]
+        new[starts] = best[previous_row] - entry_cost + between_t  # beat starts
         tempo_pointer[t] = best_from[previous_row]
-        new += log_obs[t][kind]
+        new[on_beat] += beat_extra[t]
+        new[on_bar] += bar_extra[t]
         score, new = new, score
 
     state = int(score.argmax())
@@ -306,6 +325,15 @@ def _viterbi(
         bpm=60.0 * fps / lengths[tempo_of_state[path[frames]]],
         log_prob=log_prob,
     )
+
+
+def _bar_contrast(path: _Path, bar_act: np.ndarray) -> float:
+    """How much likelier the network finds a bar start at the bar starts than at other beats."""
+    is_bar_start = path.beat_in_bar == 0
+    if is_bar_start.all() or not is_bar_start.any():
+        return 1.0
+    peaks = np.array([bar_act[max(0, f - 2) : f + 3].max() for f in path.frames])
+    return float(peaks[is_bar_start].mean() - peaks[~is_bar_start].mean())
 
 
 def _tempo_spread(path: _Path) -> tuple[float, float]:
