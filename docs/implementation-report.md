@@ -171,6 +171,13 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
 - **Still to do:**
   - A "fix the beat grid" UI (move the bar start by one beat, tap tempo). The commercial apps that let you correct analysis do exactly this.
   - Ship the model file with the app. The official download server answered "rate limited" during testing; a mirror on Hugging Face worked.
+- **Follow-up (21 November 2026), now implemented:**
+  - **Distribution:** the official server works again, and Beat This! is on PyPI (`beat-this` 1.1, MIT for code and weights).
+  - **Model choice:** `final0` and `small0` were equally accurate on real songs: beats 0.86 / 0.85, bar starts 0.82 / 0.81. `small0` is 40 % faster (1.4 vs 2.2 s of CPU per minute of audio).
+  - **Timing:** detected beats sit a steady ~20 ms after sharp attacks (spread under 2 ms on synthetic songs). The player compensates by jumping 30 ms early.
+  - **Other checks:** a song without drums still worked (0.98); AAC input gave the same beats as WAV.
+  - **Loops:** on real songs, both ends of a 1-, 2- or 4-bar loop landed on the true bar lines 86–88 % of the time. The misses come from soft intros without drums; once the band plays, it scores 0.97–0.99.
+  - **Details:** [../experiments/test_beats_followup.py](../experiments/test_beats_followup.py).
 
 ##### 9. Beat-synced loops (M, ✅)
 - **Build:**

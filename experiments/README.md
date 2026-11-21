@@ -32,6 +32,7 @@ Tools (portable, no install): [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/rele
 | Script | Feature |
 |---|---|
 | [test_beats.py](test_beats.py) | BPM, beats, downbeats: librosa, Beat This!, madmom |
+| [test_beats_followup.py](test_beats_followup.py) | Beat This! final0 vs small0, timing precision, loop accuracy (needs `CKPT_DIR`) |
 | [test_separation.py](test_separation.py) | stem separation quality and speed: Demucs models |
 | [test_stretch.py](test_stretch.py) | offline speed change / pitch shift in Python |
 | [test_harmony.py](test_harmony.py) | key, chords, tuning |
