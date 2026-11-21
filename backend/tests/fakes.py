@@ -6,13 +6,18 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from music_trainer.models import SearchResult, VideoMetadata
+from music_trainer.models import BeatAnalysis, SearchResult, VideoMetadata
+from music_trainer.services.beats import BeatTrackingError, beat_analysis_from_times
 from music_trainer.services.youtube import DownloadProgress, ProgressCallback, YouTubeError
 from music_trainer.video_ids import watch_url
 
 VIDEO_ID = "jNQXAC9IVRw"
 OTHER_VIDEO_ID = "dQw4w9WgXcQ"
 FAKE_MEDIA = bytes(range(256)) * 40  # 10 240 bytes
+# 120 BPM, 4/4: 16 beats, bars starting every 2 s
+FAKE_BEATS = beat_analysis_from_times(
+    [0.5 + 0.5 * i for i in range(16)], [0.5 + 2.0 * i for i in range(4)], analyzer="fake"
+)
 
 
 class FakeYouTubeClient:
@@ -58,6 +63,25 @@ class FakeYouTubeClient:
         )
 
 
+class FakeBeatTracker:
+    """Stands in for BeatThisTracker: no model, instant result."""
+
+    def __init__(self) -> None:
+        self.analyzed: list[Path] = []
+        self.error: str | None = None
+        """When set, analyze() raises BeatTrackingError with this message."""
+        self.release = threading.Event()
+        """analyze() waits for this event; set by default so it finishes at once."""
+        self.release.set()
+
+    def analyze(self, media_path: Path) -> BeatAnalysis:
+        self.analyzed.append(media_path)
+        self.release.wait(timeout=10)
+        if self.error:
+            raise BeatTrackingError(self.error)
+        return FAKE_BEATS
+
+
 def wait_for_download(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:
     """Poll the download until it is no longer active; return the final job."""
     deadline = time.monotonic() + timeout
@@ -67,3 +91,14 @@ def wait_for_download(client: TestClient, video_id: str, timeout: float = 5.0) -
             return job
         time.sleep(0.02)
     raise AssertionError(f"download of {video_id} did not finish within {timeout} s")
+
+
+def wait_for_beats(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:
+    """Poll beat detection until it is no longer queued or running; return the final state."""
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        state = client.get(f"/api/library/{video_id}/beats").json()
+        if state["status"] not in ("queued", "analyzing"):
+            return state
+        time.sleep(0.02)
+    raise AssertionError(f"beat detection of {video_id} did not finish within {timeout} s")

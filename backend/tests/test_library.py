@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from music_trainer.models import VideoMetadata
-from music_trainer.services.library import Library
+from music_trainer.models import BeatAnalysis, VideoMetadata
+from music_trainer.services.library import Library, VideoNotInLibraryError
 from music_trainer.video_ids import InvalidVideoIdError, watch_url
 
 VIDEO_ID = "jNQXAC9IVRw"
@@ -80,3 +80,27 @@ def test_clear_staging(library: Library) -> None:
     library.create_staging_dir(VIDEO_ID)
     library.clear_staging()
     assert not (library.root / Library.STAGING_DIR).exists()
+
+
+def test_beat_analysis_roundtrip(library: Library) -> None:
+    add_video(library)
+    assert library.read_beat_analysis(VIDEO_ID) is None
+    analysis = BeatAnalysis(
+        bpm=120.0, beats_per_bar=4, beats=[0.5, 1.0], downbeats=[0.5], analyzer="test"
+    )
+    library.write_beat_analysis(VIDEO_ID, analysis)
+    assert library.read_beat_analysis(VIDEO_ID) == analysis
+    assert (library.root / VIDEO_ID / "analysis.json").is_file()
+    assert not (library.root / VIDEO_ID / "analysis.json.part").exists()
+
+
+def test_beat_analysis_needs_the_video(library: Library) -> None:
+    analysis = BeatAnalysis(bpm=None, beats_per_bar=None, beats=[], downbeats=[], analyzer="t")
+    with pytest.raises(VideoNotInLibraryError):
+        library.write_beat_analysis(VIDEO_ID, analysis)
+
+
+def test_unreadable_beat_analysis_is_ignored(library: Library) -> None:
+    add_video(library)
+    (library.root / VIDEO_ID / "analysis.json").write_text("{broken")
+    assert library.read_beat_analysis(VIDEO_ID) is None

@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Response, status
 from fastapi.responses import FileResponse
 
 from music_trainer.api.dependencies import (
+    BeatAnalysisDependency,
     DownloadsDependency,
     LibraryDependency,
     VideoIdParameter,
@@ -42,7 +43,10 @@ def get_video(video_id: VideoIdParameter, library: LibraryDependency) -> Library
 
 @router.delete("/{video_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_video(
-    video_id: VideoIdParameter, library: LibraryDependency, downloads: DownloadsDependency
+    video_id: VideoIdParameter,
+    library: LibraryDependency,
+    downloads: DownloadsDependency,
+    beat_analysis: BeatAnalysisDependency,
 ) -> Response:
     try:
         deleted = library.delete_video(video_id)
@@ -50,7 +54,9 @@ def delete_video(
         raise HTTPException(status.HTTP_409_CONFLICT, str(error)) from error
     if not deleted:
         raise _not_found(video_id)
-    downloads.forget(video_id)  # so the video can be downloaded again
+    # so the video can be downloaded and analysed again
+    downloads.forget(video_id)
+    beat_analysis.forget(video_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

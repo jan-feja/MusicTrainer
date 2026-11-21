@@ -37,6 +37,20 @@ class Settings(BaseSettings):
     ffmpeg_path: Path | None = None
     """ffmpeg executable or its folder; None = look it up on PATH."""
 
+    beat_model: str = "final0"
+    """Beat This! checkpoint: 'final0' (78 MB, most accurate) or 'small0' (8 MB, faster)."""
+
+    analysis_device: str = "cpu"
+    """PyTorch device for beat detection: 'cpu' or 'cuda'."""
+
+    analyze_beats_after_download: bool = True
+    """Detect the beats of every new download right away, in the background."""
+
     @property
     def library_dir(self) -> Path:
         return self.data_dir / "library"
+
+    @property
+    def models_dir(self) -> Path:
+        """Downloaded model weights."""
+        return self.data_dir / "models"

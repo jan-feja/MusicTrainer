@@ -7,6 +7,7 @@ from fastapi import Depends, Request
 from fastapi import Path as PathParameter
 
 from music_trainer.config import Settings
+from music_trainer.services.beat_analysis import BeatAnalysisManager
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
 from music_trainer.services.youtube import YouTubeClient
@@ -19,6 +20,7 @@ class Services:
     library: Library
     youtube: YouTubeClient
     downloads: DownloadManager
+    beat_analysis: BeatAnalysisManager
 
 
 def get_services(request: Request) -> Services:
@@ -37,9 +39,14 @@ def get_downloads(request: Request) -> DownloadManager:
     return get_services(request).downloads
 
 
+def get_beat_analysis(request: Request) -> BeatAnalysisManager:
+    return get_services(request).beat_analysis
+
+
 LibraryDependency = Annotated[Library, Depends(get_library)]
 YouTubeDependency = Annotated[YouTubeClient, Depends(get_youtube)]
 DownloadsDependency = Annotated[DownloadManager, Depends(get_downloads)]
+BeatAnalysisDependency = Annotated[BeatAnalysisManager, Depends(get_beat_analysis)]
 VideoIdParameter = Annotated[
     str, PathParameter(pattern=VIDEO_ID_PATTERN, description="YouTube video ID")
 ]

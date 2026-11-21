@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "music-trainer"
 version = "0.1.0"
-description = "Backend of the music practice app: YouTube search, downloads and the local video library."
+description = "Backend of the music practice app: YouTube search, downloads, the local video library and beat detection."
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",
@@ -14,6 +14,9 @@ dependencies = [
     "pydantic-settings>=2.3",
     # [default] brings yt-dlp-ejs, the scripts yt-dlp needs to solve YouTube's JavaScript challenges
     "yt-dlp[default]>=2025.11.12",
+    # beat and downbeat detection (brings PyTorch; on Windows and macOS PyPI ships the CPU build)
+    "beat-this>=1.1",
+    "numpy>=1.24",
 ]
 
 [project.optional-dependencies]
@@ -28,7 +31,9 @@ packages = ["src/music_trainer"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-markers = ["network: talks to YouTube; run with `pytest -m network`"]
+markers = [
+    "network: talks to YouTube or downloads the beat model; run with `pytest -m network`",
+]
 addopts = "-m 'not network'"
 
 [tool.ruff]

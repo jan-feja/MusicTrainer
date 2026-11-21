@@ -3,9 +3,10 @@
     <library>/<video_id>/meta.json       VideoMetadata
     <library>/<video_id>/video.mp4       media file (its name is stored in meta.json)
     <library>/<video_id>/thumbnail.jpg   optional
+    <library>/<video_id>/analysis.json   BeatAnalysis (beats and bar starts), once detected
     <library>/.staging/<video_id>/       downloads in progress, moved into place when done
 
-Later features (stems, analysis.json, loops.json) belong in the same folder.
+Later features (stems, loops.json, ...) belong in the same folder.
 """
 
 import logging
@@ -13,21 +14,30 @@ import shutil
 import threading
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import TypeVar
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
-from music_trainer.models import VideoMetadata
+from music_trainer.models import BeatAnalysis, VideoMetadata
 from music_trainer.video_ids import require_valid_video_id
 
 logger = logging.getLogger(__name__)
+
+ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
 class LibraryError(Exception):
     """A library operation failed, e.g. a file is still in use."""
 
 
+class VideoNotInLibraryError(LibraryError, LookupError):
+    def __init__(self, video_id: str) -> None:
+        super().__init__(f"Video {video_id} is not in the library")
+
+
 class Library:
     METADATA_FILE = "meta.json"
+    ANALYSIS_FILE = "analysis.json"
     STAGING_DIR = ".staging"
 
     def __init__(self, root: Path) -> None:
@@ -65,6 +75,17 @@ class Library:
         if metadata is None or metadata.thumbnail_file is None:
             return None
         return self._file_in_video_dir(video_id, metadata.thumbnail_file)
+
+    def read_beat_analysis(self, video_id: str) -> BeatAnalysis | None:
+        return self._read_json(self._video_dir(video_id) / self.ANALYSIS_FILE, BeatAnalysis)
+
+    def write_beat_analysis(self, video_id: str, analysis: BeatAnalysis) -> None:
+        if not self.contains(video_id):
+            raise VideoNotInLibraryError(video_id)
+        target = self._video_dir(video_id) / self.ANALYSIS_FILE
+        partial = target.with_name(target.name + ".part")
+        partial.write_text(analysis.model_dump_json(), encoding="utf-8")
+        partial.replace(target)  # readers never see a half-written file
 
     def delete_video(self, video_id: str) -> bool:
         """Delete the video's folder. Returns False if there was nothing to delete."""
@@ -120,11 +141,14 @@ class Library:
         return path
 
     def _read_metadata(self, folder: Path) -> VideoMetadata | None:
-        path = folder / self.METADATA_FILE
+        return self._read_json(folder / self.METADATA_FILE, VideoMetadata)
+
+    @staticmethod
+    def _read_json(path: Path, model: type[ModelT]) -> ModelT | None:
         if not path.is_file():
             return None
         try:
-            return VideoMetadata.model_validate_json(path.read_text(encoding="utf-8"))
+            return model.model_validate_json(path.read_text(encoding="utf-8"))
         except (OSError, ValidationError) as error:
             logger.warning("Skipping unreadable %s: %s", path, error)
             return None

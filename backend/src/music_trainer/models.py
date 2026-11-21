@@ -92,3 +92,39 @@ class DownloadRequest(ApiModel):
     video_id: str = Field(pattern=VIDEO_ID_PATTERN)
     title: str | None = Field(default=None, max_length=500)
     """Title from the search result, shown while the download runs."""
+
+
+class BeatAnalysis(ApiModel):
+    """The beat grid of a song; stored as analysis.json in the video's folder."""
+
+    bpm: float | None
+    """Tempo from the median time between beats; None if too few beats were found."""
+    beats_per_bar: int | None
+    """Most common number of beats between bar starts (4 for most pop songs)."""
+    beats: list[float]
+    """Beat times in seconds, ascending."""
+    downbeats: list[float]
+    """Bar starts in seconds; each one is also in `beats`."""
+    analyzer: str
+    """Which method produced the grid, e.g. 'beat_this:final0'."""
+
+
+class AnalysisStatus(StrEnum):
+    NOT_STARTED = "not_started"
+    QUEUED = "queued"
+    ANALYZING = "analyzing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+    @property
+    def is_active(self) -> bool:
+        return self in {AnalysisStatus.QUEUED, AnalysisStatus.ANALYZING}
+
+
+class BeatTrackingState(ApiModel):
+    """Where beat detection of a video stands, with the result once it is done."""
+
+    video_id: str
+    status: AnalysisStatus
+    analysis: BeatAnalysis | None = None
+    error: str | None = None
