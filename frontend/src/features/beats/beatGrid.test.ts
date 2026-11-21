@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { BeatAnalysis } from '../../api/types'
 import {
   createBeatGrid,
+  shiftedBarStarts,
   describeGridLength,
   gridPoints,
   isSnapMode,
@@ -21,6 +22,7 @@ const ANALYSIS: BeatAnalysis = {
   beats: BEATS,
   downbeats: [1, 3, 5, 7],
   analyzer: 'test',
+  hints: { beatsPerBar: null, tempoBpm: null, barStarts: [] },
 }
 
 describe('nearestIndex', () => {
@@ -66,11 +68,23 @@ describe('createBeatGrid', () => {
     expect(gridPoints(grid, 'beat')).toBe(BEATS)
     expect(gridPoints(grid, 'bar')).toEqual([1, 3, 5, 7])
   })
+})
 
-  it('moves bar starts by whole beats', () => {
-    expect(createBeatGrid(ANALYSIS, 1).bars).toEqual([1.5, 3.5, 5.5, 7.5])
-    // shifting earlier drops a bar start that would fall before the first beat
-    expect(createBeatGrid(ANALYSIS, -1).bars).toEqual([2.5, 4.5, 6.5])
+describe('shiftedBarStarts', () => {
+  it('moves the bars from the one at the playhead on', () => {
+    expect(shiftedBarStarts(ANALYSIS, 3.4, 1)).toEqual([3.5])
+    expect(shiftedBarStarts(ANALYSIS, 5.0, -1)).toEqual([4.5])
+  })
+
+  it('wraps around at the first beat', () => {
+    // a bar start one beat before the first beat: the next one comes a beat early
+    expect(shiftedBarStarts(ANALYSIS, 0, -1)).toEqual([2.5])
+  })
+
+  it("keeps the user's other bar starts", () => {
+    const fixed = { ...ANALYSIS, hints: { ...ANALYSIS.hints, barStarts: [1.5, 6.5] } }
+    // the bar at 3.4 s starts at 3: bar starts before it and from the next bar (5 s) on stay
+    expect(shiftedBarStarts(fixed, 3.4, 1)).toEqual([1.5, 3.5, 6.5])
   })
 })
 

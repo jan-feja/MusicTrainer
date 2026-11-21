@@ -1,4 +1,10 @@
-import type { BeatTrackingState, DownloadJob, LibraryVideo, SearchResult } from './types'
+import type {
+  BeatGridHints,
+  BeatTrackingState,
+  DownloadJob,
+  LibraryVideo,
+  SearchResult,
+} from './types'
 
 const API_BASE = '/api'
 
@@ -83,8 +89,21 @@ export const api = {
     return request(`${videoPath(videoId)}/beats`, { signal })
   },
 
-  /** Start beat detection; `force` runs it again even if a result exists. */
-  detectBeats(videoId: string, force = false): Promise<BeatTrackingState> {
-    return request(`${videoPath(videoId)}/beats${force ? '?force=true' : ''}`, { method: 'POST' })
+  /**
+   * Start beat detection. `force` runs the beat network again even if a result
+   * exists; `hints` only decodes the grid again with them (a few seconds).
+   */
+  detectBeats(
+    videoId: string,
+    options: { force?: boolean; hints?: BeatGridHints } = {},
+  ): Promise<BeatTrackingState> {
+    const query = options.force ? '?force=true' : ''
+    return request(`${videoPath(videoId)}/beats${query}`, {
+      method: 'POST',
+      ...(options.hints && {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(options.hints),
+      }),
+    })
   },
 }

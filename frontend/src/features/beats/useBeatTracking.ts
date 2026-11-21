@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
-import type { BeatTrackingState } from '../../api/types'
+import type { BeatAnalysis, BeatGridHints, BeatTrackingState } from '../../api/types'
 import { errorMessage } from '../../lib/format'
 
 const POLL_INTERVAL_MS = 1000
@@ -8,10 +8,16 @@ const POLL_INTERVAL_MS = 1000
 export interface BeatTracking {
   /** null until the first answer arrives */
   state: BeatTrackingState | null
+  /** The latest finished beat grid; stays while a new one is detected. */
+  analysis: BeatAnalysis | null
+  /** A new grid is being detected (e.g. after new hints). */
+  updating: boolean
   /** The server could not be asked (as opposed to detection failing). */
   requestError: string | null
   /** Ask again, or detect again after a failure. */
   retry: () => void
+  /** Detect the grid again with what the user knows about the song. */
+  setHints: (hints: BeatGridHints) => void
 }
 
 function isRunning(state: BeatTrackingState): boolean {
@@ -24,6 +30,7 @@ function isRunning(state: BeatTrackingState): boolean {
  */
 export function useBeatTracking(videoId: string, enabled = true): BeatTracking {
   const [state, setState] = useState<BeatTrackingState | null>(null)
+  const [finished, setFinished] = useState<{ videoId: string; analysis: BeatAnalysis } | null>(null)
   const [requestError, setRequestError] = useState<string | null>(null)
   const [attempt, setAttempt] = useState(0)
 
@@ -40,6 +47,7 @@ export function useBeatTracking(videoId: string, enabled = true): BeatTracking {
         }
         if (controller.signal.aborted) return
         setState(current)
+        if (current.analysis) setFinished({ videoId, analysis: current.analysis })
         setRequestError(null)
         if (isRunning(current)) timer = window.setTimeout(poll, POLL_INTERVAL_MS)
       } catch (error) {
@@ -53,21 +61,33 @@ export function useBeatTracking(videoId: string, enabled = true): BeatTracking {
     }
   }, [videoId, enabled, attempt])
 
+  const pollAgain = () => setAttempt((count) => count + 1)
+
+  const restart = (options: Parameters<typeof api.detectBeats>[1]) => {
+    api.detectBeats(videoId, options).then(
+      (restarted) => {
+        setState(restarted)
+        pollAgain()
+      },
+      (error: unknown) => setRequestError(errorMessage(error)),
+    )
+  }
+
   const retry = () => {
     setRequestError(null)
-    const pollAgain = () => setAttempt((count) => count + 1)
     if (state?.status === 'failed') {
-      api.detectBeats(videoId, true).then(
-        (restarted) => {
-          setState(restarted)
-          pollAgain()
-        },
-        (error: unknown) => setRequestError(errorMessage(error)),
-      )
+      restart({ force: true })
     } else {
       pollAgain()
     }
   }
 
-  return { state, requestError, retry }
+  const setHints = (hints: BeatGridHints) => {
+    setRequestError(null)
+    restart({ hints })
+  }
+
+  const analysis = finished?.videoId === videoId ? finished.analysis : null
+  const updating = state !== null && isRunning(state) && analysis !== null
+  return { state, analysis, updating, requestError, retry, setHints }
 }

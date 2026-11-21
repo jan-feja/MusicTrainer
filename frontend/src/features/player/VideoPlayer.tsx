@@ -9,6 +9,7 @@ import {
   SNAP_LEAD_SECONDS,
   type SnapMode,
   createBeatGrid,
+  shiftedBarStarts,
   describeGridLength,
   gridPoints,
   nextSnapMode,
@@ -58,12 +59,11 @@ export function VideoPlayer({ src, poster, autoPlay = true, beatTracking }: Vide
   const videoRef = useRef<HTMLVideoElement>(null)
   const [loop, dispatchLoop] = useReducer(loopReducer, EMPTY_LOOP)
   const [snapMode, setSnapMode] = useSnapMode()
-  const [barShift, setBarShift] = useState(0)
 
-  const analysis = beatTracking?.state?.status === 'completed' ? beatTracking.state.analysis : null
+  const analysis = beatTracking?.analysis ?? null
   const grid = useMemo(
-    () => (analysis && analysis.beats.length >= 2 ? createBeatGrid(analysis, barShift) : null),
-    [analysis, barShift],
+    () => (analysis && analysis.beats.length >= 2 ? createBeatGrid(analysis) : null),
+    [analysis],
   )
   const snapUnit: GridUnit | null = grid && snapMode !== 'off' ? snapMode : null
   const snapPoints = grid && snapUnit ? gridPoints(grid, snapUnit) : null
@@ -142,12 +142,21 @@ export function VideoPlayer({ src, poster, autoPlay = true, beatTracking }: Vide
     changeSnapMode(next)
   }
 
-  const changeBarShift = (delta: -1 | 1) => {
-    if (!analysis) return
-    const beatsPerBar = analysis.beatsPerBar ?? 4
-    const shift = (((barShift + delta) % beatsPerBar) + beatsPerBar) % beatsPerBar
-    setBarShift(shift)
-    if (snapUnit === 'bar') snapLoopTo(createBeatGrid(analysis, shift).bars)
+  // a new grid (new hints, moved bar starts): keep a snapped loop on it
+  const [previousGrid, setPreviousGrid] = useState(grid)
+  if (grid !== previousGrid) {
+    setPreviousGrid(grid)
+    if (previousGrid && grid && snapUnit) snapLoopTo(gridPoints(grid, snapUnit))
+  }
+
+  const moveBarStarts = (delta: -1 | 1) => {
+    if (!analysis || !beatTracking) return
+    const barStarts = shiftedBarStarts(analysis, playback.currentTime, delta)
+    beatTracking.setHints({ ...analysis.hints, barStarts })
+  }
+
+  const resetBarStarts = () => {
+    if (analysis && beatTracking) beatTracking.setHints({ ...analysis.hints, barStarts: [] })
   }
 
   const toggleLoop = () => dispatchLoop({ type: 'toggle' })
@@ -269,8 +278,8 @@ export function VideoPlayer({ src, poster, autoPlay = true, beatTracking }: Vide
                 tracking={beatTracking}
                 snapMode={snapMode}
                 onSnapModeChange={changeSnapMode}
-                barShift={barShift}
-                onBarShiftChange={changeBarShift}
+                onMoveBarStarts={moveBarStarts}
+                onResetBarStarts={resetBarStarts}
               />
             </div>
           )}

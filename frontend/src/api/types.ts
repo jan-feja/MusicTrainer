@@ -37,6 +37,16 @@ export interface DownloadJob {
   error: string | null
 }
 
+/** What the user knows about a song's beat grid; null leaves it to the detection. */
+export interface BeatGridHints {
+  /** Every bar has this many beats. */
+  beatsPerBar: number | null
+  /** The tempo is near this; decides between e.g. 75 and 150 BPM. */
+  tempoBpm: number | null
+  /** Times (s) where a bar starts; from each one on, bars are counted from there. */
+  barStarts: number[]
+}
+
 /** The beat grid of a song. */
 export interface BeatAnalysis {
   bpm: number | null
@@ -46,6 +56,8 @@ export interface BeatAnalysis {
   /** Bar starts in seconds; each one is also in `beats`. */
   downbeats: number[]
   analyzer: string
+  /** The hints the grid was detected with. */
+  hints: BeatGridHints
 }
 
 export type AnalysisStatus = 'not_started' | 'queued' | 'analyzing' | 'completed' | 'failed'

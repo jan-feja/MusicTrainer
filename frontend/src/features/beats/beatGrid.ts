@@ -27,13 +27,34 @@ export interface BeatGrid {
  * Build the grid. `barShift` moves every bar start by whole beats, for songs
  * where the detector put the bar start on the wrong beat.
  */
-export function createBeatGrid(analysis: BeatAnalysis, barShift = 0): BeatGrid {
-  const { beats } = analysis
-  const bars = analysis.downbeats
-    .map((time) => nearestIndex(beats, time) + barShift)
-    .filter((index) => index >= 0 && index < beats.length)
-    .map((index) => beats[index])
-  return { beats, bars, beatsPerBar: analysis.beatsPerBar, bpm: analysis.bpm }
+export function createBeatGrid(analysis: BeatAnalysis): BeatGrid {
+  return {
+    beats: analysis.beats,
+    bars: analysis.downbeats,
+    beatsPerBar: analysis.beatsPerBar,
+    bpm: analysis.bpm,
+  }
+}
+
+/**
+ * The bar starts to send as a hint when the user moves the bars one beat
+ * earlier (-1) or later (+1) from the bar at `time` on. Their other bar starts
+ * stay, so a fix after an odd bar keeps the bars before it.
+ */
+export function shiftedBarStarts(analysis: BeatAnalysis, time: number, delta: -1 | 1): number[] {
+  const { beats, downbeats, hints } = analysis
+  if (beats.length === 0) return hints.barStarts
+  let bar = 0
+  while (bar + 1 < downbeats.length && downbeats[bar + 1] <= time + 1e-3) bar += 1
+  const barStart = downbeats.length > 0 ? downbeats[bar] : beats[0]
+  const nextBarStart = bar + 1 < downbeats.length ? downbeats[bar + 1] : Infinity
+  let target = nearestIndex(beats, barStart) + delta
+  // no beat before the first one: moving earlier there means the next bar starts a beat early
+  if (target < 0) target += analysis.beatsPerBar ?? 4
+  const targetTime = beats[Math.min(target, beats.length - 1)]
+  const from = Math.min(barStart, targetTime) - 1e-3
+  const kept = hints.barStarts.filter((t) => t < from || t >= nextBarStart)
+  return [...kept, targetTime].sort((a, b) => a - b)
 }
 
 export function gridPoints(grid: BeatGrid, unit: GridUnit): readonly number[] {

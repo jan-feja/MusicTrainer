@@ -1,37 +1,27 @@
-import type { BeatAnalysis } from '../../api/types'
+import type { BeatAnalysis, BeatGridHints } from '../../api/types'
 import { SNAP_MODES, type SnapMode } from './beatGrid'
 import type { BeatTracking } from './useBeatTracking'
 import styles from './BeatSnapControls.module.css'
 
 const MODE_LABELS: Record<SnapMode, string> = { off: 'Off', beat: 'Beats', bar: 'Bars' }
+const BEATS_PER_BAR_CHOICES = [2, 3, 4, 5, 6, 7, 8, 9, 12]
 
 interface BeatSnapControlsProps {
   tracking: BeatTracking
   snapMode: SnapMode
   onSnapModeChange: (mode: SnapMode) => void
-  /** Which beat of the bar the detected bar start is moved to (0 = as detected). */
-  barShift: number
-  onBarShiftChange: (delta: -1 | 1) => void
+  /** Move the bar starts one beat earlier or later, from the bar at the playhead on. */
+  onMoveBarStarts: (delta: -1 | 1) => void
+  /** Go back to the detected bar starts. */
+  onResetBarStarts: () => void
 }
 
-/** Beat detection status and the loop snap setting. */
-export function BeatSnapControls({
-  tracking,
-  snapMode,
-  onSnapModeChange,
-  barShift,
-  onBarShiftChange,
-}: BeatSnapControlsProps) {
+/** Beat detection status, the loop snap setting and fixes for the beat grid. */
+export function BeatSnapControls(props: BeatSnapControlsProps) {
   return (
     <div className={styles.group} role="group" aria-label="Beat grid">
       <span className={styles.label}>Snap loop</span>
-      <BeatStatus
-        tracking={tracking}
-        snapMode={snapMode}
-        onSnapModeChange={onSnapModeChange}
-        barShift={barShift}
-        onBarShiftChange={onBarShiftChange}
-      />
+      <BeatStatus {...props} />
     </div>
   )
 }
@@ -40,21 +30,15 @@ function BeatStatus({
   tracking,
   snapMode,
   onSnapModeChange,
-  barShift,
-  onBarShiftChange,
+  onMoveBarStarts,
+  onResetBarStarts,
 }: BeatSnapControlsProps) {
-  const { state, requestError, retry } = tracking
+  const { state, analysis, updating, requestError, retry, setHints } = tracking
 
   if (requestError) {
     return <Problem message={`Could not load the beats: ${requestError}`} onRetry={retry} />
   }
-  if (state === null || state.status === 'not_started') {
-    return <Busy text="Loading beats…" />
-  }
-  if (state.status === 'queued' || state.status === 'analyzing') {
-    return <Busy text="Detecting beats…" />
-  }
-  if (state.status === 'failed' || state.analysis === null) {
+  if (state?.status === 'failed') {
     return (
       <Problem
         message={`Beat detection failed: ${state.error ?? 'unknown error'}`}
@@ -62,36 +46,55 @@ function BeatStatus({
       />
     )
   }
-  if (state.analysis.beats.length < 2) {
+  if (analysis === null) {
+    const detecting = state?.status === 'queued' || state?.status === 'analyzing'
+    return <Busy text={detecting ? 'Detecting beats…' : 'Loading beats…'} />
+  }
+  if (analysis.beats.length < 2) {
     return <span className={styles.note}>No beats found in this video</span>
   }
   return (
     <>
-      <SnapModeSwitch analysis={state.analysis} mode={snapMode} onChange={onSnapModeChange} />
-      <span className={styles.note}>{describeTempo(state.analysis)}</span>
+      <SnapModeSwitch analysis={analysis} mode={snapMode} onChange={onSnapModeChange} />
+      <GridHints analysis={analysis} onChange={setHints} disabled={updating} />
       {snapMode === 'bar' && (
-        <span className={styles.barShift}>
+        <span className={styles.barShift} role="group" aria-label="Bar starts">
           <button
             type="button"
             className="icon-button icon-button-small"
-            onClick={() => onBarShiftChange(-1)}
-            aria-label="Move bar starts one beat earlier"
-            title="Bar starts on the wrong beat? Move them one beat earlier"
+            onClick={() => onMoveBarStarts(-1)}
+            disabled={updating}
+            aria-label="Move bar starts from here on one beat earlier"
+            title="Bar starts on the wrong beat from here on? Move them one beat earlier"
           >
             ‹
           </button>
-          <span className={styles.note}>Bar start{barShift !== 0 && ` (+${barShift})`}</span>
+          <span className={styles.note}>Bar start</span>
           <button
             type="button"
             className="icon-button icon-button-small"
-            onClick={() => onBarShiftChange(1)}
-            aria-label="Move bar starts one beat later"
-            title="Bar starts on the wrong beat? Move them one beat later"
+            onClick={() => onMoveBarStarts(1)}
+            disabled={updating}
+            aria-label="Move bar starts from here on one beat later"
+            title="Bar starts on the wrong beat from here on? Move them one beat later"
           >
             ›
           </button>
+          {analysis.hints.barStarts.length > 0 && (
+            <button
+              type="button"
+              className={styles.small}
+              onClick={onResetBarStarts}
+              disabled={updating}
+              aria-label="Use the detected bar starts"
+              title="Use the detected bar starts again"
+            >
+              ↺
+            </button>
+          )}
         </span>
       )}
+      {updating && <Busy text="Updating…" />}
     </>
   )
 }
@@ -125,11 +128,84 @@ function SnapModeSwitch({
   )
 }
 
-function describeTempo(analysis: BeatAnalysis): string {
-  const parts = []
-  if (analysis.bpm !== null) parts.push(`${Math.round(analysis.bpm)} BPM`)
-  if (analysis.beatsPerBar !== null) parts.push(`${analysis.beatsPerBar} beats per bar`)
-  return parts.join(' · ')
+/** Detected tempo and meter, with fixes for when the detection picked the wrong one. */
+function GridHints({
+  analysis,
+  onChange,
+  disabled,
+}: {
+  analysis: BeatAnalysis
+  onChange: (hints: BeatGridHints) => void
+  disabled: boolean
+}) {
+  const { hints, bpm, beatsPerBar } = analysis
+  // a new tempo or meter makes new beats: bar starts the user placed no longer fit
+  const setTempo = (tempoBpm: number | null) => onChange({ ...hints, tempoBpm, barStarts: [] })
+  return (
+    <>
+      {bpm !== null && (
+        <span className={styles.hint} role="group" aria-label="Tempo">
+          <span className={styles.note}>{Math.round(bpm)} BPM</span>
+          <button
+            type="button"
+            className={styles.small}
+            onClick={() => setTempo(Math.round(bpm / 2))}
+            disabled={disabled || bpm / 2 < 30}
+            aria-label="Half the tempo"
+            title="Beats detected twice too fast? Detect them at half the tempo"
+          >
+            ½×
+          </button>
+          <button
+            type="button"
+            className={styles.small}
+            onClick={() => setTempo(Math.round(bpm * 2))}
+            disabled={disabled || bpm * 2 > 300}
+            aria-label="Double the tempo"
+            title="Beats detected half too slow? Detect them at double the tempo"
+          >
+            2×
+          </button>
+          {hints.tempoBpm !== null && (
+            <button
+              type="button"
+              className={styles.small}
+              onClick={() => setTempo(null)}
+              disabled={disabled}
+              aria-label="Detect the tempo automatically"
+              title="Detect the tempo automatically"
+            >
+              ↺
+            </button>
+          )}
+        </span>
+      )}
+      <label className={styles.hint}>
+        <select
+          className={styles.select}
+          value={hints.beatsPerBar ?? 'auto'}
+          disabled={disabled}
+          onChange={(event) => {
+            const value = event.target.value
+            const beatsPerBar = value === 'auto' ? null : Number(value)
+            onChange({ ...hints, beatsPerBar, barStarts: [] })
+          }}
+          aria-label="Beats per bar"
+          title="Beats per bar: detected, or set it if the bars come out wrong"
+        >
+          <option value="auto">
+            {hints.beatsPerBar === null && beatsPerBar !== null ? `Auto (${beatsPerBar})` : 'Auto'}
+          </option>
+          {BEATS_PER_BAR_CHOICES.map((count) => (
+            <option key={count} value={count}>
+              {count}
+            </option>
+          ))}
+        </select>
+        <span className={styles.note}>beats per bar</span>
+      </label>
+    </>
+  )
 }
 
 function Busy({ text }: { text: string }) {
