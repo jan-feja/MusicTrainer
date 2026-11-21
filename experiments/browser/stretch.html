@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Stretch test</title></head>
+<body>
+<pre id="log"></pre>
+<script type="module">
+// Real-time speed change in the browser: can it handle 6 stems?
+// Each setup is rendered in an OfflineAudioContext (runs as fast as the CPU allows),
+// so "x real time" = how many times faster than needed for live playback.
+import SignalsmithStretch from 'https://cdn.jsdelivr.net/npm/signalsmith-stretch@1.3.2/SignalsmithStretch.mjs';
+import { SoundTouchNode } from 'https://cdn.jsdelivr.net/npm/@soundtouchjs/audio-worklet@2.0.3/+esm';
+const ST_PROC = 'https://cdn.jsdelivr.net/npm/@soundtouchjs/audio-worklet@2.0.3/.dist/soundtouch-processor.js';
+
+const log = (...a) => { document.getElementById('log').textContent += a.join(' ') + '\n'; console.log(...a); };
+const SR = 44100, SECONDS = 30, RATE = 0.75;
+const STEMS = ['drums', 'bass', 'guitar', 'piano', 'vocals', 'bass'];  // 6 stems
+const result = { rate: RATE, seconds_in: SECONDS };
+
+function sliceBuffer(buf, seconds) {
+  const len = Math.min(buf.length, Math.round(seconds * SR));
+  const out = new AudioBuffer({ length: len, numberOfChannels: 2, sampleRate: SR });
+  for (let c = 0; c < 2; c++) out.copyToChannel(buf.getChannelData(Math.min(c, buf.numberOfChannels - 1)).subarray(0, len), c);
+  return out;
+}
+
+async function loadStems() {
+  const dec = new OfflineAudioContext(2, SR, SR);
+  const bufs = [];
+  for (const s of STEMS) {
+    const ab = await (await fetch(`/data/synth_steady/stems/${s}.wav`)).arrayBuffer();
+    bufs.push(sliceBuffer(await dec.decodeAudioData(ab), SECONDS));
+  }
+  return bufs;
+}
+
+function sine(freq, seconds) {
+  const b = new AudioBuffer({ length: seconds * SR, numberOfChannels: 2, sampleRate: SR });
+  for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < d.length; i++) d[i] = 0.5 * Math.sin(2 * Math.PI * freq * i / SR); }
+  return [b];
+}
+
+// --- the three setups ---------------------------------------------------
+// A: one Signalsmith node per stem, fed with buffers (rate set directly)
+async function signalsmithPerStem(ctx, bufs) {
+  for (const b of bufs) {
+    const node = await SignalsmithStretch(ctx);
+    node.connect(ctx.destination);
+    await node.addBuffers([b.getChannelData(0), b.getChannelData(1)]);
+    node.schedule({ active: true, rate: RATE, input: 0, output: 0 });
+  }
+}
+// B: stems played slower by Web Audio (pitch drops), mixed through per-stem gains (= mute/solo),
+//    then ONE Signalsmith node in live mode shifts the pitch back up
+async function signalsmithAfterMix(ctx, bufs) {
+  const node = await SignalsmithStretch(ctx);
+  const bus = ctx.createGain();
+  for (const b of bufs) {
+    const src = ctx.createBufferSource(); src.buffer = b; src.playbackRate.value = RATE;
+    const g = ctx.createGain(); src.connect(g).connect(bus); src.start(0);
+  }
+  bus.connect(node); node.connect(ctx.destination);
+  node.schedule({ active: true, semitones: -12 * Math.log2(RATE), output: 0 });
+}
+// C: same as B, but SoundTouch does the pitch correction
+async function soundTouchAfterMix(ctx, bufs) {
+  await SoundTouchNode.register(ctx, ST_PROC);
+  const st = new SoundTouchNode({ context: ctx });
+  st.playbackRate.value = RATE;
+  const bus = ctx.createGain();
+  for (const b of bufs) {
+    const src = ctx.createBufferSource(); src.buffer = b; src.playbackRate.value = RATE;
+    const g = ctx.createGain(); src.connect(g).connect(bus); src.start(0);
+  }
+  bus.connect(st); st.connect(ctx.destination);
+}
+
+async function render(setup, bufs) {
+  const inSec = bufs[0].length / SR;
+  const outLen = Math.ceil(inSec / RATE * SR) + SR;
+  const ctx = new OfflineAudioContext(2, outLen, SR);
+  await setup(ctx, bufs);
+  const t0 = performance.now();
+  const out = await ctx.startRendering();
+  const ms = performance.now() - t0;
+  return { out, ms, outSec: outLen / SR };
+}
+
+// dominant frequency (Hz) of the middle second, 1 Hz resolution search 300-600 Hz
+function dominantFreq(buf) {
+  const d = buf.getChannelData(0), mid = Math.floor(d.length / 2), n = SR;
+  let best = 0, bestF = 0;
+  for (let f = 300; f <= 600; f += 1) {
+    let re = 0, im = 0;
+    for (let i = 0; i < n; i += 2) { const x = d[mid - n / 2 + i]; re += x * Math.cos(2 * Math.PI * f * i / SR); im += x * Math.sin(2 * Math.PI * f * i / SR); }
+    const p = re * re + im * im; if (p > best) { best = p; bestF = f; }
+  }
+  return bestF;
+}
+function audibleSeconds(buf) {
+  const d = buf.getChannelData(0); let last = 0;
+  for (let i = 0; i < d.length; i++) if (Math.abs(d[i]) > 0.01) last = i;
+  return last / SR;
+}
+
+try {
+  result.preservesPitch_supported = 'preservesPitch' in HTMLMediaElement.prototype;
+  const bufs = await loadStems();
+  log('stems loaded', bufs.length);
+  for (const [name, setup] of [['signalsmith_6_nodes', signalsmithPerStem], ['signalsmith_after_mix', signalsmithAfterMix], ['soundtouch_after_mix', soundTouchAfterMix]]) {
+    try {
+      const r = await render(setup, bufs);
+      const tone = await render(setup, sine(440, 3));
+      result[name] = {
+        render_ms: Math.round(r.ms),
+        x_realtime: +(r.outSec / (r.ms / 1000)).toFixed(1),
+        tone_440_out_hz: dominantFreq(tone.out),
+        tone_3s_out_seconds: +audibleSeconds(tone.out).toFixed(2),
+        expected_seconds: +(3 / RATE).toFixed(2),
+      };
+      log(name, JSON.stringify(result[name]));
+    } catch (e) { result[name] = { error: String(e) }; log(name, 'ERROR', e); }
+  }
+} catch (e) { result.error = String(e); }
+window.__result = result;
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+from pathlib import Path
+
+import pytest
+
+from music_trainer.models import VideoMetadata
+from music_trainer.services.library import Library
+from music_trainer.video_ids import InvalidVideoIdError, watch_url
+
+VIDEO_ID = "jNQXAC9IVRw"
+
+
+def add_video(library: Library, video_id: str = VIDEO_ID, title: str = "Title") -> VideoMetadata:
+    staging = library.create_staging_dir(video_id)
+    (staging / "video.mp4").write_bytes(b"media")
+    metadata = VideoMetadata(
+        video_id=video_id, title=title, source_url=watch_url(video_id), media_file="video.mp4"
+    )
+    return library.commit(video_id, metadata)
+
+
+@pytest.fixture
+def library(tmp_path: Path) -> Library:
+    return Library(tmp_path / "library")
+
+
+def test_commit_moves_download_into_library(library: Library) -> None:
+    stored = add_video(library)
+
+    assert stored.downloaded_at is not None
+    assert library.contains(VIDEO_ID)
+    assert library.get_video(VIDEO_ID) == stored
+    assert library.media_path(VIDEO_ID) == library.root / VIDEO_ID / "video.mp4"
+    assert library.thumbnail_path(VIDEO_ID) is None
+    assert not (library.root / Library.STAGING_DIR / VIDEO_ID).exists()
+
+
+def test_list_videos_newest_first(library: Library) -> None:
+    add_video(library, VIDEO_ID, "first")
+    add_video(library, "dQw4w9WgXcQ", "second")
+    assert [v.title for v in library.list_videos()] == ["second", "first"]
+
+
+def test_list_videos_skips_broken_and_staging_folders(library: Library) -> None:
+    add_video(library)
+    (library.root / "aaaaaaaaaaa").mkdir()
+    (library.root / "aaaaaaaaaaa" / "meta.json").write_text("{not json")
+    library.create_staging_dir("dQw4w9WgXcQ")
+    assert [v.video_id for v in library.list_videos()] == [VIDEO_ID]
+
+
+def test_commit_replaces_existing_video(library: Library) -> None:
+    add_video(library, title="old")
+    add_video(library, title="new")
+    assert library.get_video(VIDEO_ID).title == "new"
+
+
+def test_delete_video(library: Library) -> None:
+    add_video(library)
+    assert library.delete_video(VIDEO_ID) is True
+    assert not library.contains(VIDEO_ID)
+    assert library.delete_video(VIDEO_ID) is False
+
+
+def test_media_path_never_leaves_video_folder(library: Library) -> None:
+    add_video(library)
+    meta_file = library.root / VIDEO_ID / Library.METADATA_FILE
+    tampered = library.get_video(VIDEO_ID).model_copy(update={"media_file": "../../secret.txt"})
+    meta_file.write_text(tampered.model_dump_json())
+    assert library.media_path(VIDEO_ID) is None
+
+
+def test_invalid_ids_are_rejected(library: Library) -> None:
+    with pytest.raises(InvalidVideoIdError):
+        library.get_video("../outside!")
+    with pytest.raises(InvalidVideoIdError):
+        library.create_staging_dir("..")
+
+
+def test_clear_staging(library: Library) -> None:
+    library.create_staging_dir(VIDEO_ID)
+    library.clear_staging()
+    assert not (library.root / Library.STAGING_DIR).exists()

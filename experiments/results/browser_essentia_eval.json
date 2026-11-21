@@ -1,0 +1,64 @@
+{
+ "synth_steady": {
+  "bpm": 99.98,
+  "key": "G major",
+  "tuning_hz": 440.51,
+  "tuning_error": null,
+  "chords_key": "E minor",
+  "ms": {
+   "rhythm": 15257,
+   "key": 912,
+   "tonal": 2282,
+   "total": 21195
+  },
+  "audio_s": 147.6,
+  "beatF": 0.893,
+  "chords_majmin": 0.917
+ },
+ "synth_live": {
+  "bpm": 106.91,
+  "key": "G major",
+  "tuning_hz": 440.25,
+  "tuning_error": null,
+  "chords_key": "E minor",
+  "ms": {
+   "rhythm": 13196,
+   "key": 782,
+   "tonal": 2225,
+   "total": 19360
+  },
+  "audio_s": 147.9,
+  "beatF": 0.901,
+  "chords_majmin": 0.915
+ },
+ "synth_detune": {
+  "bpm": 99.99,
+  "key": "G major",
+  "tuning_hz": 431.19,
+  "tuning_error": null,
+  "chords_key": "Eb minor",
+  "ms": {
+   "rhythm": 12679,
+   "key": 866,
+   "tonal": 2414,
+   "total": 18974
+  },
+  "audio_s": 147.6,
+  "beatF": 0.887,
+  "chords_majmin": 0.0
+ },
+ "0038_bringmetolife": {
+  "bpm": 94.95,
+  "key": "E minor",
+  "tuning_hz": 434.19,
+  "tuning_error": null,
+  "chords_key": "E minor",
+  "ms": {
+   "rhythm": 20314,
+   "key": 1277,
+   "tonal": 4079,
+   "total": 29897
+  },
+  "audio_s": 240
+ }
+}

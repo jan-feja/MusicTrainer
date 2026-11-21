@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>essentia.js test</title></head>
+<body>
+<pre id="log"></pre>
+<script type="module">
+// Can analysis (BPM, beats, key, chords, tuning) run fully in the browser?
+import { EssentiaWASM } from 'https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.es.js';
+import Essentia from 'https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js-core.es.js';
+
+const log = (...a) => { document.getElementById('log').textContent += a.join(' ') + '\n'; console.log(...a); };
+const SR = 44100;
+const result = {};
+const essentia = new Essentia(EssentiaWASM);
+result.version = essentia.version;
+const algos = essentia.algorithmNames || '';
+result.has = Object.fromEntries(['RhythmExtractor2013', 'KeyExtractor', 'TonalExtractor', 'ChordsDetection', 'TuningFrequencyExtractor', 'BeatTrackerMultiFeature']
+  .map(a => [a, typeof essentia[a] === 'function']));
+
+async function decodeMono(url, maxSeconds) {
+  const ab = await (await fetch(url)).arrayBuffer();
+  const ctx = new OfflineAudioContext(1, SR, SR);
+  const buf = await ctx.decodeAudioData(ab);
+  const n = Math.min(buf.length, maxSeconds * SR);
+  const mono = new Float32Array(n);
+  for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < n; i++) mono[i] += d[i] / buf.numberOfChannels; }
+  return mono;
+}
+
+function analyse(signal) {
+  const out = {};
+  const vec = essentia.arrayToVector(signal);
+  let t = performance.now();
+  const r = essentia.RhythmExtractor2013(vec, 208, 'multifeature', 40);
+  out.bpm = +r.bpm.toFixed(2);
+  out.beats = Array.from(essentia.vectorToArray(r.ticks));
+  out.rhythm_ms = Math.round(performance.now() - t);
+  t = performance.now();
+  const k = essentia.KeyExtractor(vec);
+  out.key = `${k.key} ${k.scale}`; out.key_strength = +k.strength.toFixed(2);
+  out.key_ms = Math.round(performance.now() - t);
+  if (result.has.TonalExtractor) {
+    t = performance.now();
+    const ton = essentia.TonalExtractor(vec);
+    out.tonal_ms = Math.round(performance.now() - t);
+    out.tonal_outputs = Object.keys(ton);
+    try {
+      const tf = essentia.TuningFrequencyExtractor(vec);
+      const arr = Array.from(essentia.vectorToArray(tf.tuningFrequency)).filter(x => x > 0);
+      arr.sort((a, b) => a - b);
+      out.tuning_hz = +arr[Math.floor(arr.length / 2)].toFixed(2);
+    } catch (e) { out.tuning_error = String(e); }
+    // chords_progression: one label per frame (hop 2048 @ 44.1 kHz by default)
+    const prog = [];
+    for (let i = 0; i < ton.chords_progression.size(); i++) prog.push(ton.chords_progression.get(i));
+    out.chords_frames = prog;
+    out.chords_hop_s = 2048 / SR;
+    out.chords_key = `${ton.chords_key} ${ton.chords_scale}`;
+  }
+  return out;
+}
+
+try {
+  for (const [name, url] of [['synth_steady', '/data/synth_steady/mix.wav'], ['synth_live', '/data/synth_live/mix.wav'],
+                              ['synth_detune', '/data/synth_detune/mix.wav'], ['0038_bringmetolife', '/data/songs/0038_bringmetolife.wav']]) {
+    const t0 = performance.now();
+    const sig = await decodeMono(url, 240);
+    const r = analyse(sig);
+    r.total_ms = Math.round(performance.now() - t0);
+    r.audio_seconds = +(sig.length / SR).toFixed(1);
+    result[name] = r;
+    log(name, 'bpm', r.bpm, 'key', r.key, 'tuning', r.tuning_hz, 'ms', r.total_ms);
+  }
+} catch (e) { result.error = String(e && e.stack || e); }
+window.__result = result;
+</script>
+</body>
+</html>

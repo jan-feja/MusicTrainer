@@ -1,0 +1,32 @@
+{
+ "rate": 0.75,
+ "seconds_in": 30,
+ "preservesPitch_supported": true,
+ "signalsmith_6_nodes": {
+  "render_ms": 13346,
+  "x_realtime": 3.1,
+  "tone_440_out_hz": 440,
+  "tone_3s_out_seconds": 4.04,
+  "expected_seconds": 4
+ },
+ "signalsmith_after_mix": {
+  "render_ms": 2013,
+  "x_realtime": 20.4,
+  "tone_440_out_hz": 440,
+  "tone_3s_out_seconds": 4.09,
+  "expected_seconds": 4
+ },
+ "soundtouch_after_mix": {
+  "render_ms": 4109,
+  "x_realtime": 10,
+  "tone_440_out_hz": 440,
+  "tone_3s_out_seconds": 4,
+  "expected_seconds": 4
+ },
+ "console": [
+  "[log] stems loaded 6",
+  "[log] signalsmith_6_nodes {\"render_ms\":13346,\"x_realtime\":3.1,\"tone_440_out_hz\":440,\"tone_3s_out_seconds\":4.04,\"expected_seconds\":4}",
+  "[log] signalsmith_after_mix {\"render_ms\":2013,\"x_realtime\":20.4,\"tone_440_out_hz\":440,\"tone_3s_out_seconds\":4.09,\"expected_seconds\":4}",
+  "[log] soundtouch_after_mix {\"render_ms\":4109,\"x_realtime\":10,\"tone_440_out_hz\":440,\"tone_3s_out_seconds\":4,\"expected_seconds\":4}"
+ ]
+}

@@ -1,0 +1,187 @@
+{
+ "key": {
+  "steady": {
+   "truth": "E minor",
+   "librosa": "G major",
+   "librosa_score": 0.3,
+   "madmom": "G major",
+   "madmom_score": 0.3
+  },
+  "live": {
+   "truth": "E minor",
+   "librosa": "G major",
+   "librosa_score": 0.3,
+   "madmom": "G major",
+   "madmom_score": 0.3
+  },
+  "detune": {
+   "truth": "E minor",
+   "librosa": "G major",
+   "librosa_score": 0.3,
+   "madmom": "G major",
+   "madmom_score": 0.3
+  },
+  "eb": {
+   "truth": "D# minor",
+   "librosa": "F# major",
+   "librosa_score": 0.3,
+   "madmom": "F# major",
+   "madmom_score": 0.3
+  },
+  "0038_bringmetolife": {
+   "librosa": "E minor",
+   "madmom": "E minor"
+  },
+  "0566_americanwoman": {
+   "librosa": "G# major",
+   "madmom": "C minor"
+  },
+  "0625_complicated": {
+   "librosa": "F major",
+   "madmom": "F major"
+  },
+  "0734_iftodaywasyourlastday": {
+   "librosa": "A# major",
+   "madmom": "Bb major"
+  },
+  "0343_banjo": {
+   "librosa": "D major",
+   "madmom": "D minor"
+  },
+  "0110_girlsandboys": {
+   "librosa": "G minor",
+   "madmom": "G minor"
+  },
+  "0362_crazygirl": {
+   "librosa": "E major",
+   "madmom": "E major"
+  },
+  "0380_everybodytalks": {
+   "librosa": "D# major",
+   "madmom": "Eb major"
+  }
+ },
+ "chords": {
+  "steady": {
+   "librosa": 0.9784609570323857,
+   "madmom": 0.958333333333332
+  },
+  "live": {
+   "librosa": 0.9762695825350682,
+   "madmom": 0.9594379011856438
+  },
+  "detune": {
+   "librosa": 0.9695302052444911,
+   "madmom": 0.9519230769230759
+  },
+  "eb": {
+   "librosa": 0.9769979359265074,
+   "madmom": 0.958333333333332
+  },
+  "0038_bringmetolife_librosa_first40s": [
+   "0.0:D:maj",
+   "7.2:E:maj",
+   "13.2:A:min",
+   "16.3:E:maj",
+   "18.5:F:min",
+   "19.5:C:maj",
+   "20.3:E:min",
+   "21.0:A:min",
+   "21.7:E:min",
+   "22.8:C:maj",
+   "24.9:A:min",
+   "27.5:E:maj",
+   "28.6:F:min",
+   "30.0:C:maj",
+   "30.7:D:min",
+   "31.8:E:min",
+   "33.0:C:min",
+   "36.2:E:min"
+  ],
+  "0038_bringmetolife_madmom_first40s": [
+   "0.0:N",
+   "7.8:E:maj",
+   "9.8:N",
+   "10.6:E:maj",
+   "12.6:A:min",
+   "14.2:N",
+   "15.5:A:min",
+   "17.7:N",
+   "18.3:E:maj",
+   "21.5:E:min",
+   "22.8:A:min",
+   "27.6:E:maj",
+   "29.0:A:min",
+   "30.4:E:maj",
+   "31.5:E:min",
+   "33.1:C:maj",
+   "34.5:E:min",
+   "35.2:B:min",
+   "36.1:C:maj",
+   "36.9:E:maj",
+   "39.2:E:min"
+  ]
+ },
+ "tuning": {
+  "synth_steady": {
+   "truth": 0,
+   "estimate": 1.0000000000000009
+  },
+  "synth_detune": {
+   "truth": -35,
+   "estimate": -36.0
+  },
+  "synth_eb": {
+   "truth": 0,
+   "estimate": 1.0000000000000009
+  },
+  "0038_bringmetolife_-30": {
+   "base": -2.0000000000000018,
+   "shift": -30,
+   "estimate": -32.0,
+   "measured_shift": -30.0
+  },
+  "0038_bringmetolife_+20": {
+   "base": -2.0000000000000018,
+   "shift": 20,
+   "estimate": 19.000000000000007,
+   "measured_shift": 21.000000000000007
+  },
+  "0566_americanwoman_-30": {
+   "base": 5.000000000000004,
+   "shift": -30,
+   "estimate": -21.000000000000004,
+   "measured_shift": -26.000000000000007
+  },
+  "0566_americanwoman_+20": {
+   "base": 5.000000000000004,
+   "shift": 20,
+   "estimate": 28.000000000000004,
+   "measured_shift": 23.0
+  },
+  "0625_complicated_-30": {
+   "base": 1.0000000000000009,
+   "shift": -30,
+   "estimate": -28.000000000000004,
+   "measured_shift": -29.000000000000004
+  },
+  "0625_complicated_+20": {
+   "base": 1.0000000000000009,
+   "shift": 20,
+   "estimate": 19.000000000000007,
+   "measured_shift": 18.000000000000007
+  },
+  "0734_iftodaywasyourlastday_-30": {
+   "base": 4.0000000000000036,
+   "shift": -30,
+   "estimate": -28.000000000000004,
+   "measured_shift": -32.00000000000001
+  },
+  "0734_iftodaywasyourlastday_+20": {
+   "base": 4.0000000000000036,
+   "shift": 20,
+   "estimate": 23.0,
+   "measured_shift": 18.999999999999996
+  }
+ }
+}

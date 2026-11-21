@@ -1,0 +1,39 @@
+/* The player is always dark, like YouTube's; it re-maps the page colours for its controls. */
+.player {
+  --color-text: #f1f1f1;
+  --color-text-muted: #aaa;
+  --color-surface-raised: #2b2b2b;
+  --color-surface-hover: #3a3a3a;
+  --color-border: #444;
+  --player-track: rgb(255 255 255 / 25%);
+  --player-loop: rgb(250 204 21 / 45%);
+  --player-loop-off: rgb(255 255 255 / 15%);
+  --player-loop-handle: #facc15;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-large);
+  background: #0f0f0f;
+  color: var(--color-text);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  max-height: 70vh;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  cursor: pointer;
+}
+
+.player[data-fullscreen='true'] {
+  border-radius: 0;
+}
+
+.player[data-fullscreen='true'] .video {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: auto;
+}

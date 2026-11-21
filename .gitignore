@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Downloaded videos and other app data (created at runtime)
+/data/
+
+# Local settings
+.env
+
+# Experiments keep their data outside the repo (MT_DATA)
+experiments/data/

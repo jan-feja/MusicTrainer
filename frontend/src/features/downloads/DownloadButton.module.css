@@ -1,0 +1,22 @@
+.done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-success);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.error {
+  margin: 6px 0 0;
+  color: var(--color-error);
+  font-size: 0.875rem;
+}

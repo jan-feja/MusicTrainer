@@ -1,0 +1,119 @@
+{
+ "gp5": {
+  "file": "/data/scores/bass.gp5",
+  "title": "Bass line",
+  "tracks": [
+   "Bass"
+  ],
+  "bars": 52,
+  "tempo": 100,
+  "has_backing_track": false,
+  "sync_points": 0,
+  "staves": [
+   [
+    "tab+notation"
+   ]
+  ],
+  "render_ms": 450,
+  "player_ready": true,
+  "player_state_after_2_5s": 1,
+  "time_position_ms": 2352,
+  "tick_position": 2823,
+  "speed": 0.75,
+  "looping": true
+ },
+ "musicxml": {
+  "file": "/data/scores/song.musicxml",
+  "title": "Synthetic\u00a0song\u00a0(from\u00a0MIDI)",
+  "tracks": [
+   "",
+   "",
+   "",
+   "Piano",
+   ""
+  ],
+  "bars": 53,
+  "tempo": 120,
+  "has_backing_track": false,
+  "sync_points": 0,
+  "staves": [
+   [
+    "+notation"
+   ],
+   [
+    "+notation"
+   ],
+   [
+    "+notation"
+   ],
+   [
+    "+notation"
+   ],
+   [
+    "+notation"
+   ]
+  ],
+  "render_ms": 276
+ },
+ "gp8_backing_track": {
+  "file": "/data/scores/canon-audio-track.gp",
+  "title": "Canon Rock",
+  "tracks": [
+   "Guitar Player",
+   "Low Bassy Sound",
+   "High Soundy Thing",
+   "Second Guitar",
+   "Drums",
+   "Harmonizer",
+   "The clean guitar",
+   "Track 8",
+   "Percussion"
+  ],
+  "bars": 224,
+  "tempo": 90,
+  "has_backing_track": true,
+  "sync_points": 16,
+  "staves": [
+   [
+    "tab+notation"
+   ],
+   [
+    "tab+notation"
+   ],
+   [
+    "tab+notation"
+   ],
+   [
+    "tab+notation"
+   ],
+   [
+    "+notation"
+   ],
+   [
+    "tab+notation"
+   ],
+   [
+    "tab+notation"
+   ],
+   [
+    "tab+notation"
+   ],
+   [
+    "+notation"
+   ]
+  ],
+  "player_ready": true,
+  "render_ms": 876,
+  "player_state_after_2_5s": 1,
+  "time_position_ms": 1,
+  "tick_position": 1,
+  "speed": 0.75,
+  "looping": true
+ },
+ "console": [
+  "[pageerror] The play() request was interrupted by a call to pause(). https://goo.gl/LdLk22",
+  "[pageerror] The play() request was interrupted by a new load request. https://goo.gl/LdLk22",
+  "[pageerror] The play() request was interrupted by a new load request. https://goo.gl/LdLk22",
+  "[pageerror] The play() request was interrupted by a new load request. https://goo.gl/LdLk22"
+ ]
+}

@@ -1,0 +1,7 @@
+{
+ "htdemucs/cuda": 12.822786000091583,
+ "htdemucs_ft/cuda": 50.00049449992366,
+ "htdemucs_6s/cuda": 11.262001200113446,
+ "htdemucs/cpu": 14.428213600069284,
+ "htdemucs_6s/cpu": 13.614696600008756
+}

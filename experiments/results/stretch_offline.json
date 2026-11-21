@@ -1,0 +1,18 @@
+{
+ "pedalboard (Rubber Band)": {
+  "seconds_6_stems": 119.4429758999031,
+  "song_seconds": 147.5628117913832,
+  "length_error": 3.841709291184065e-08,
+  "pitch_change_cents_at_075": 0.0,
+  "pitch_shift_plus2_cents": 199.99999999999972,
+  "seconds_pitch_shift_1_stem": 18.47026059986092
+ },
+ "librosa (phase vocoder)": {
+  "seconds_6_stems": 25.81859809998423,
+  "song_seconds": 147.5628117913832,
+  "length_error": 3.841709291184065e-08,
+  "pitch_change_cents_at_075": 0.0,
+  "pitch_shift_plus2_cents": 199.99999999999972,
+  "seconds_pitch_shift_1_stem": 7.176897699944675
+ }
+}

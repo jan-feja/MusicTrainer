@@ -1,0 +1,30 @@
+.help {
+  margin-top: 12px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.help summary {
+  cursor: pointer;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px 24px;
+  margin: 12px 0 0;
+}
+
+.item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.item dt {
+  min-width: 72px;
+}
+
+.item dd {
+  margin: 0;
+}

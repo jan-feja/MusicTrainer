@@ -1,0 +1,52 @@
+.poster {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  max-height: 70vh;
+  border-radius: var(--radius-large);
+  background: #000;
+}
+
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.35) blur(2px);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  color: #fff;
+  font-size: 1.125rem;
+  text-align: center;
+}
+
+.overlay p {
+  margin: 0;
+}
+
+.progress {
+  width: min(360px, 80%);
+}
+
+.error {
+  color: #ffb4b4;
+}
+
+.title {
+  margin: 16px 0 4px;
+  font-size: 1.375rem;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}

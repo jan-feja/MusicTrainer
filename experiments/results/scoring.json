@@ -1,0 +1,138 @@
+{
+ "di": {
+  "latency_true_ms": 137.0,
+  "latency_est_ms": 140.0,
+  "wrong_notes_precision_recall": [
+   1.0,
+   1.0
+  ],
+  "missed_notes_precision_recall": [
+   0.95,
+   1.0
+  ],
+  "timing_corr_with_truth": 0.79,
+  "timing_mean_abs_error_ms": 9.3,
+  "bars_flagged_rushing": [
+   22
+  ],
+  "bars_truly_rushing": [
+   20,
+   21,
+   22,
+   23
+  ],
+  "notes_total": 384,
+  "wrong_true": 22,
+  "missed_true": 18,
+  "wrong_found": 22,
+  "missed_found": 19
+ },
+ "room": {
+  "latency_true_ms": 137.0,
+  "latency_est_ms": -160.0,
+  "wrong_notes_precision_recall": [
+   0.08,
+   0.36
+  ],
+  "missed_notes_precision_recall": [
+   0.08,
+   0.06
+  ],
+  "timing_corr_with_truth": 0.134,
+  "timing_mean_abs_error_ms": 26.4,
+  "bars_flagged_rushing": [],
+  "bars_truly_rushing": [
+   20,
+   21,
+   22,
+   23
+  ],
+  "notes_total": 384,
+  "wrong_true": 22,
+  "missed_true": 18,
+  "wrong_found": 100,
+  "missed_found": 12
+ },
+ "room_separated": {
+  "latency_true_ms": 137.0,
+  "latency_est_ms": 440.0,
+  "wrong_notes_precision_recall": [
+   0.11,
+   0.45
+  ],
+  "missed_notes_precision_recall": [
+   0.04,
+   0.06
+  ],
+  "timing_corr_with_truth": 0.275,
+  "timing_mean_abs_error_ms": 17.4,
+  "bars_flagged_rushing": [
+   22
+  ],
+  "bars_truly_rushing": [
+   20,
+   21,
+   22,
+   23
+  ],
+  "notes_total": 384,
+  "wrong_true": 22,
+  "missed_true": 18,
+  "wrong_found": 93,
+  "missed_found": 24
+ },
+ "room+cal": {
+  "latency_true_ms": 137.0,
+  "latency_est_ms": 142.0,
+  "wrong_notes_precision_recall": [
+   0.63,
+   1.0
+  ],
+  "missed_notes_precision_recall": [
+   0.67,
+   0.44
+  ],
+  "timing_corr_with_truth": 0.307,
+  "timing_mean_abs_error_ms": 22.6,
+  "bars_flagged_rushing": [],
+  "bars_truly_rushing": [
+   20,
+   21,
+   22,
+   23
+  ],
+  "notes_total": 384,
+  "wrong_true": 22,
+  "missed_true": 18,
+  "wrong_found": 35,
+  "missed_found": 12
+ },
+ "room_separated+cal": {
+  "latency_true_ms": 137.0,
+  "latency_est_ms": 142.0,
+  "wrong_notes_precision_recall": [
+   1.0,
+   1.0
+  ],
+  "missed_notes_precision_recall": [
+   0.78,
+   1.0
+  ],
+  "timing_corr_with_truth": 0.662,
+  "timing_mean_abs_error_ms": 11.3,
+  "bars_flagged_rushing": [
+   22
+  ],
+  "bars_truly_rushing": [
+   20,
+   21,
+   22,
+   23
+  ],
+  "notes_total": 384,
+  "wrong_true": 22,
+  "missed_true": 18,
+  "wrong_found": 22,
+  "missed_found": 23
+ }
+}

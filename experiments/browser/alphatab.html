@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><title>alphaTab test</title>
+<style>
+  body { font-family: sans-serif; margin: 8px; background: #fff; }
+  h3 { margin: 4px 0; font-size: 14px; }
+  .at { height: 300px; overflow: hidden; border: 1px solid #ccc; margin-bottom: 8px; }
+</style>
+<script src="/data/vendor/alphatab/alphaTab.js"></script>
+</head>
+<body>
+<h3>1. bass.gp5: bass tab generated from MIDI (make_scores.py)</h3><div id="a1" class="at"></div>
+<h3>2. song.musicxml: MusicXML generated from MIDI by music21</h3><div id="a2" class="at"></div>
+<h3>3. canon-audio-track.gp: Guitar Pro 8 file with embedded audio + sync points</h3><div id="a3" class="at"></div>
+<script>
+// Can alphaTab (1) read GP5 / MusicXML / GP8 files, (2) render tab + notation,
+// (3) play with speed + loop, (4) play a real recording synced to the notation?
+const V = '/data/vendor/alphatab';
+const result = {};
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+function load(elId, file, testPlayer) {
+  return new Promise((resolve) => {
+    const info = { file };
+    const api = new alphaTab.AlphaTabApi(document.getElementById(elId), {
+      core: { fontDirectory: V + '/font/', file, useWorkers: false },
+      display: { barCount: 8, scale: 0.8 },
+      player: { playerMode: 'EnabledAutomatic', soundFont: V + '/soundfont/sonivox.sf2' },
+    });
+    const t0 = performance.now();
+    api.error.on(e => { info.error = String(e && e.message || e); resolve(info); });
+    api.scoreLoaded.on(score => {
+      info.title = score.title;
+      info.tracks = score.tracks.map(t => t.name);
+      info.bars = score.masterBars.length;
+      info.tempo = score.tempo;
+      info.has_backing_track = !!score.backingTrack;
+      info.sync_points = score.masterBars.reduce((n, mb) => n + (mb.syncPoints ? mb.syncPoints.length : 0), 0);
+      info.staves = score.tracks.map(t => t.staves.map(s => (s.showTablature ? 'tab' : '') + (s.showStandardNotation ? '+notation' : '')));
+    });
+    let rendered = false;
+    api.renderFinished.on(() => { if (!rendered) { rendered = true; info.render_ms = Math.round(performance.now() - t0); if (!testPlayer) resolve(info); } });
+    if (testPlayer) {
+      api.playerReady.on(async () => {
+        try {
+          info.player_ready = true;
+          api.playbackSpeed = 0.75;
+          api.isLooping = true;
+          api.playbackRange = { startTick: 0, endTick: 960 * 4 * 2 };  // loop the first 2 bars
+          api.play();
+          await wait(2500);
+          info.player_state_after_2_5s = api.playerState;  // 1 = playing
+          info.time_position_ms = Math.round(api.timePosition);
+          info.tick_position = api.tickPosition;
+          info.speed = api.playbackSpeed;
+          info.looping = api.isLooping;
+          api.stop();
+        } catch (e) { info.player_error = String(e); }
+        resolve(info);
+      });
+      setTimeout(() => { info.player_timeout = true; resolve(info); }, 60000);
+    }
+  });
+}
+
+(async () => {
+  try {
+    result.gp5 = await load('a1', '/data/scores/bass.gp5', true);
+    result.musicxml = await load('a2', '/data/scores/song.musicxml', false);
+    result.gp8_backing_track = await load('a3', '/data/scores/canon-audio-track.gp', true);
+  } catch (e) { result.error = String(e); }
+  window.__result = result;
+})();
+</script>
+</body>
+</html>
