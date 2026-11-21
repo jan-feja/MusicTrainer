@@ -11,6 +11,7 @@ from music_trainer.app import create_app
 from music_trainer.config import Settings
 from music_trainer.models import BeatAnalysis
 from music_trainer.services.beats import (
+    BeatThisTracker,
     BeatTrackingError,
     CheckpointSource,
     beat_analysis_from_times,
@@ -248,6 +249,13 @@ class TestBeatsApi:
         assert client.get(f"/api/library/{VIDEO_ID}/beats").status_code == 404
         assert client.post(f"/api/library/{VIDEO_ID}/beats").status_code == 404
         assert client.get("/api/library/not-an-id/beats").status_code == 422
+
+
+def test_several_beat_models_are_named_together() -> None:
+    tracker = BeatThisTracker("final0, final1,final2", Path("models"))
+    assert tracker.model == "beat_this:final0+final1+final2"
+    with pytest.raises(ValueError):
+        BeatThisTracker(" , ", Path("models"))
 
 
 class TestCheckpointDownload:

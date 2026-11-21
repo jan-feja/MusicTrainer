@@ -38,7 +38,8 @@ class Settings(BaseSettings):
     """ffmpeg executable or its folder; None = look it up on PATH."""
 
     beat_model: str = "final0"
-    """Beat This! checkpoint: 'final0' (78 MB, most accurate) or 'small0' (8 MB, faster)."""
+    """Beat This! checkpoint: 'final0' (78 MB) or 'small0' (8 MB, faster); several separated
+    by commas ('final0,final1,final2') are averaged: a little more accurate, 3x the time."""
 
     analysis_device: str = "cpu"
     """PyTorch device for beat detection: 'cpu' or 'cuda'."""
