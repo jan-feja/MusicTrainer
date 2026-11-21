@@ -11,14 +11,16 @@ feels, sustained leads, odd and compound meters, single odd bars, tempo jumps,
 rubato, ritardando, no drums, swing, off-beat accents, stops and a drifting
 live tempo. A sidecar <name>.json holds the category and render options.
 
-Usage: python make_score_songs.py <out_dir>
+Usage: python make_score_songs.py <out_dir> [variants]
+  variants (default 1): also write <name>_v1, _v2, ... with the tempo scaled
+  (x0.87, x1.15, x0.93, x1.07) and other random choices (fills, melodies, mix)
 """
 
 import json
 import math
 import random
 import sys
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
 import mido
@@ -570,10 +572,27 @@ SONGS = [
 ]
 
 
+TEMPO_FACTORS = (1.0, 0.87, 1.15, 0.93, 1.07)
+
+
+def variant(song: Song, index: int) -> Song:
+    """The same song at another tempo, with other random choices."""
+    if index == 0:
+        return song
+    factor = TEMPO_FACTORS[index % len(TEMPO_FACTORS)]
+
+    def scaled(tempo: float | tuple[float, float]) -> float | tuple[float, float]:
+        return (tempo[0] * factor, tempo[1] * factor) if isinstance(tempo, tuple) else tempo * factor
+
+    sections = [replace(section, tempo=scaled(section.tempo)) for section in song.sections]
+    return replace(song, name=f"{song.name}_v{index}", sections=sections, seed=song.seed + 100 * index)
+
+
 def main() -> None:
     out = Path(sys.argv[1])
+    variants = int(sys.argv[2]) if len(sys.argv) > 2 else 1
     out.mkdir(parents=True, exist_ok=True)
-    for song in SONGS:
+    for song in (variant(base, i) for base in SONGS for i in range(variants)):
         score = build(song)
         write_midi(song, score, out / f"{song.name}.mid")
         meta = {k: v for k, v in asdict(song).items() if k not in ("sections",)}

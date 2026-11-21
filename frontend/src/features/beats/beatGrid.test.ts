@@ -22,7 +22,7 @@ const ANALYSIS: BeatAnalysis = {
   beats: BEATS,
   downbeats: [1, 3, 5, 7],
   analyzer: 'test',
-  hints: { beatsPerBar: null, tempoBpm: null, barStarts: [] },
+  hints: { beatsPerBar: null, tempoBpm: null, barStarts: [], steadyTempo: false },
 }
 
 describe('nearestIndex', () => {

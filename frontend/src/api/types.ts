@@ -45,6 +45,8 @@ export interface BeatGridHints {
   tempoBpm: number | null
   /** Times (s) where a bar starts; from each one on, bars are counted from there. */
   barStarts: number[]
+  /** The song is played to a click: all beats exactly evenly spaced. */
+  steadyTempo: boolean
 }
 
 /** The beat grid of a song. */

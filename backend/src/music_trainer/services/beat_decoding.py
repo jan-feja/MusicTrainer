@@ -39,6 +39,7 @@ OCTAVE_SPAN = 1.4  # tempo range around a chosen octave: tempo / 1.4 .. tempo * 
 ACTIVITY_THRESHOLD = 0.05  # frames before the first / after the last activity this high are skipped
 SMOOTHING_BEATS = 2  # beat times are fitted to a straight line over +-2 beats ...
 SMOOTHING_LIMIT = 0.025  # ... where that moves them less than 25 ms (frames are 20 ms apart)
+STEADY_OUTLIER = 0.04  # beats this far off the constant-tempo line do not pull it
 _EPSILON = 1e-5
 
 
@@ -129,6 +130,27 @@ def decode_beats(
         info=info,
     )
     return place_bar_starts(decoded, options.bar_starts)
+
+
+def fit_steady_tempo(decoded: DecodedBeats) -> DecodedBeats:
+    """All beats exactly evenly spaced: for songs played to a click.
+
+    A straight line through the beat times (beats far off it are ignored, they are
+    detection errors in a steady song). The bar starts stay on the same beats.
+    """
+    times = decoded.beats
+    if len(times) < 4:
+        return decoded
+    index = np.arange(len(times))
+    keep = np.ones(len(times), dtype=bool)
+    for _ in range(3):
+        slope, intercept = np.polyfit(index[keep], times[keep], 1)
+        off = np.abs(times - (slope * index + intercept)) > STEADY_OUTLIER
+        if off.all() or np.array_equal(~off, keep):
+            break
+        keep = ~off
+    steady = slope * index + intercept
+    return replace(decoded, beats=steady, downbeats=steady[decoded.beat_in_bar == 0])
 
 
 def place_bar_starts(decoded: DecodedBeats, bar_starts: Sequence[float]) -> DecodedBeats:

@@ -151,7 +151,7 @@ export function VideoPlayer({ src, poster, autoPlay = true, beatTracking }: Vide
 
   const moveBarStarts = (delta: -1 | 1) => {
     if (!analysis || !beatTracking) return
-    const barStarts = shiftedBarStarts(analysis, playback.currentTime, delta)
+    const barStarts = shiftedBarStarts(analysis, playback.getCurrentTime(), delta)
     beatTracking.setHints({ ...analysis.hints, barStarts })
   }
 

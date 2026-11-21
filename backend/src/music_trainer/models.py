@@ -104,6 +104,8 @@ class BeatGridHints(ApiModel):
     """The tempo is near this; decides between e.g. 75 and 150 BPM."""
     bar_starts: list[Annotated[float, Field(ge=0)]] = Field(default_factory=list, max_length=500)
     """Times (s) where a bar starts; from each one on, bars are counted from there."""
+    steady_tempo: bool = False
+    """The song is played to a click: space all beats exactly evenly."""
 
 
 class BeatAnalysis(ApiModel):

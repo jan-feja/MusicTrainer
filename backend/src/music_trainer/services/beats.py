@@ -28,6 +28,7 @@ from music_trainer.services.beat_decoding import (
     DecodedBeats,
     DecodingOptions,
     decode_beats,
+    fit_steady_tempo,
     place_bar_starts,
 )
 
@@ -153,7 +154,9 @@ def decode_grid(activations: BeatActivations, hints: BeatGridHints = NO_HINTS) -
 
 
 def grid_analysis(decoded: DecodedBeats, model: str, hints: BeatGridHints) -> BeatAnalysis:
-    """The stored beat grid: a decoded grid with the user's bar starts placed."""
+    """The stored beat grid: a decoded grid with the user's steady tempo and bar starts."""
+    if hints.steady_tempo:
+        decoded = fit_steady_tempo(decoded)
     placed = place_bar_starts(decoded, hints.bar_starts)
     return beat_analysis_from_times(
         placed.beats,

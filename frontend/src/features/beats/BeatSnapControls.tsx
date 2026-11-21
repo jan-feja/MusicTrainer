@@ -178,6 +178,16 @@ function GridHints({
               ↺
             </button>
           )}
+          <button
+            type="button"
+            className={styles.small}
+            onClick={() => onChange({ ...hints, steadyTempo: !hints.steadyTempo })}
+            disabled={disabled}
+            aria-pressed={hints.steadyTempo}
+            title="Played to a click? Space all beats exactly evenly, so every bar has the same length"
+          >
+            Steady
+          </button>
         </span>
       )}
       <label className={styles.hint}>

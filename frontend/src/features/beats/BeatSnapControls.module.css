@@ -81,6 +81,12 @@
   background: var(--color-surface-hover);
 }
 
+.small[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+}
+
 .small:disabled {
   cursor: default;
   opacity: 0.4;

@@ -1,6 +1,7 @@
 """Beat detection: grid building, the background job and the API."""
 
 import hashlib
+import itertools
 from pathlib import Path
 
 import pytest
@@ -80,7 +81,7 @@ class TestBeatsApi:
             "beats": FAKE_BEATS.beats,
             "downbeats": FAKE_BEATS.downbeats,
             "analyzer": "fake+grid",
-            "hints": {"beatsPerBar": None, "tempoBpm": None, "barStarts": []},
+            "hints": {"beatsPerBar": None, "tempoBpm": None, "barStarts": [], "steadyTempo": False},
         }
         assert len(FAKE_BEATS.beats) == 16
         assert FAKE_BEATS.downbeats == [0.5, 2.5, 4.5, 6.5]
@@ -137,14 +138,14 @@ class TestBeatsApi:
         assert response.status_code == 202
         analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
         assert analysis["beatsPerBar"] == 3
-        assert analysis["hints"] == {"beatsPerBar": 3, "tempoBpm": None, "barStarts": []}
+        assert analysis["hints"]["beatsPerBar"] == 3
         assert analysis["downbeats"] == analysis["beats"][::3]
         assert len(fake_beat_tracker.analyzed) == 1  # the stored network output was reused
 
         client.post(f"/api/library/{VIDEO_ID}/beats", json={"tempoBpm": 240})
         analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
         assert analysis["bpm"] == pytest.approx(240, abs=8)
-        assert analysis["hints"] == {"beatsPerBar": None, "tempoBpm": 240, "barStarts": []}
+        assert analysis["hints"]["tempoBpm"] == 240
 
     def test_bar_starts_move_the_bars_without_decoding_again(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker
@@ -163,6 +164,18 @@ class TestBeatsApi:
 
         client.post(f"/api/library/{VIDEO_ID}/beats", json={**hints, "barStarts": []})
         assert wait_for_beats(client, VIDEO_ID)["analysis"]["downbeats"] == FAKE_BEATS.downbeats
+
+    def test_steady_tempo_spaces_the_beats_evenly(
+        self, client: TestClient, fake_beat_tracker: FakeBeatTracker
+    ) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        client.post(f"/api/library/{VIDEO_ID}/beats", json={"steadyTempo": True})
+        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        assert analysis["hints"]["steadyTempo"] is True
+        gaps = {round(b - a, 3) for a, b in itertools.pairwise(analysis["beats"])}
+        assert gaps <= {0.499, 0.5, 0.501}  # rounded to ms
+        assert len(fake_beat_tracker.analyzed) == 1
 
     def test_running_the_network_again_keeps_the_hints(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker

@@ -3,7 +3,12 @@
 import numpy as np
 import pytest
 
-from music_trainer.services.beat_decoding import DecodingOptions, decode_beats, place_bar_starts
+from music_trainer.services.beat_decoding import (
+    DecodingOptions,
+    decode_beats,
+    fit_steady_tempo,
+    place_bar_starts,
+)
 from tests.fakes import network_output
 
 
@@ -98,6 +103,15 @@ def test_a_one_beat_bar_before_a_given_bar_start_joins_the_bar_before() -> None:
     assert np.allclose(later.downbeats, [beats[i] for i in (0, 5, 9, 13, 17, 21)], atol=0.005)
     pickup = place_bar_starts(decoded, [beats[1]])  # the first beat becomes a pickup
     assert np.allclose(pickup.downbeats, [beats[i] for i in (1, 5, 9, 13, 17, 21)], atol=0.005)
+
+
+def test_steady_tempo_makes_beats_evenly_spaced() -> None:
+    beats, _ = grid(75.5, 4, 20)
+    jittered = [b + 0.015 * ((i * 7) % 3 - 1) for i, b in enumerate(beats)]
+    decoded = decode_beats(*network_output(jittered, jittered[::4], 66))
+    steady = fit_steady_tempo(decoded)
+    assert np.allclose(np.diff(steady.beats), 60 / 75.5, atol=0.002)
+    assert np.allclose(np.diff(steady.downbeats), 4 * 60 / 75.5, atol=0.005)
 
 
 def test_beats_per_bar_can_be_set() -> None:

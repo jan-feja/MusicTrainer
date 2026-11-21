@@ -71,7 +71,7 @@ def load_items(sets: tuple[str, ...] = ("score", "synth", "harmonix", "library")
         for wav in sorted(Path(DATA, "gtzan", "genres").glob("*/*.wav")):
             genre, number = wav.stem.split(".")
             ann = annotations / f"gtzan_{genre}_{number}.beats"
-            if ann.exists():
+            if ann.exists() and wav.stem != "jazz.00054":  # a known broken file in GTZAN
                 rows = np.loadtxt(ann, ndmin=2)
                 if len(rows) < 4 or rows.shape[1] < 2:  # a few clips have no bar annotations
                     continue
