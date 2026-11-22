@@ -57,8 +57,9 @@ data/library/<video-id>/
   thumbnail.jpg                                                            <- part 1 (done)
   analysis.json   bpm, beats_per_bar, beats[], downbeats[], analyzer, hints <- part 2 (done)
   beat_activations.npz  beat network output (50 per second), to decode again  <- part 2 (done)
+  loops.json      [{ id, name, start, end, snap_mode, playback_rate }]      <- part 3 UI (done)
+  player.json     volume, muted, playback_rate, snap_mode, position, loop, active loop  <- part 3 UI (done)
   stems/          drums.wav, bass.wav, vocals.wav, ...                     <- part 1 (to do)
-  loops.json      [{ name, start, end }]                                   <- part 2 format, created from part 3 UI (to do)
 ```
 Example `analysis.json` (times in seconds; every downbeat is also a beat; `hints` are the user's fixes, see [beat-tracking.md](beat-tracking.md)):
 ```json

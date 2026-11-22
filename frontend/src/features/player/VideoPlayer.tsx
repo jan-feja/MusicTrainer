@@ -1,4 +1,5 @@
-import { useMemo, useReducer, useRef, useState } from 'react'
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import type { PlayerSettings, SavedLoop } from '../../api/types'
 import { ExitFullscreenIcon, FullscreenIcon, PauseIcon, PlayIcon } from '../../components/icons'
 import { formatTime } from '../../lib/format'
 import { useLatest } from '../../lib/useLatest'
@@ -20,16 +21,31 @@ import {
 } from '../beats/beatGrid'
 import type { BeatTracking } from '../beats/useBeatTracking'
 import { useSnapMode } from '../beats/useSnapMode'
+import {
+  initialLoopState,
+  storedPosition,
+  useReportPlayerSettings,
+  useRestorePlayerSettings,
+} from '../practice/playerSettings'
+import { SavedLoopMarks } from '../practice/SavedLoopMarks'
+import { SavedLoops } from '../practice/SavedLoops'
+import { createLoop, describeLoop } from '../practice/loopList'
+import { useSavedLoops } from '../practice/useSavedLoops'
 import { LoopControls } from './LoopControls'
-import { EMPTY_LOOP, LOOP_NUDGE_SECONDS, getLoopRegion, loopJumpTarget, loopReducer } from './loop'
+import { LOOP_NUDGE_SECONDS, getLoopRegion, loopJumpTarget, loopReducer } from './loop'
+import { normalizePlaybackRate, stepPlaybackRate } from './playbackRate'
 import { SeekBar } from './SeekBar'
 import { ShortcutHelp } from './ShortcutHelp'
 import { SpeedControl } from './SpeedControl'
+import { TimelineOverview } from './TimelineOverview'
+import { followPlayhead, visibleRange } from './timelineView'
 import { useFullscreen } from './useFullscreen'
 import { usePlayerShortcuts } from './usePlayerShortcuts'
 import { useGaplessLoop } from './useGaplessLoop'
+import { useTimelineZoom } from './useTimelineZoom'
 import { useVideoPlayback } from './useVideoPlayback'
 import { VolumeControl } from './VolumeControl'
+import { ZoomControls } from './ZoomControls'
 import controlStyles from './PlayerControls.module.css'
 import styles from './VideoPlayer.module.css'
 
@@ -38,10 +54,27 @@ const SEEK_STEP_SECONDS = 5
 const COARSE_NUDGE_SECONDS = 1
 /** Shift + arrow on a loop handle, with snapping. */
 const COARSE_GRID_STEPS = 4
-/** Beat marks are drawn only up to this many beats; more would merge into a solid bar. */
+/** Beat marks are drawn up to this many in view when snapping to beats; more would merge. */
 const MAX_BEAT_MARKS = 600
+/** Otherwise beat marks appear once this few are in view (zoomed in). */
+const MAX_HELPER_BEAT_MARKS = 120
+/** Bars are numbered once this few are in view. */
+const MAX_BAR_NUMBERS = 40
+/** Z without a loop zooms this far in around the playhead. */
+const PLAIN_ZOOM_FACTOR = 8
+const NO_LOOPS: SavedLoop[] = []
 
 type LoopPoint = 'start' | 'end'
+
+/** A video's saved loops and player settings, and where to report changes to store them. */
+export interface PlayerPractice {
+  loops: SavedLoop[]
+  settings: PlayerSettings
+  onLoopsChange: (loops: SavedLoop[]) => void
+  onSettingsChange: (settings: PlayerSettings) => void
+  /** The last save failed with this message. */
+  saveError: string | null
+}
 
 interface VideoPlayerProps {
   src: string
@@ -51,11 +84,14 @@ interface VideoPlayerProps {
   autoPlay?: boolean
   /** Beat grid of the video; lets the loop snap to beats and bars. */
   beatTracking?: BeatTracking
+  /** Saved loops and settings; without them nothing is restored or stored. */
+  practice?: PlayerPractice
 }
 
 /**
- * Video player with speed control and an A–B loop that can snap to the beat
- * grid. Give it a `key` per video so the loop resets when the video changes.
+ * Video player with speed control, a zoomable timeline and an A–B loop that
+ * can snap to the beat grid and be saved. Give it a `key` per video so its
+ * state starts over when the video changes.
  */
 export function VideoPlayer({
   src,
@@ -63,11 +99,23 @@ export function VideoPlayer({
   poster,
   autoPlay = true,
   beatTracking,
+  practice,
 }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [loop, dispatchLoop] = useReducer(loopReducer, EMPTY_LOOP)
-  const [snapMode, setSnapMode] = useSnapMode()
+  const initialSettings = practice?.settings ?? null
+  const saved = useSavedLoops(
+    practice?.loops ?? NO_LOOPS,
+    initialSettings?.activeLoopId ?? null,
+    practice?.onLoopsChange,
+  )
+  const [loop, dispatchLoop] = useReducer(loopReducer, null, () =>
+    initialLoopState(initialSettings, saved.active),
+  )
+  const [snapMode, setSnapMode] = useSnapMode(
+    saved.active?.snapMode ?? initialSettings?.snapMode ?? null,
+  )
+  useRestorePlayerSettings(videoRef, initialSettings, saved.active, loop)
 
   const analysis = beatTracking?.analysis ?? null
   const grid = useMemo(
@@ -107,6 +155,49 @@ export function VideoPlayer({
   })
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
   const duration = playback.duration
+  const zoom = useTimelineZoom(duration)
+
+  useReportPlayerSettings(
+    {
+      volume: playback.volume,
+      muted: playback.isMuted,
+      playbackRate: playback.playbackRate,
+      snapMode,
+      position: storedPosition(loop, playback.currentTime, playback.isPlaying),
+      loopStart: loop.start,
+      loopEnd: loop.end,
+      loopEnabled: loop.enabled,
+      activeLoopId: saved.activeId,
+    },
+    duration > 0,
+    initialSettings,
+    practice?.onSettingsChange,
+  )
+
+  // edits of the active saved loop go into it; a loop without both points lets go of it
+  const { activeId, update: updateSaved, setActiveId } = saved
+  useEffect(() => {
+    if (activeId === null) return
+    if (loop.start === null || loop.end === null) setActiveId(null)
+    else updateSaved(activeId, { start: loop.start, end: loop.end })
+  }, [loop.start, loop.end, activeId, updateSaved, setActiveId])
+
+  // the loop that was open last time fills the timeline once the duration is known
+  const [fittedAtStart, setFittedAtStart] = useState(false)
+  if (!fittedAtStart && duration > 0) {
+    setFittedAtStart(true)
+    if (region) zoom.fit(region)
+  }
+
+  // a zoomed view moves on with the playhead
+  const previousTime = useRef(playback.currentTime)
+  useEffect(() => {
+    const previous = previousTime.current
+    previousTime.current = playback.currentTime
+    if (!playback.isPlaying || !zoom.zoomed) return
+    const next = followPlayhead(zoom.view, previous, playback.currentTime, duration)
+    if (next) zoom.setView(next)
+  }, [playback.currentTime, playback.isPlaying, zoom, duration])
 
   const snap = (time: number) => (snapPoints ? snapToGrid(snapPoints, time) : time)
   const setLoopPoint = (type: 'setStart' | 'setEnd' | 'moveStart' | 'moveEnd', time: number) =>
@@ -151,6 +242,7 @@ export function VideoPlayer({
 
   const changeSnapMode = (mode: SnapMode) => {
     setSnapMode(mode)
+    if (activeId) updateSaved(activeId, { snapMode: mode })
     if (grid && mode !== 'off') snapLoopTo(gridPoints(grid, mode))
   }
 
@@ -160,6 +252,15 @@ export function VideoPlayer({
     if (next === 'bar' && grid.bars.length < 2) next = nextSnapMode(next)
     changeSnapMode(next)
   }
+
+  // the speed of the active saved loop is kept with it
+  const changeRate = (rate: number) => {
+    const next = normalizePlaybackRate(rate)
+    playback.setPlaybackRate(next)
+    if (activeId) updateSaved(activeId, { playbackRate: next })
+  }
+  const stepRate = (steps: number) =>
+    changeRate(stepPlaybackRate(videoRef.current?.playbackRate ?? playback.playbackRate, steps))
 
   // a new grid (new hints, moved bar starts): keep a snapped loop on it
   const [previousGrid, setPreviousGrid] = useState(grid)
@@ -181,16 +282,49 @@ export function VideoPlayer({
   const toggleLoop = () => dispatchLoop({ type: 'toggle' })
   const clearLoop = () => dispatchLoop({ type: 'clear' })
 
+  /** Load a saved loop with its snap and speed, go to its start and zoom to it. */
+  const selectLoop = (id: string) => {
+    const chosen = saved.loops.find((candidate) => candidate.id === id)
+    if (!chosen) return
+    setActiveId(id)
+    setSnapMode(chosen.snapMode)
+    dispatchLoop({ type: 'load', start: chosen.start, end: chosen.end, duration })
+    playback.setPlaybackRate(chosen.playbackRate)
+    const chosenLead = grid && chosen.snapMode !== 'off' ? SNAP_LEAD_SECONDS : 0
+    playback.seek(Math.max(0, chosen.start - chosenLead))
+    zoom.fit(chosen)
+  }
+  const canSaveLoop = practice !== undefined && region !== null && activeId === null
+  const saveLoop = () => {
+    if (!canSaveLoop || !region) return
+    saved.add(createLoop(saved.loops, region, snapMode, playback.playbackRate))
+  }
+  const deleteLoop = (id: string) => {
+    const doomed = saved.loops.find((candidate) => candidate.id === id)
+    if (doomed && window.confirm(`Delete the saved loop “${doomed.name}”?`)) saved.remove(id)
+  }
+  const toggleZoom = () => {
+    if (zoom.zoomed) zoom.reset()
+    else if (region) zoom.fit(region)
+    else zoom.zoomBy(1 / PLAIN_ZOOM_FACTOR, playback.getCurrentTime())
+  }
+
   usePlayerShortcuts({
     togglePlay: playback.togglePlay,
     seekBackward: () => playback.seekBy(-SEEK_STEP_SECONDS),
     seekForward: () => playback.seekBy(SEEK_STEP_SECONDS),
-    slower: () => playback.stepPlaybackRate(-1),
-    faster: () => playback.stepPlaybackRate(1),
+    slower: () => stepRate(-1),
+    faster: () => stepRate(1),
     setLoopStart: setLoopStartHere,
     setLoopEnd: setLoopEndHere,
     toggleLoop,
     clearLoop,
+    saveLoop,
+    selectSavedLoop: (key) => {
+      const chosen = saved.loops[Number(key) - 1]
+      if (chosen) selectLoop(chosen.id)
+    },
+    toggleZoom,
     cycleSnapMode,
     jumpToLoopStart: () => playback.seek(Math.max(0, (loop.start ?? 0) - lead)),
     toggleMute: playback.toggleMute,
@@ -205,7 +339,13 @@ export function VideoPlayer({
     lengthLabel = `${(region.end - region.start).toFixed(1)} s`
   }
   const stepLabel = snapUnit ? `1 ${snapUnit}` : `${LOOP_NUDGE_SECONDS * 1000} ms`
-  const showBeatMarks = snapUnit === 'beat' && grid !== null && grid.beats.length <= MAX_BEAT_MARKS
+
+  const view = zoom.view
+  const [firstBeat, lastBeat] = grid ? visibleRange(grid.beats, view) : [0, 0]
+  const [firstBar, lastBar] = grid ? visibleRange(grid.bars, view) : [0, 0]
+  const beatsInView = lastBeat - firstBeat
+  const showBeatMarks =
+    snapUnit === 'beat' ? beatsInView <= MAX_BEAT_MARKS : beatsInView <= MAX_HELPER_BEAT_MARKS
 
   return (
     <div>
@@ -225,22 +365,42 @@ export function VideoPlayer({
           <SeekBar
             currentTime={playback.currentTime}
             duration={duration}
+            view={view}
             loop={loop}
             onSeek={playback.seek}
             onMoveLoopStart={moveLoopStart}
             onMoveLoopEnd={moveLoopEnd}
             onNudgeLoopStart={(direction, coarse) => nudgeLoopPoint('start', direction, coarse)}
             onNudgeLoopEnd={(direction, coarse) => nudgeLoopPoint('end', direction, coarse)}
+            onZoom={zoom.zoomBy}
+            onPan={zoom.pan}
             markers={
-              grid && (
-                <BeatTicks
-                  duration={duration}
-                  bars={grid.bars}
-                  beats={showBeatMarks ? grid.beats : undefined}
-                />
-              )
+              <>
+                {grid && (
+                  <BeatTicks
+                    view={view}
+                    bars={grid.bars}
+                    beats={showBeatMarks ? grid.beats : undefined}
+                    barNumbers={lastBar - firstBar <= MAX_BAR_NUMBERS}
+                  />
+                )}
+                <SavedLoopMarks view={view} loops={saved.loops} activeId={activeId} />
+              </>
             }
           />
+          {/* the space stays when not zoomed, so the controls below never jump */}
+          <div className={controlStyles.overviewSlot}>
+            {zoom.zoomed && (
+              <TimelineOverview
+                duration={duration}
+                view={view}
+                currentTime={playback.currentTime}
+                loop={loop}
+                savedLoops={saved.loops}
+                onViewChange={zoom.setView}
+              />
+            )}
+          </div>
           <div className={controlStyles.row}>
             <button
               type="button"
@@ -263,8 +423,8 @@ export function VideoPlayer({
             <span className={controlStyles.spacer} />
             <SpeedControl
               rate={playback.playbackRate}
-              onChange={playback.setPlaybackRate}
-              onStep={playback.stepPlaybackRate}
+              onChange={changeRate}
+              onStep={stepRate}
               bpm={grid?.bpm}
             />
             <button
@@ -289,7 +449,24 @@ export function VideoPlayer({
               stepLabel={stepLabel}
               lengthLabel={lengthLabel}
             />
+            <ZoomControls zoom={zoom} region={region} />
           </div>
+          {practice && (
+            <div className={controlStyles.row}>
+              <SavedLoops
+                loops={saved.loops}
+                activeId={activeId}
+                canSave={canSaveLoop}
+                describe={(candidate) => describeLoop(candidate, grid)}
+                onSelect={selectLoop}
+                onSave={saveLoop}
+                onNew={clearLoop}
+                onRename={(id, name) => updateSaved(id, { name })}
+                onDelete={deleteLoop}
+                saveError={practice.saveError}
+              />
+            </div>
+          )}
           {beatTracking && (
             <div className={controlStyles.row}>
               <BeatSnapControls

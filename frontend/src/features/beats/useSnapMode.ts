@@ -12,9 +12,12 @@ function readStoredSnapMode(): SnapMode {
   }
 }
 
-/** The loop snap setting, remembered in this browser across videos and visits. */
-export function useSnapMode(): [SnapMode, (mode: SnapMode) => void] {
-  const [mode, setMode] = useState<SnapMode>(readStoredSnapMode)
+/**
+ * The loop snap setting. Starts at `initial` (the video's own setting), else
+ * at the one used last in this browser, which each change also remembers.
+ */
+export function useSnapMode(initial?: SnapMode | null): [SnapMode, (mode: SnapMode) => void] {
+  const [mode, setMode] = useState<SnapMode>(() => initial ?? readStoredSnapMode())
 
   const changeMode = useCallback((next: SnapMode) => {
     setMode(next)

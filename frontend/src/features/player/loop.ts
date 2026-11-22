@@ -31,6 +31,8 @@ export type LoopAction =
   | { type: 'setStart' | 'setEnd' | 'moveStart' | 'moveEnd'; time: number; duration: number }
   /** Replace both points at once (e.g. after snapping them to beats); keeps on/off. */
   | { type: 'setRegion'; start: number; end: number; duration: number }
+  /** Replace both points and turn the loop on (e.g. a saved loop was picked). */
+  | { type: 'load'; start: number; end: number; duration: number }
   | { type: 'toggle' }
   | { type: 'clear' }
 
@@ -61,6 +63,11 @@ export function loopReducer(state: LoopState, action: LoopAction): LoopState {
       const start = clamp(action.start, 0, action.duration)
       const end = clamp(action.end, 0, action.duration)
       return end - start >= MIN_LOOP_LENGTH ? { ...state, start, end } : state
+    }
+    case 'load': {
+      const start = clamp(action.start, 0, action.duration)
+      const end = clamp(action.end, 0, action.duration)
+      return end - start >= MIN_LOOP_LENGTH ? { start, end, enabled: true } : state
     }
     case 'toggle':
       return getLoopRegion(state) ? { ...state, enabled: !state.enabled } : state

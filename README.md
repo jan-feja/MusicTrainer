@@ -19,6 +19,17 @@ An app for practising music with songs. The idea and planned features are in [do
       - **‹ Bar start ›**: the bar starts are on the wrong beat from here on (e.g. after a 2/4 bar)
       - **Steady**: the song is played to a click, so all beats are spaced exactly evenly
     - the song's tempo is shown at the current speed
+  - **saved loops**, kept with the video, as many as you like:
+    - **+ Save loop** (S) keeps the current loop with its snap and speed; it gets a name (double-click to rename)
+    - pick one (or press 1–9): its snap and speed are set, playback goes to its start and the timeline zooms to it
+    - changing the picked loop (moving A / B, speed, snap) saves it; **New loop** starts another one
+    - the timeline marks where the other saved loops are
+  - **zoom** the timeline to adjust a loop precisely:
+    - **−** / **+**, **Fit loop** (the loop fills the timeline), **Whole song**; Z switches between the loop and the whole song
+    - Ctrl + scroll (or pinch) on the timeline zooms around the pointer, Shift + scroll moves
+    - a strip under the zoomed timeline shows the whole song: drag its window or click to move
+    - zoomed in, the bars are numbered and the beats marked; while playing, the view moves on with the playhead
+  - **reopening a video** brings the player back as it was left: volume, speed, snap, the loop (zoomed to it) and the position
   - volume and full screen
   - keyboard shortcuts
 
@@ -41,7 +52,8 @@ frontend/       Browser UI (React + TypeScript + Vite)
     api/          typed client for the backend API
     app/          app shell: routes, header
     components/   shared UI pieces (video card, grid, progress bar, ...)
-    features/     search/, library/, downloads/, player/ (player, A–B loop, gapless loop audio, speed), beats/ (beat grid, snapping)
+    features/     search/, library/, downloads/, player/ (player, A–B loop, gapless loop audio, speed, zoom),
+                  beats/ (beat grid, snapping), practice/ (saved loops, player settings kept with the video)
     lib/          small helpers and hooks
 docs/           planning documents, app survey, implementation report
 experiments/    feasibility tests from the research phase (independent of the app)
@@ -137,7 +149,8 @@ Environment variables, or a `.env` file in the folder you start the backend from
   The player asks for it and polls while detection runs. New hints only decode again (seconds; moving bar starts is instant), the old grid stays on screen meanwhile. Grids from the first version of the app are detected again when the video is opened.
 
   Accuracy: see [docs/beat-tracking.md](docs/beat-tracking.md). Detected beats sit 10-20 ms after sharp attacks, so a loop snapped to the grid jumps 30 ms early and keeps the first note's attack.
-- **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json` and `beat_activations.npz`. Later features (stems, `loops.json`) belong in the same folder; see [docs/functionalities.md](docs/functionalities.md).
+- **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left). Later features (stems) belong in the same folder; see [docs/functionalities.md](docs/functionalities.md).
+- **Saved loops and settings:** the player loads them with the video (`GET /api/library/<id>/loops` and `/settings`) and stores changes a moment later (`PUT`, the whole list or settings at once; whatever is pending is sent when the page is left).
 - **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`.
 - **Gapless loops** (`frontend/src/features/player/gaplessLoop.ts`): seeking the `<video>` back to A silences it while the browser's media pipeline restarts, 5–190 ms per jump on the library songs. So the loop's sound comes from Web Audio instead:
   1. When A is set, the browser fetches the audio around it once (`GET /api/library/<id>/audio?start=&end=`, a WAV cut sample-exactly by ffmpeg, about 0.2 s for 40 s of audio).

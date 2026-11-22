@@ -73,3 +73,32 @@ export interface BeatTrackingState {
   analysis: BeatAnalysis | null
   error: string | null
 }
+
+/** What loop points snap to. */
+export type LoopSnapMode = 'off' | 'beat' | 'bar'
+
+/** A practice loop saved with a video (the video's loops.json). */
+export interface SavedLoop {
+  id: string
+  name: string
+  start: number
+  end: number
+  snapMode: LoopSnapMode
+  /** The speed the loop is practiced at. */
+  playbackRate: number
+}
+
+/** How the player was left for a video (its player.json); restored when it is opened. */
+export interface PlayerSettings {
+  volume: number
+  muted: boolean
+  playbackRate: number
+  /** null: whatever the browser used last */
+  snapMode: LoopSnapMode | null
+  position: number
+  loopStart: number | null
+  loopEnd: number | null
+  loopEnabled: boolean
+  /** The saved loop being played and edited. */
+  activeLoopId: string | null
+}

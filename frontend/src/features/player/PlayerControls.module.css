@@ -5,6 +5,12 @@
   padding: 2px 16px 14px;
 }
 
+/* holds the overview of a zoomed timeline; as high when empty */
+.overviewSlot {
+  height: 16px;
+  margin-top: -4px;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;

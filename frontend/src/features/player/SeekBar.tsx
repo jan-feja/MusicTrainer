@@ -1,13 +1,20 @@
-import { type KeyboardEvent, type ReactNode, useRef } from 'react'
+import { type KeyboardEvent, type ReactNode, type RefObject, useEffect, useRef } from 'react'
 import { formatTime, formatTimePrecise } from '../../lib/format'
 import { clamp } from '../../lib/math'
+import { useLatest } from '../../lib/useLatest'
 import { type LoopState, getLoopRegion } from './loop'
+import type { TimeView } from './timelineView'
 import { usePointerDrag } from './usePointerDrag'
 import styles from './SeekBar.module.css'
+
+/** Wheel sensitivity of the zoom: e^(0.002 per pixel scrolled). */
+const WHEEL_ZOOM_RATE = 0.002
 
 interface SeekBarProps {
   currentTime: number
   duration: number
+  /** The part of the song shown; the whole song unless zoomed. */
+  view: TimeView
   loop: LoopState
   onSeek: (time: number) => void
   onMoveLoopStart: (time: number) => void
@@ -15,6 +22,10 @@ interface SeekBarProps {
   /** Arrow keys on a focused handle: one step earlier (-1) or later (+1); Shift = bigger steps. */
   onNudgeLoopStart: (direction: -1 | 1, coarse: boolean) => void
   onNudgeLoopEnd: (direction: -1 | 1, coarse: boolean) => void
+  /** Ctrl + wheel (or pinch): zoom by `factor` around the time under the pointer. */
+  onZoom?: (factor: number, anchor: number) => void
+  /** Shift + wheel (or sideways scrolling): move the view by `seconds`. */
+  onPan?: (seconds: number) => void
   /** Drawn on the track, e.g. bar marks. */
   markers?: ReactNode
 }
@@ -23,27 +34,38 @@ interface SeekBarProps {
 export function SeekBar({
   currentTime,
   duration,
+  view,
   loop,
   onSeek,
   onMoveLoopStart,
   onMoveLoopEnd,
   onNudgeLoopStart,
   onNudgeLoopEnd,
+  onZoom,
+  onPan,
   markers,
 }: SeekBarProps) {
   const barRef = useRef<HTMLDivElement>(null)
+  const length = view.end - view.start
 
   const timeAt = (clientX: number) => {
     const rect = barRef.current?.getBoundingClientRect()
-    if (!rect || rect.width === 0) return 0
-    return clamp((clientX - rect.left) / rect.width, 0, 1) * duration
+    if (!rect || rect.width === 0) return view.start
+    return view.start + clamp((clientX - rect.left) / rect.width, 0, 1) * length
   }
-  const percent = (time: number) => (duration > 0 ? (time / duration) * 100 : 0)
+  const percent = (time: number) => (length > 0 ? ((time - view.start) / length) * 100 : 0)
+  const inView = (time: number) => time >= view.start && time <= view.end
 
   const seekDrag = usePointerDrag((clientX) => onSeek(timeAt(clientX)))
   const startDrag = usePointerDrag((clientX) => onMoveLoopStart(timeAt(clientX)))
   const endDrag = usePointerDrag((clientX) => onMoveLoopEnd(timeAt(clientX)))
+  useWheelZoom(barRef, view, duration, onZoom, onPan)
+
   const region = getLoopRegion(loop)
+  const shownRegion = region && {
+    start: Math.max(region.start, view.start),
+    end: Math.min(region.end, view.end),
+  }
 
   return (
     <div ref={barRef} className={styles.bar}>
@@ -57,21 +79,26 @@ export function SeekBar({
         aria-valuetext={formatTime(currentTime)}
         {...seekDrag}
       >
-        {region && (
+        {shownRegion && shownRegion.end > shownRegion.start && (
           <div
             className={styles.loopRegion}
             data-enabled={loop.enabled}
             style={{
-              left: `${percent(region.start)}%`,
-              width: `${percent(region.end - region.start)}%`,
+              left: `${percent(shownRegion.start)}%`,
+              width: `${percent(shownRegion.end) - percent(shownRegion.start)}%`,
             }}
           />
         )}
-        <div className={styles.played} style={{ width: `${percent(currentTime)}%` }} />
+        <div
+          className={styles.played}
+          style={{ width: `${clamp(percent(currentTime), 0, 100)}%` }}
+        />
         {markers}
-        <div className={styles.playhead} style={{ left: `${percent(currentTime)}%` }} />
+        {inView(currentTime) && (
+          <div className={styles.playhead} style={{ left: `${percent(currentTime)}%` }} />
+        )}
       </div>
-      {loop.start !== null && (
+      {loop.start !== null && inView(loop.start) && (
         <LoopHandle
           label="A"
           description="Loop start"
@@ -82,7 +109,7 @@ export function SeekBar({
           onNudge={onNudgeLoopStart}
         />
       )}
-      {loop.end !== null && (
+      {loop.end !== null && inView(loop.end) && (
         <LoopHandle
           label="B"
           description="Loop end"
@@ -95,6 +122,47 @@ export function SeekBar({
       )}
     </div>
   )
+}
+
+/**
+ * Ctrl / Cmd + wheel (a pinch on a touchpad) zooms around the pointer; Shift +
+ * wheel or sideways scrolling pans. A native listener, since React's wheel
+ * listeners cannot stop the browser from zooming the page.
+ */
+function useWheelZoom(
+  barRef: RefObject<HTMLDivElement | null>,
+  view: TimeView,
+  duration: number,
+  onZoom?: (factor: number, anchor: number) => void,
+  onPan?: (seconds: number) => void,
+) {
+  const latest = useLatest({ view, duration, onZoom, onPan })
+  useEffect(() => {
+    const bar = barRef.current
+    if (!bar) return
+    const handleWheel = (event: WheelEvent) => {
+      const { view, duration, onZoom, onPan } = latest.current
+      const rect = bar.getBoundingClientRect()
+      if (rect.width === 0) return
+      // Firefox scrolls in lines or pages
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? rect.width : 1
+      const length = view.end - view.start
+      if ((event.ctrlKey || event.metaKey) && onZoom) {
+        event.preventDefault()
+        const anchor = view.start + clamp((event.clientX - rect.left) / rect.width, 0, 1) * length
+        onZoom(Math.exp(event.deltaY * unit * WHEEL_ZOOM_RATE), anchor)
+        return
+      }
+      const sideways = event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)
+      if (sideways && onPan && length < duration) {
+        event.preventDefault()
+        const delta = (event.deltaX !== 0 ? event.deltaX : event.deltaY) * unit
+        onPan((delta / rect.width) * length)
+      }
+    }
+    bar.addEventListener('wheel', handleWheel, { passive: false })
+    return () => bar.removeEventListener('wheel', handleWheel)
+  }, [barRef, latest])
 }
 
 interface LoopHandleProps {

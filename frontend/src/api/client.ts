@@ -3,6 +3,8 @@ import type {
   BeatTrackingState,
   DownloadJob,
   LibraryVideo,
+  PlayerSettings,
+  SavedLoop,
   SearchResult,
 } from './types'
 
@@ -106,4 +108,34 @@ export const api = {
       }),
     })
   },
+
+  getLoops(videoId: string, signal?: AbortSignal): Promise<SavedLoop[]> {
+    return request(`${videoPath(videoId)}/loops`, { signal })
+  },
+
+  /** `keepalive` lets the request finish while the page is being closed. */
+  saveLoops(videoId: string, loops: SavedLoop[], keepalive = false): Promise<SavedLoop[]> {
+    return request(`${videoPath(videoId)}/loops`, putJson(loops, keepalive))
+  },
+
+  getPlayerSettings(videoId: string, signal?: AbortSignal): Promise<PlayerSettings> {
+    return request(`${videoPath(videoId)}/settings`, { signal })
+  },
+
+  savePlayerSettings(
+    videoId: string,
+    settings: PlayerSettings,
+    keepalive = false,
+  ): Promise<PlayerSettings> {
+    return request(`${videoPath(videoId)}/settings`, putJson(settings, keepalive))
+  },
+}
+
+function putJson(body: unknown, keepalive: boolean): RequestInit {
+  return {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    keepalive,
+  }
 }

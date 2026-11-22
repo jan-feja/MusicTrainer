@@ -132,3 +132,22 @@ describe('loopJumpTarget with a lead', () => {
     expect(loopJumpTarget(fromZero, 4, 0.03)).toBe(0)
   })
 })
+
+describe('load', () => {
+  const load = (start: number, end: number): LoopAction => ({
+    type: 'load',
+    start,
+    end,
+    duration: DURATION,
+  })
+
+  it('replaces both points and turns the loop on', () => {
+    const off = loopReducer(apply(setStart(1), setEnd(5)), { type: 'toggle' })
+    expect(loopReducer(off, load(10, 20))).toEqual({ start: 10, end: 20, enabled: true })
+  })
+
+  it('ignores loops that are too short', () => {
+    const state = apply(setStart(1), setEnd(5))
+    expect(loopReducer(state, load(10, 10 + MIN_LOOP_LENGTH / 2))).toBe(state)
+  })
+})
