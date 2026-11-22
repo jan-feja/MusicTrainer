@@ -128,6 +128,8 @@ export interface StemSeparationState {
   status: AnalysisStatus
   /** Share separated (0–1) while 'analyzing'; null if unknown. */
   progress: number | null
+  /** While 'queued': how many songs are separated before this one. */
+  queuePosition: number | null
   /** Set once the status is 'completed'. */
   stems: StemSet | null
   error: string | null

@@ -31,7 +31,11 @@ def fake_chord_detector() -> FakeChordDetector:
 
 @pytest.fixture
 def settings(tmp_path: Path) -> Settings:
-    return Settings(data_dir=tmp_path / "data", frontend_dist_dir=tmp_path / "no-frontend")
+    return Settings(
+        data_dir=tmp_path / "data",
+        frontend_dist_dir=tmp_path / "no-frontend",
+        separate_stems_after_download=False,  # the tests start separations themselves
+    )
 
 
 @pytest.fixture

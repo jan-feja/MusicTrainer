@@ -8,20 +8,31 @@ interface StemsControlsProps {
   onToggle: () => void
 }
 
-/** Turns the stems on and off, and shows how far they are; the track lanes mix them. */
+/**
+ * The stems' state: progress while the song is separated (it starts by itself),
+ * then the On / Off switch; a failure offers to try again.
+ */
 export function StemsControls({ stems, enabled, onToggle }: StemsControlsProps) {
+  const { status } = stems
+  const separated =
+    status.kind === 'available' ||
+    status.kind === 'loading' ||
+    status.kind === 'ready' ||
+    (status.kind === 'failed' && status.separated === true)
   return (
     <div className={styles.group}>
       <span className={styles.label}>Stems</span>
-      <button
-        type="button"
-        className="button button-small"
-        onClick={onToggle}
-        aria-pressed={enabled}
-        title="Separate the song into instruments to mute or solo them"
-      >
-        {enabled ? 'On' : 'Off'}
-      </button>
+      {separated && (
+        <button
+          type="button"
+          className="button button-small"
+          onClick={onToggle}
+          aria-pressed={enabled}
+          title="Play the separated instruments, to mute or solo them"
+        >
+          {enabled ? 'On' : 'Off'}
+        </button>
+      )}
       <StemsStatusView stems={stems} />
     </div>
   )
@@ -31,11 +42,14 @@ function percent(value: number): string {
   return `${Math.round(value * 100)} %`
 }
 
+function waitingText(songsAhead: number | null): string {
+  if (!songsAhead) return 'Waiting to separate…'
+  return `Waiting to separate: ${songsAhead} ${songsAhead === 1 ? 'song' : 'songs'} ahead…`
+}
+
 function StemsStatusView({ stems }: { stems: Stems }) {
   const { status } = stems
   switch (status.kind) {
-    case 'off':
-      return null
     case 'checking':
       return (
         <span className={styles.note} role="status">
@@ -49,7 +63,7 @@ function StemsStatusView({ stems }: { stems: Stems }) {
           {status.progress === null ? (
             <span className={styles.note}>
               <span className={styles.spinner} aria-hidden="true" />
-              Waiting to separate…
+              {waitingText(status.songsAhead)}
             </span>
           ) : (
             <>
@@ -61,7 +75,6 @@ function StemsStatusView({ stems }: { stems: Stems }) {
               </span>
             </>
           )}
-          <span className={styles.hint}>About 2 minutes per song; the video plays on.</span>
         </span>
       )
     case 'loading':
@@ -76,17 +89,14 @@ function StemsStatusView({ stems }: { stems: Stems }) {
     case 'failed':
       return (
         <span className={styles.failed} role="alert">
-          Stems not available: {status.error}
+          {status.separated ? 'Stems could not be loaded' : 'Stems not available'}: {status.error}
           <button type="button" className="button button-small" onClick={stems.retry}>
             Try again
           </button>
         </span>
       )
-    case 'ready': {
-      const absent = status.tracks.filter((track) => track.quiet).map((track) => track.label)
-      return absent.length > 0 ? (
-        <span className={styles.hint}>Not in this song: {absent.join(', ')}</span>
-      ) : null
-    }
+    case 'available':
+    case 'ready':
+      return null
   }
 }

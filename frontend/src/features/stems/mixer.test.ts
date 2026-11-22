@@ -25,14 +25,20 @@ describe('mixer', () => {
     expect(mixerGains(NAMES, withMuteToggled(mixer, 'vocals')).vocals).toBe(1)
   })
 
-  it('plays only the soloed stems, and never muted ones', () => {
+  it('solos one stem at most', () => {
     let mixer = withSoloToggled(null, 'drums')
-    mixer = withSoloToggled(mixer, 'bass')
-    expect(mixerGains(NAMES, mixer)).toEqual({ drums: 1, bass: 1, vocals: 0 })
-    mixer = withMuteToggled(mixer, 'drums')
+    expect(mixerGains(NAMES, mixer)).toEqual({ drums: 1, bass: 0, vocals: 0 })
+    mixer = withSoloToggled(mixer, 'bass') // moves the solo
+    expect(mixer.solo).toEqual(['bass'])
     expect(mixerGains(NAMES, mixer)).toEqual({ drums: 0, bass: 1, vocals: 0 })
-    mixer = withSoloToggled(withSoloToggled(mixer, 'drums'), 'bass')
-    expect(mixerGains(NAMES, mixer)).toEqual({ drums: 0, bass: 1, vocals: 1 })
+    mixer = withSoloToggled(mixer, 'bass') // ends it
+    expect(mixer.solo).toEqual([])
+    expect(mixerGains(NAMES, mixer)).toEqual({ drums: 1, bass: 1, vocals: 1 })
+  })
+
+  it('a muted stem stays silent when soloed', () => {
+    const mixer = withSoloToggled(withMuteToggled(null, 'drums'), 'drums')
+    expect(mixerGains(NAMES, mixer)).toEqual({ drums: 0, bass: 0, vocals: 0 })
   })
 
   it('a soloed stem at 0 is silent', () => {
@@ -80,9 +86,9 @@ describe('mixer', () => {
     expect(stemLevel(mixer, 'bass')).toBe(0.3)
   })
 
-  it('moving the slider of a stem left out of the solo adds it to the solo', () => {
+  it('moving the slider of a stem left out of the solo ends the solo', () => {
     const mixer = withLevel(withSoloToggled(null, 'drums'), 'bass', 0.5)
-    expect(mixer.solo).toEqual(['drums', 'bass'])
-    expect(mixerGains(NAMES, mixer)).toEqual({ drums: 1, bass: 0.5, vocals: 0 })
+    expect(mixer.solo).toEqual([])
+    expect(mixerGains(NAMES, mixer)).toEqual({ drums: 1, bass: 0.5, vocals: 1 })
   })
 })

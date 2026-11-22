@@ -36,9 +36,10 @@ export function withMuteToggled(settings: MixerSettings | null, name: string) {
   return mixer({ ...current, muted: toggled(current.muted, name) })
 }
 
+/** Solo one stem at most: S on the soloed stem ends the solo, on another moves it there. */
 export function withSoloToggled(settings: MixerSettings | null, name: string) {
   const current = settings ?? EMPTY_MIXER
-  return mixer({ ...current, solo: toggled(current.solo, name) })
+  return mixer({ ...current, solo: current.solo.includes(name) ? [] : [name] })
 }
 
 export function withVolume(settings: MixerSettings | null, name: string, volume: number) {
@@ -64,7 +65,7 @@ export function stemLevel(settings: MixerSettings | null, name: string): number 
 /**
  * Move a stem's slider. Like the player's volume: 0 mutes the stem (keeping its
  * volume for unmuting), anything else sets the volume and makes the stem heard
- * again: unmuted, and joined to the solo when other stems are soloed.
+ * again: unmuted, and if another stem is soloed, the solo ends.
  */
 export function withLevel(settings: MixerSettings | null, name: string, level: number) {
   const current = settings ?? EMPTY_MIXER
@@ -73,7 +74,7 @@ export function withLevel(settings: MixerSettings | null, name: string, level: n
   }
   const next = withVolume(current, name, level)
   const muted = next.muted.filter((n) => n !== name)
-  const solo = next.solo.length > 0 && !next.solo.includes(name) ? [...next.solo, name] : next.solo
+  const solo = next.solo.length > 0 && !next.solo.includes(name) ? [] : next.solo
   return mixer({ ...next, muted, solo })
 }
 

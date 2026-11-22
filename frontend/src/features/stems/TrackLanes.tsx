@@ -184,7 +184,7 @@ function LaneHeader({
         aria-pressed={solo}
         onClick={() => onToggleSolo(name)}
         aria-label={`Solo ${label}`}
-        title={`Solo ${label}: hear only the soloed stems`}
+        title={`Solo ${label}: hear only this stem`}
       >
         S
       </button>

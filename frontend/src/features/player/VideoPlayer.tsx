@@ -52,6 +52,7 @@ import { SpeedControl } from './SpeedControl'
 import { TimelineOverview } from './TimelineOverview'
 import { followPlayhead, visibleRange } from './timelineView'
 import { useFullscreen } from './useFullscreen'
+import { useVideoRecovery } from './useVideoRecovery'
 import { usePlayerShortcuts } from './usePlayerShortcuts'
 import { useGaplessLoop } from './useGaplessLoop'
 import { useTimelineZoom } from './useTimelineZoom'
@@ -134,7 +135,7 @@ export function VideoPlayer({
 
   const [mixer, setMixer] = useState<MixerSettings | null>(initialSettings?.mixer ?? null)
   const stemsEnabled = mixer?.enabled ?? false
-  const stems = useStems(videoId ?? '', videoId !== undefined && stemsEnabled)
+  const stems = useStems(videoId, stemsEnabled)
   const stemTracks = stems.status.kind === 'ready' ? stems.status.tracks : null
   const visibleStemTracks = useMemo(
     () => stemTracks?.filter((track) => !track.quiet) ?? [],
@@ -193,6 +194,7 @@ export function VideoPlayer({
     clock: () => stemPlayer.current?.position() ?? gaplessLoop.current?.position() ?? null,
   })
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
+  const recovery = useVideoRecovery(videoRef, src)
   const duration = playback.duration
   const zoom = useTimelineZoom(duration)
 
@@ -401,6 +403,14 @@ export function VideoPlayer({
           onClick={playback.togglePlay}
           onDoubleClick={toggleFullscreen}
         />
+        {recovery.error && (
+          <div className={styles.videoError} role="alert">
+            <span>Video could not be played: {recovery.error}</span>
+            <button type="button" className="button button-small" onClick={recovery.reload}>
+              Reload video
+            </button>
+          </div>
+        )}
         <div className={controlStyles.controls}>
           <SeekBar
             currentTime={playback.currentTime}

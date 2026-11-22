@@ -42,9 +42,12 @@ def separate_stems(
     separation: StemSeparationDependency,
     force: Annotated[bool, Query(description="Separate again even if stems exist")] = False,
 ) -> StemSeparationState:
-    """Start separating (runs in the background, ~2 min per song on a CPU; poll GET)."""
+    """Separate this song next (runs in the background, ~2 min per song on a CPU; poll GET).
+
+    Called by the player for the open song: moves it to the front of the queue.
+    """
     try:
-        return separation.start(video_id, force=force)
+        return separation.start(video_id, force=force, first=True)
     except VideoNotInLibraryError as error:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(error)) from error
 

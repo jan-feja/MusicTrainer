@@ -230,6 +230,8 @@ class StemSeparationState(ApiModel):
     status: AnalysisStatus
     progress: float | None = Field(default=None, ge=0, le=1)
     """Share of the song separated while the status is 'analyzing'; None if unknown."""
+    queue_position: int | None = Field(default=None, ge=0)
+    """While 'queued': how many songs are separated before this one."""
     stems: StemSet | None = None
     error: str | None = None
 

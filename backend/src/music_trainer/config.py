@@ -54,9 +54,9 @@ class Settings(BaseSettings):
     separation_device: str = "cpu"
     """PyTorch device for stem separation: 'cpu' or 'cuda'."""
 
-    separate_stems_after_download: bool = False
+    separate_stems_after_download: bool = True
     """Separate every new download into stems right away (about 2 CPU minutes per song);
-    otherwise only when the player asks for stems."""
+    otherwise only when the player opens the song."""
 
     @property
     def library_dir(self) -> Path:

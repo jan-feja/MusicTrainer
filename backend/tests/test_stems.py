@@ -14,6 +14,7 @@ from music_trainer.services.stems import DemucsSeparator, StemSeparationError
 from tests.fakes import (
     FAKE_FLAC,
     FAKE_STEM_NAMES,
+    OTHER_VIDEO_ID,
     VIDEO_ID,
     FakeBeatTracker,
     FakeStemSeparator,
@@ -39,6 +40,7 @@ class TestStemsApi:
             "videoId": VIDEO_ID,
             "status": "not_started",
             "progress": None,
+            "queuePosition": None,
             "stems": None,
             "error": None,
         }
@@ -127,6 +129,47 @@ class TestStemsApi:
         download(client)  # downloading again starts from scratch
         assert client.get(STEMS_URL).json()["status"] == "not_started"
 
+    def test_the_song_in_the_player_is_separated_next(
+        self, client: TestClient, settings: Settings, fake_stem_separator: FakeStemSeparator
+    ) -> None:
+        third = "9bZkp7q19f0"
+        for video_id in (VIDEO_ID, OTHER_VIDEO_ID, third):
+            download(client, video_id)
+        fake_stem_separator.release.clear()
+        separation = client.app.state.services.stem_separation  # type: ignore[attr-defined]
+        separation.start(VIDEO_ID)
+        assert fake_stem_separator.started.wait(timeout=5)
+        separation.start(OTHER_VIDEO_ID)  # as after a download: at the end of the queue
+        separation.start(third)
+        other = client.get(f"/api/library/{OTHER_VIDEO_ID}/stems").json()
+        assert (other["status"], other["queuePosition"]) == ("queued", 1)
+
+        # the player opens the third song: it moves to the front
+        opened = client.post(f"/api/library/{third}/stems").json()
+        assert (opened["status"], opened["queuePosition"]) == ("queued", 1)
+        assert client.get(f"/api/library/{OTHER_VIDEO_ID}/stems").json()["queuePosition"] == 2
+
+        fake_stem_separator.release.set()
+        for video_id in (VIDEO_ID, OTHER_VIDEO_ID, third):
+            assert wait_for_stems(client, video_id)["status"] == "completed"
+        order = [path.parent.name for path in fake_stem_separator.separated]
+        assert order == [VIDEO_ID, third, OTHER_VIDEO_ID]
+
+    def test_deleting_a_queued_video_drops_it(
+        self, client: TestClient, fake_stem_separator: FakeStemSeparator
+    ) -> None:
+        download(client)
+        download(client, OTHER_VIDEO_ID)
+        fake_stem_separator.release.clear()
+        client.post(STEMS_URL)
+        assert fake_stem_separator.started.wait(timeout=5)
+        client.post(f"/api/library/{OTHER_VIDEO_ID}/stems")
+        assert client.delete(f"/api/library/{OTHER_VIDEO_ID}").status_code == 204
+
+        fake_stem_separator.release.set()
+        assert wait_for_stems(client, VIDEO_ID)["status"] == "completed"
+        assert [path.parent.name for path in fake_stem_separator.separated] == [VIDEO_ID]
+
     def test_unknown_stem_video_or_name(self, client: TestClient) -> None:
         assert client.get(STEMS_URL).status_code == 404
         assert client.post(STEMS_URL).status_code == 404
@@ -138,12 +181,13 @@ class TestStemsApi:
         assert client.get("/api/library/not-an-id/stems").status_code == 422
 
 
-def test_separating_after_download_can_be_turned_on(
+def test_new_downloads_are_separated(
     settings: Settings,
     fake_youtube: FakeYouTubeClient,
     fake_beat_tracker: FakeBeatTracker,
     fake_stem_separator: FakeStemSeparator,
 ) -> None:
+    assert Settings.model_fields["separate_stems_after_download"].default is True
     settings = settings.model_copy(update={"separate_stems_after_download": True})
     app = create_app(
         settings,

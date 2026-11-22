@@ -27,15 +27,17 @@ export interface StemTrack {
 }
 
 export type StemsStatus =
-  | { kind: 'off' }
   /** Asking the server. */
   | { kind: 'checking' }
   /** The server separates the song; `progress` is 0–1 or null while waiting its turn. */
-  | { kind: 'separating'; progress: number | null }
+  | { kind: 'separating'; progress: number | null; songsAhead: number | null }
+  /** Separated, and switched off: nothing loaded. */
+  | { kind: 'available' }
   /** Downloading and decoding the stems, 0–1. */
   | { kind: 'loading'; progress: number }
   | { kind: 'ready'; tracks: StemTrack[] }
-  | { kind: 'failed'; error: string }
+  /** `separated`: the stems are there, but could not be loaded. */
+  | { kind: 'failed'; error: string; separated?: boolean }
 
 export function stemLabel(name: string): string {
   return name.charAt(0).toUpperCase() + name.slice(1)
