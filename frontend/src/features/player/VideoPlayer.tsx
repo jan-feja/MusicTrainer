@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { useClickTrack } from '../grid/clickTrack'
+import { type GridEditorActions, GridEditor } from '../grid/GridEditor'
+import { useMusicPicture } from '../grid/musicVisual'
 import type { PlayerSettings, SavedLoop } from '../../api/types'
 import { ExitFullscreenIcon, FullscreenIcon, PauseIcon, PlayIcon } from '../../components/icons'
 import { formatTime } from '../../lib/format'
@@ -63,6 +66,7 @@ const MAX_BAR_NUMBERS = 40
 /** Z without a loop zooms this far in around the playhead. */
 const PLAIN_ZOOM_FACTOR = 8
 const NO_LOOPS: SavedLoop[] = []
+const NO_TIMES: number[] = []
 
 type LoopPoint = 'start' | 'end'
 
@@ -80,6 +84,8 @@ interface VideoPlayerProps {
   src: string
   /** Sections of the audio as WAV (`?start=&end=`); lets the loop play without a gap. */
   audioUrl?: string
+  /** The library video; lets the grid editor show pictures of the music. */
+  videoId?: string
   poster?: string
   autoPlay?: boolean
   /** Beat grid of the video; lets the loop snap to beats and bars. */
@@ -96,6 +102,7 @@ interface VideoPlayerProps {
 export function VideoPlayer({
   src,
   audioUrl,
+  videoId,
   poster,
   autoPlay = true,
   beatTracking,
@@ -156,6 +163,22 @@ export function VideoPlayer({
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
   const duration = playback.duration
   const zoom = useTimelineZoom(duration)
+
+  // the grid editor and the click track
+  const [editorOpen, setEditorOpen] = useState(false)
+  const [clickOn, setClickOn] = useState(false)
+  const editorActions = useRef<GridEditorActions | null>(null)
+  const canEditGrid = beatTracking !== undefined && grid !== null
+  const picture = useMusicPicture(videoId ?? '', editorOpen && videoId !== undefined)
+  useClickTrack({
+    enabled: clickOn && grid !== null,
+    playing: playback.isPlaying,
+    beats: grid?.beats ?? NO_TIMES,
+    bars: grid?.bars ?? NO_TIMES,
+    rate: playback.playbackRate,
+    volume: Math.max(0.25, playback.volume),
+    position: playback.getCurrentTime,
+  })
 
   useReportPlayerSettings(
     {
@@ -329,6 +352,10 @@ export function VideoPlayer({
     jumpToLoopStart: () => playback.seek(Math.max(0, (loop.start ?? 0) - lead)),
     toggleMute: playback.toggleMute,
     toggleFullscreen,
+    toggleClick: () => setClickOn((on) => !on && grid !== null),
+    toggleGridEditor: () => setEditorOpen((open) => !open && canEditGrid),
+    addSection: () => editorActions.current?.addSection(),
+    tapBarStart: () => editorActions.current?.tap(),
   })
 
   let lengthLabel: string | null = null
@@ -401,6 +428,21 @@ export function VideoPlayer({
               />
             )}
           </div>
+          {editorOpen && beatTracking && canEditGrid && (
+            <GridEditor
+              tracking={beatTracking}
+              picture={picture}
+              view={view}
+              duration={duration}
+              currentTime={playback.currentTime}
+              getCurrentTime={playback.getCurrentTime}
+              onSeek={playback.seek}
+              clickOn={clickOn}
+              onToggleClick={() => setClickOn((on) => !on)}
+              onClose={() => setEditorOpen(false)}
+              actions={editorActions}
+            />
+          )}
           <div className={controlStyles.row}>
             <button
               type="button"
@@ -476,6 +518,28 @@ export function VideoPlayer({
                 onMoveBarStarts={moveBarStarts}
                 onResetBarStarts={resetBarStarts}
               />
+              {grid && (
+                <span className={controlStyles.group}>
+                  <button
+                    type="button"
+                    className={controlStyles.pill}
+                    aria-pressed={clickOn}
+                    onClick={() => setClickOn((on) => !on)}
+                    title="A click on every beat, higher on bar starts (Q)"
+                  >
+                    Click
+                  </button>
+                  <button
+                    type="button"
+                    className={controlStyles.pill}
+                    aria-pressed={editorOpen}
+                    onClick={() => setEditorOpen((open) => !open)}
+                    title="Bars wrong? Mark sections, set their bars, tap bar starts (E)"
+                  >
+                    Edit beats &amp; bars
+                  </button>
+                </span>
+              )}
             </div>
           )}
         </div>

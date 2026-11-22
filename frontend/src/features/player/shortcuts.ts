@@ -21,6 +21,10 @@ export const PLAYER_SHORTCUTS = [
   { id: 'cycleSnapMode', keys: ['g'], label: 'G', description: 'Snap loop: off / beats / bars' },
   { id: 'jumpToLoopStart', keys: ['Home'], label: 'Home', description: 'Go to loop start' },
   { id: 'toggleMute', keys: ['m'], label: 'M', description: 'Mute / unmute' },
+  { id: 'toggleClick', keys: ['q'], label: 'Q', description: 'Click on every beat on / off' },
+  { id: 'toggleGridEditor', keys: ['e'], label: 'E', description: 'Edit beats & bars' },
+  { id: 'addSection', keys: ['n'], label: 'N', description: 'Editing: new section here' },
+  { id: 'tapBarStart', keys: ['t'], label: 'T', description: 'Editing: a bar starts here (tap)' },
   { id: 'toggleFullscreen', keys: ['f'], label: 'F', description: 'Full screen' },
 ] as const
 

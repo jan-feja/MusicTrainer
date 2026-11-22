@@ -25,6 +25,8 @@ from pydantic import BaseModel, TypeAdapter, ValidationError
 
 from music_trainer.models import BeatAnalysis, PlayerSettings, SavedLoop, VideoMetadata
 from music_trainer.services.beat_decoding import BeatActivations
+from music_trainer.services.visual import VERSION as PICTURE_VERSION
+from music_trainer.services.visual import MusicPicture
 from music_trainer.video_ids import require_valid_video_id
 
 logger = logging.getLogger(__name__)
@@ -48,6 +50,7 @@ class Library:
     METADATA_FILE = "meta.json"
     ANALYSIS_FILE = "analysis.json"
     ACTIVATIONS_FILE = "beat_activations.npz"
+    PICTURE_FILE = "visual.npz"
     LOOPS_FILE = "loops.json"
     SETTINGS_FILE = "player.json"
     STAGING_DIR = ".staging"
@@ -143,6 +146,41 @@ class Library:
                 downbeat=activations.downbeat.astype(np.float16),
                 fps=np.float64(activations.fps),
                 model=np.str_(activations.model),
+            )
+        partial.replace(target)
+
+    def read_picture(self, video_id: str) -> MusicPicture | None:
+        """The stored picture of the music, or None if missing, unreadable or outdated."""
+        path = self._video_dir(video_id) / self.PICTURE_FILE
+        try:
+            with np.load(path) as data:
+                if int(data["version"]) != PICTURE_VERSION:
+                    return None
+                return MusicPicture(
+                    spectrogram=data["spectrogram"],
+                    colors=data["colors"],
+                    fps=float(data["fps"]),
+                    color_step=float(data["color_step"]),
+                )
+        except FileNotFoundError:
+            return None
+        except (OSError, KeyError, ValueError) as error:
+            logger.warning("Ignoring unreadable %s: %s", path, error)
+            return None
+
+    def write_picture(self, video_id: str, picture: MusicPicture) -> None:
+        if not self.contains(video_id):
+            raise VideoNotInLibraryError(video_id)
+        target = self._video_dir(video_id) / self.PICTURE_FILE
+        partial = target.with_name(target.name + ".part")
+        with partial.open("wb") as file:
+            np.savez_compressed(
+                file,
+                spectrogram=picture.spectrogram,
+                colors=picture.colors,
+                fps=np.float64(picture.fps),
+                color_step=np.float64(picture.color_step),
+                version=np.int64(PICTURE_VERSION),
             )
         partial.replace(target)
 

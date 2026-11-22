@@ -56,6 +56,8 @@ Tools (portable, no install): [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/rele
 | [get_harmonix_changes.py](get_harmonix_changes.py) | Harmonix songs with meter or tempo changes: selection, download, annotations |
 | [make_beat_regression_set.py](make_beat_regression_set.py) | the backend's beat grid regression set (network outputs + true beats and bars of 226 songs) |
 | [test_meter_sections.py](test_meter_sections.py) | decoder variants for meter and tempo changes (meter sections, tempo octave limit, single odd bars) on the regression set |
+| [test_assisted_grid.py](test_assisted_grid.py) | guided grids: a simulated user's sections and bar starts on the regression set |
+| [test_section_colors.py](test_section_colors.py) | the grid editor's section colors against annotated Harmonix section starts |
 | [test_separation.py](test_separation.py) | stem separation quality and speed: Demucs models |
 | [test_stretch.py](test_stretch.py) | offline speed change / pitch shift in Python |
 | [test_harmony.py](test_harmony.py) | key, chords, tuning |

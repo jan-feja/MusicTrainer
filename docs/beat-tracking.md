@@ -214,6 +214,24 @@ What's left wrong is mostly wrong beats, not bars: a beat on the off-beat (regga
 
 **Tried and dropped:** letting a network bar start count as a plain beat at a small cost (helps when the user's bars are twice the network's): steady songs 0.88 → 0.86, and some songs broke.
 
+### The grid editor
+
+How users give those hints (*Edit beats & bars*, E), modelled on what practice and DJ tools do:
+
+- [Capo](https://supermegaultragroovy.com/products/capo/help/mac/4.6/song-structure): tap the first beat of every bar while the song plays, check the grid with the metronome, sections that start on a bar. Its author says its detection "is unable to work with odd or changing time signatures", hence the manual tools.
+- [Transcribe!](https://seventhstring.com/xscribe/overview.html): section, bar and beat markers tapped on the keyboard.
+- [Logic Pro's Smart Tempo](https://support.apple.com/guide/logicpro/lgcp644481aa/mac): downbeat and time signature *hints* that make the detection try again, rather than a grid drawn by hand.
+- DJ software ([Serato](https://support.serato.com/hc/en-us/articles/360001274936-Beatgrids)): set the downbeat, shift the grid.
+
+**What the editor shows** (`GET /api/library/<id>/visual`, `visual.py`, computed once in ~2 s for a 12-minute video):
+
+- **Section colors.** Similar music gets a similar color (timbre and harmony, PCA, hue), so sections tend to stand out and a returning chorus gets its color again. It is a hint, not a detector ([test_section_colors.py](../experiments/test_section_colors.py), 38 Harmonix songs, 426 section starts): 43 % of section starts are among a song's largest 20 % of color changes, against 27 % for random times. The color change at a section start ranks at the 70th percentile on average, against the 58th.
+- **Spectrogram** with the grid's bar and beat lines: attacks show as vertical lines.
+- **Bars as rows.** Every bar of the selected section is a row, as long as the bar lasts, with the beat detection's bar-start likelihood in yellow. When the bars are right, the rows look alike and the yellow marks sit at their left edge; a wrong bar sticks out. A grid shifted by one beat looks just as tidy in any picture of the audio, so only the yellow marks, or the click track, give that away.
+- **Click track.** A click on every beat, higher on bar starts, scheduled on the Web Audio clock from the player's position. It follows the speed and the loop jump. In the browser test its clicks land on the beats (to the millisecond of the scheduling); the latency difference between the click and the video's own sound was not measured.
+
+Edits apply at once on screen and go to the backend 0.7 s after the last one (taps come in bursts), one decoding at a time; Ctrl+Z undoes them.
+
 ## Timing
 
 - **Spread:** detected beats are within ~3 ms of the true onsets on score songs (median spread), and ~8 ms against human annotations on real songs (which includes the annotators' own jitter).

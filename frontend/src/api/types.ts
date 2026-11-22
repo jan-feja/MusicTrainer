@@ -25,6 +25,8 @@ export interface LibraryVideo {
   mediaUrl: string
   /** Sections of the audio as WAV: `?start=&end=` in seconds. */
   audioUrl: string
+  /** Pictures of the music for the grid editor (MusicVisual). */
+  visualUrl: string
   thumbnailUrl: string | null
 }
 
@@ -39,6 +41,20 @@ export interface DownloadJob {
   error: string | null
 }
 
+/**
+ * A part of the song with its own bars: one starts at `start`, the section lasts until the
+ * next one. Unset fields are left to the detection.
+ */
+export interface GridSection {
+  start: number
+  /** Every bar of the section has this many beats. */
+  beatsPerBar: number | null
+  /** Bar lengths in beats, repeated from the section start, e.g. [6, 6, 5, 6, 5, 5]. */
+  pattern: number[]
+  /** The section's beats are near this tempo (e.g. eighth notes, twice the song's tempo). */
+  tempoBpm: number | null
+}
+
 /** What the user knows about a song's beat grid; null leaves it to the detection. */
 export interface BeatGridHints {
   /** Every bar has this many beats. */
@@ -49,6 +65,27 @@ export interface BeatGridHints {
   barStarts: number[]
   /** The song is played to a click: all beats exactly evenly spaced. */
   steadyTempo: boolean
+  /** Parts of the song with their own meter, bar pattern or tempo. */
+  sections: GridSection[]
+}
+
+/** Pictures of the music for the grid editor; arrays are base64 of uint8 values. */
+export interface MusicVisual {
+  /** Spectrogram frames per second. */
+  fps: number
+  bands: number
+  frames: number
+  /** frames x bands, low frequencies first, 255 = loudest. */
+  spectrogram: string
+  /** Seconds per section color. */
+  colorStep: number
+  /** RGB per color step: similar music, similar color. */
+  colors: string
+  beatFps: number | null
+  /** Per frame, how likely the beat network finds a beat (0-255). */
+  beat: string | null
+  /** Per frame, how likely it finds a bar start (0-255). */
+  downbeat: string | null
 }
 
 /** The beat grid of a song. */

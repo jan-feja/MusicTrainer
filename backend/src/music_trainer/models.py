@@ -63,6 +63,8 @@ class LibraryVideo(ApiModel):
     media_url: str
     audio_url: str
     """A section of the audio as WAV: `?start=&end=` in seconds (for gapless loops)."""
+    visual_url: str
+    """Pictures of the music for the grid editor (spectrogram, section colors)."""
     thumbnail_url: str | None = None
 
 
@@ -123,6 +125,26 @@ class BeatGridHints(ApiModel):
     """The song is played to a click: space all beats exactly evenly."""
     sections: list[GridSection] = Field(default_factory=list, max_length=200)
     """Parts of the song with their own meter, bar pattern or tempo."""
+
+
+class MusicVisual(ApiModel):
+    """Pictures of the music for the grid editor. Arrays are base64 of uint8 values."""
+
+    fps: float
+    """Spectrogram frames per second."""
+    bands: int
+    frames: int
+    spectrogram: str
+    """frames x bands, low frequencies first, 255 = loudest."""
+    color_step: float
+    """Seconds per section color."""
+    colors: str
+    """One RGB triple per color step: similar music, similar color."""
+    beat_fps: float | None = None
+    beat: str | None = None
+    """Per frame, how likely the beat network finds a beat (255 = certain)."""
+    downbeat: str | None = None
+    """Per frame, how likely it finds a bar start."""
 
 
 class BeatAnalysis(ApiModel):

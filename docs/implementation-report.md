@@ -188,6 +188,7 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
   - 31 Harmonix songs whose meter or tempo changes.
 
   The meter may now change between sections of at least 4 bars, and real tempo changes are followed. Bar starts on songs with meter changes went from 0.67 to 0.73 (4-bar loops 0.41 → 0.50), on songs with tempo changes from 0.88 to 0.92 (0.71 → 0.82), with steady songs unchanged. Mixed /8 meters (Tool's *Pneuma*) and single odd bars still need the user; a section-by-section assisted mode is proposed: [beat-tracking.md](beat-tracking.md#meter-and-tempo-changes).
+- **Fifth follow-up (22 November 2026), now implemented: the grid editor (assisted mode).** For songs the detection cannot get right alone, the user marks sections (beats per bar, a bar pattern like 6+6+5+6+5+5, the beat speed) and taps bar starts, helped by pictures of the music (similarity colors, a spectrogram, every bar as a row) and a click track. Inspired by Capo (tap the bar starts, check with the metronome), Transcribe! (tapped markers) and Logic Pro's Smart Tempo (hints that guide the detection). The hints constrain the decoder's search, so the beats follow them too. A simulated user gets songs with meter changes from 0.73 to 0.95 bar starts F (4-bar loops 0.50 → 0.91); the *Pneuma*-like score songs from ~0.6 to 1.00: [beat-tracking.md](beat-tracking.md#guided-grids).
 
 ##### 9. Beat-synced loops (M, ✅)
 - **Build:**

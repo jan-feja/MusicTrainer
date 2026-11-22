@@ -126,6 +126,7 @@ function PracticePlayer({
         key={`${video.videoId}:${practice ? 'saved' : 'unsaved'}`}
         src={video.mediaUrl}
         audioUrl={video.audioUrl}
+        videoId={video.videoId}
         poster={video.thumbnailUrl ?? undefined}
         beatTracking={beatTracking}
         practice={practice}

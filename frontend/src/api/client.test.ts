@@ -40,7 +40,7 @@ describe('api client', () => {
 
     fetchMock.mockResolvedValue(Response.json({ status: 'queued' }, { status: 202 }))
     await api.detectBeats('jNQXAC9IVRw', {
-      hints: { beatsPerBar: 3, tempoBpm: null, barStarts: [], steadyTempo: false },
+      hints: { beatsPerBar: 3, tempoBpm: null, barStarts: [], steadyTempo: false, sections: [] },
     })
     const [url, init] = fetchMock.mock.calls[2]
     expect(url).toBe('/api/library/jNQXAC9IVRw/beats')
@@ -50,6 +50,7 @@ describe('api client', () => {
       tempoBpm: null,
       barStarts: [],
       steadyTempo: false,
+      sections: [],
     })
   })
 

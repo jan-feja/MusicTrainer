@@ -18,6 +18,13 @@ An app for practising music with songs. The idea and planned features are in [do
       - **beats per bar**: Auto (detected; e.g. *Auto (4, 3)* when sections differ), or 2-9 / 12 for the whole song
       - **‹ Bar start ›**: the bar starts are on the wrong beat from here on (e.g. after a 2/4 bar)
       - **Steady**: the song is played to a click, so all beats are spaced exactly evenly
+    - **Click** (Q): a click on every beat, higher on bar starts, at any speed and in loops: to hear whether the grid is right, or to practice with
+    - **Edit beats & bars** (E) for songs whose bars the detection gets wrong (changing meters, odd bars, *Pneuma*-like 6+6+5+6+5+5 verses):
+      - under the timeline, the music in pictures: similar music in similar colors (sections tend to stand out), and a spectrogram with the grid's bar lines
+      - **+ Section here** (N): the bars change here. A section can have its beats per bar, a **bar pattern** (e.g. 6+6+5+6+5+5) and its beat speed (2× for eighth notes); drag its left edge or use ‹ › to move its start
+      - **Tap bar start** (T): while it plays, press T on the first beat of a bar
+      - **Bars as rows**: every bar of the section a row; when the bars are right, the rows look alike and the yellow marks (where the beat detection hears a bar start) sit at their left edge. Click a row to go there
+      - **Undo** (Ctrl+Z); every change decodes the grid again in a few seconds
     - the song's tempo is shown at the current speed
   - **saved loops**, kept with the video, as many as you like:
     - **+ Save loop** (S) keeps the current loop with its snap and speed; it gets a name (double-click to rename)
@@ -146,11 +153,12 @@ Environment variables, or a `.env` file in the folder you start the backend from
   2. The [Beat This!](https://github.com/CPJKU/beat_this) network (ISMIR 2024, MIT) says, 50 times per second, how likely a beat and a bar start are: about 9 s for a 4-minute song on a laptop CPU. This output is stored as `beat_activations.npz`.
   3. A decoder (`beat_decoding.py`, a bar-pointer HMM in numpy) finds the most likely beat grid: the tempo changes only gradually and does not jump to its double or half, and within a section every bar has the same number of beats (3-8). The meter may change between sections of at least 4 bars. A few seconds.
   4. The grid is stored as `analysis.json` (BPM, beats per bar, beat and bar times, the user's hints).
+  5. The user's sections and bar starts (grid editor, ‹ Bar start ›) guide a second search over the same network output (`beat_guidance.py`): a section allows only its meter or bar pattern and tempo, a bar start the user gave may follow an odd bar, so the beats themselves follow the hints too. 1–5 s per change.
 
   The player asks for it and polls while detection runs. New hints only decode again (seconds; moving bar starts is instant), the old grid stays on screen meanwhile. Grids of an older decoder are decoded again from the stored network output (keeping the hints) when the video is opened.
 
   Accuracy: see [docs/beat-tracking.md](docs/beat-tracking.md). Detected beats sit 10-20 ms after sharp attacks, so a loop snapped to the grid jumps 30 ms early and keeps the first note's attack.
-- **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left). Later features (stems) belong in the same folder; see [docs/functionalities.md](docs/functionalities.md).
+- **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left), and once the grid editor was opened `visual.npz` (its pictures of the music). Later features (stems) belong in the same folder; see [docs/functionalities.md](docs/functionalities.md).
 - **Saved loops and settings:** the player loads them with the video (`GET /api/library/<id>/loops` and `/settings`) and stores changes a moment later (`PUT`, the whole list or settings at once; whatever is pending is sent when the page is left).
 - **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`.
 - **Gapless loops** (`frontend/src/features/player/gaplessLoop.ts`): seeking the `<video>` back to A silences it while the browser's media pipeline restarts, 5–190 ms per jump on the library songs. So the loop's sound comes from Web Audio instead:

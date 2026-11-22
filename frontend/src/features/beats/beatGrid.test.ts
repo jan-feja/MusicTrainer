@@ -23,7 +23,7 @@ const ANALYSIS: BeatAnalysis = {
   beats: BEATS,
   downbeats: [1, 3, 5, 7],
   analyzer: 'test',
-  hints: { beatsPerBar: null, tempoBpm: null, barStarts: [], steadyTempo: false },
+  hints: { beatsPerBar: null, tempoBpm: null, barStarts: [], steadyTempo: false, sections: [] },
 }
 
 describe('barLengths', () => {

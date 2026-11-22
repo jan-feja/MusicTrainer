@@ -1,0 +1,316 @@
+{
+ "summary": {
+  "songs": 38,
+  "section_starts": 426,
+  "percentile": 0.698,
+  "top20": 0.432,
+  "chance_percentile": 0.582,
+  "chance_top20": 0.271
+ },
+ "per_song": [
+  {
+   "song": "0009_americanmusic",
+   "starts": 7,
+   "percentile": 0.756052141527002,
+   "top20": 0.42857142857142855,
+   "chance_percentile": 0.5714152700186219,
+   "chance_top20": 0.255
+  },
+  {
+   "song": "0014_babaoriley",
+   "starts": 5,
+   "percentile": 0.8926372155287817,
+   "top20": 1.0,
+   "chance_percentile": 0.578222891566265,
+   "chance_top20": 0.275
+  },
+  {
+   "song": "0027_blackened",
+   "starts": 11,
+   "percentile": 0.7513414073279165,
+   "top20": 0.7272727272727273,
+   "chance_percentile": 0.509983136593592,
+   "chance_top20": 0.225
+  },
+  {
+   "song": "0028_blackmagic",
+   "starts": 7,
+   "percentile": 0.7575683890577507,
+   "top20": 0.5714285714285714,
+   "chance_percentile": 0.5985914893617021,
+   "chance_top20": 0.26
+  },
+  {
+   "song": "0038_bringmetolife",
+   "starts": 11,
+   "percentile": 0.45476736445003324,
+   "top20": 0.2727272727272727,
+   "chance_percentile": 0.5826240846216437,
+   "chance_top20": 0.275
+  },
+  {
+   "song": "0058_criticalacclaim",
+   "starts": 7,
+   "percentile": 0.527780362959516,
+   "top20": 0.14285714285714285,
+   "chance_percentile": 0.5824201954397394,
+   "chance_top20": 0.27
+  },
+  {
+   "song": "0065_deadandbloated",
+   "starts": 11,
+   "percentile": 0.8114655792756055,
+   "top20": 0.5454545454545454,
+   "chance_percentile": 0.5911345646437994,
+   "chance_top20": 0.3
+  },
+  {
+   "song": "0066_decentdaysandnights",
+   "starts": 13,
+   "percentile": 0.6572354848216917,
+   "top20": 0.3076923076923077,
+   "chance_percentile": 0.5997637292464879,
+   "chance_top20": 0.285
+  },
+  {
+   "song": "0068_devilsisland",
+   "starts": 16,
+   "percentile": 0.6536871693121693,
+   "top20": 0.5,
+   "chance_percentile": 0.5214550264550265,
+   "chance_top20": 0.19
+  },
+  {
+   "song": "0096_fivemagics",
+   "starts": 12,
+   "percentile": 0.7543309438470729,
+   "top20": 0.6666666666666666,
+   "chance_percentile": 0.5435065710872162,
+   "chance_top20": 0.245
+  },
+  {
+   "song": "0100_futureperfecttense",
+   "starts": 10,
+   "percentile": 0.7473490427098675,
+   "top20": 0.5,
+   "chance_percentile": 0.5691973490427099,
+   "chance_top20": 0.295
+  },
+  {
+   "song": "0110_girlsandboys",
+   "starts": 7,
+   "percentile": 0.6869970845481049,
+   "top20": 0.5714285714285714,
+   "chance_percentile": 0.5625632653061224,
+   "chance_top20": 0.235
+  },
+  {
+   "song": "0117_goodmorningblackfriday",
+   "starts": 10,
+   "percentile": 0.7069897959183673,
+   "top20": 0.4,
+   "chance_percentile": 0.5195255102040817,
+   "chance_top20": 0.22
+  },
+  {
+   "song": "0142_indestructible",
+   "starts": 10,
+   "percentile": 0.733157894736842,
+   "top20": 0.3,
+   "chance_percentile": 0.5821015037593985,
+   "chance_top20": 0.285
+  },
+  {
+   "song": "0162_lobotomy",
+   "starts": 8,
+   "percentile": 0.454275092936803,
+   "top20": 0.125,
+   "chance_percentile": 0.6149330855018588,
+   "chance_top20": 0.33
+  },
+  {
+   "song": "0182_mycurse",
+   "starts": 14,
+   "percentile": 0.6628498727735368,
+   "top20": 0.35714285714285715,
+   "chance_percentile": 0.5640797285835454,
+   "chance_top20": 0.265
+  },
+  {
+   "song": "0191_newslang",
+   "starts": 10,
+   "percentile": 0.7646743978590544,
+   "top20": 0.5,
+   "chance_percentile": 0.6002408563782337,
+   "chance_top20": 0.265
+  },
+  {
+   "song": "0199_numberofthebeast2",
+   "starts": 15,
+   "percentile": 0.7083156654888103,
+   "top20": 0.4,
+   "chance_percentile": 0.5996289752650177,
+   "chance_top20": 0.305
+  },
+  {
+   "song": "0243_saucyjack",
+   "starts": 5,
+   "percentile": 0.5555066079295156,
+   "top20": 0.0,
+   "chance_percentile": 0.6104074889867842,
+   "chance_top20": 0.305
+  },
+  {
+   "song": "0255_sleepwalker",
+   "starts": 26,
+   "percentile": 0.6106659544159544,
+   "top20": 0.3076923076923077,
+   "chance_percentile": 0.5754774305555556,
+   "chance_top20": 0.24
+  },
+  {
+   "song": "0265_straightlines",
+   "starts": 13,
+   "percentile": 0.7476252560998323,
+   "top20": 0.5384615384615384,
+   "chance_percentile": 0.5728813559322034,
+   "chance_top20": 0.285
+  },
+  {
+   "song": "0280_thedayitriedtolive",
+   "starts": 13,
+   "percentile": 0.8094697343734573,
+   "top20": 0.6153846153846154,
+   "chance_percentile": 0.557439024390244,
+   "chance_top20": 0.22
+  },
+  {
+   "song": "0289_thisisexile",
+   "starts": 11,
+   "percentile": 0.6814789687924017,
+   "top20": 0.2727272727272727,
+   "chance_percentile": 0.587714552238806,
+   "chance_top20": 0.25
+  },
+  {
+   "song": "0293_tomsawyer2",
+   "starts": 12,
+   "percentile": 0.7733609645817633,
+   "top20": 0.5,
+   "chance_percentile": 0.5928485305199698,
+   "chance_top20": 0.24
+  },
+  {
+   "song": "0301_unclejohnsband",
+   "starts": 18,
+   "percentile": 0.7022525760843518,
+   "top20": 0.4444444444444444,
+   "chance_percentile": 0.6168583752695902,
+   "chance_top20": 0.355
+  },
+  {
+   "song": "0303_wakeupdead",
+   "starts": 11,
+   "percentile": 0.7872161480235491,
+   "top20": 0.5454545454545454,
+   "chance_percentile": 0.562565180824222,
+   "chance_top20": 0.225
+  },
+  {
+   "song": "0312_whitefalconfuzz",
+   "starts": 11,
+   "percentile": 0.6617100371747213,
+   "top20": 0.2727272727272727,
+   "chance_percentile": 0.618271375464684,
+   "chance_top20": 0.32
+  },
+  {
+   "song": "0343_banjo",
+   "starts": 13,
+   "percentile": 0.6454385309347141,
+   "top20": 0.38461538461538464,
+   "chance_percentile": 0.6055690492713394,
+   "chance_top20": 0.26
+  },
+  {
+   "song": "0362_crazygirl",
+   "starts": 10,
+   "percentile": 0.6685641461342395,
+   "top20": 0.4,
+   "chance_percentile": 0.6066525063721326,
+   "chance_top20": 0.31
+  },
+  {
+   "song": "0380_everybodytalks",
+   "starts": 10,
+   "percentile": 0.6835398230088494,
+   "top20": 0.4,
+   "chance_percentile": 0.6040353982300884,
+   "chance_top20": 0.26
+  },
+  {
+   "song": "0400_heatofthemoment",
+   "starts": 10,
+   "percentile": 0.8247058823529411,
+   "top20": 0.6,
+   "chance_percentile": 0.5879852941176471,
+   "chance_top20": 0.29
+  },
+  {
+   "song": "0426_justcantgetenough",
+   "starts": 12,
+   "percentile": 0.7409850483729112,
+   "top20": 0.5,
+   "chance_percentile": 0.5709718557607739,
+   "chance_top20": 0.275
+  },
+  {
+   "song": "0462_oldalabama",
+   "starts": 12,
+   "percentile": 0.5653594771241831,
+   "top20": 0.25,
+   "chance_percentile": 0.5481941808981657,
+   "chance_top20": 0.25
+  },
+  {
+   "song": "0566_americanwoman",
+   "starts": 9,
+   "percentile": 0.8354751289448379,
+   "top20": 0.6666666666666666,
+   "chance_percentile": 0.5823721479150276,
+   "chance_top20": 0.275
+  },
+  {
+   "song": "0625_complicated",
+   "starts": 13,
+   "percentile": 0.6693437068640985,
+   "top20": 0.3076923076923077,
+   "chance_percentile": 0.5993352365415987,
+   "chance_top20": 0.25
+  },
+  {
+   "song": "0734_iftodaywasyourlastday",
+   "starts": 10,
+   "percentile": 0.7161960132890365,
+   "top20": 0.5,
+   "chance_percentile": 0.6302367109634551,
+   "chance_top20": 0.35
+  },
+  {
+   "song": "0744_immabe",
+   "starts": 11,
+   "percentile": 0.5904040404040404,
+   "top20": 0.36363636363636365,
+   "chance_percentile": 0.575376984126984,
+   "chance_top20": 0.285
+  },
+  {
+   "song": "0838_nowimallmessedup",
+   "starts": 12,
+   "percentile": 0.7854771784232367,
+   "top20": 0.4166666666666667,
+   "chance_percentile": 0.6119170124481328,
+   "chance_top20": 0.27
+  }
+ ]
+}

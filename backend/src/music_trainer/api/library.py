@@ -1,7 +1,10 @@
-"""/api/library: downloaded videos, their media, thumbnails, saved loops and player settings."""
+"""/api/library: downloaded videos, their media, thumbnails, saved loops, player settings and
+pictures of the music."""
 
+import base64
 from typing import Annotated
 
+import numpy as np
 from fastapi import APIRouter, Body, HTTPException, Query, Response, status
 from fastapi.responses import FileResponse
 
@@ -12,9 +15,22 @@ from music_trainer.api.dependencies import (
     SettingsDependency,
     VideoIdParameter,
 )
-from music_trainer.models import LibraryVideo, PlayerSettings, SavedLoop, VideoMetadata
-from music_trainer.services.audio import AudioDecodeError, extract_wav, ffmpeg_executable
+from music_trainer.models import (
+    LibraryVideo,
+    MusicVisual,
+    PlayerSettings,
+    SavedLoop,
+    VideoMetadata,
+)
+from music_trainer.services.audio import (
+    AudioDecodeError,
+    decode_audio,
+    extract_wav,
+    ffmpeg_executable,
+)
 from music_trainer.services.library import LibraryError, VideoNotInLibraryError
+from music_trainer.services.visual import SAMPLE_RATE as PICTURE_SAMPLE_RATE
+from music_trainer.services.visual import compute_picture
 
 router = APIRouter(prefix="/api/library", tags=["library"])
 
@@ -25,6 +41,7 @@ def to_library_video(metadata: VideoMetadata) -> LibraryVideo:
         **metadata.model_dump(exclude={"media_file", "thumbnail_file"}),
         media_url=f"{base_url}/media",
         audio_url=f"{base_url}/audio",
+        visual_url=f"{base_url}/visual",
         thumbnail_url=f"{base_url}/thumbnail" if metadata.thumbnail_file else None,
     )
 
@@ -104,6 +121,51 @@ def get_audio(
     except AudioDecodeError as error:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(error)) from error
     return Response(wav, media_type="audio/wav")
+
+
+@router.get("/{video_id}/visual", response_model=MusicVisual)
+def get_visual(
+    video_id: VideoIdParameter, library: LibraryDependency, settings: SettingsDependency
+) -> MusicVisual:
+    """
+    A spectrogram, section colors and the beat network's output, for the grid editor.
+    Computed on first request (a few seconds) and stored with the video.
+    """
+    path = library.media_path(video_id)
+    if path is None:
+        raise _not_found(video_id)
+    picture = library.read_picture(video_id)
+    if picture is None:
+        try:
+            samples = decode_audio(
+                path, PICTURE_SAMPLE_RATE, ffmpeg_executable(settings.ffmpeg_path)
+            )
+        except AudioDecodeError as error:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(error)) from error
+        picture = compute_picture(samples)
+        try:
+            library.write_picture(video_id, picture)
+        except VideoNotInLibraryError as error:
+            raise _not_found(video_id) from error
+    activations = library.read_beat_activations(video_id)
+
+    def encode(values: np.ndarray) -> str:
+        return base64.b64encode(np.ascontiguousarray(values, dtype=np.uint8).tobytes()).decode()
+
+    def probability(logits: np.ndarray) -> np.ndarray:
+        return np.round(255 / (1 + np.exp(-logits.astype(np.float64))))
+
+    return MusicVisual(
+        fps=picture.fps,
+        bands=picture.spectrogram.shape[1] if picture.spectrogram.ndim == 2 else 0,
+        frames=len(picture.spectrogram),
+        spectrogram=encode(picture.spectrogram),
+        color_step=picture.color_step,
+        colors=encode(picture.colors),
+        beat_fps=activations.fps if activations else None,
+        beat=encode(probability(activations.beat)) if activations else None,
+        downbeat=encode(probability(activations.downbeat)) if activations else None,
+    )
 
 
 MAX_LOOPS = 200

@@ -1,5 +1,7 @@
 """HTTP API, end to end with a fake YouTube client."""
 
+import base64
+
 from fastapi.testclient import TestClient
 
 from music_trainer.config import Settings
@@ -154,6 +156,23 @@ class TestLibrary:
         response = client.get(f"/api/library/{VIDEO_ID}/audio", params={"start": 0, "end": 1})
         assert response.status_code == 500
         assert "could not read" in response.json()["detail"]
+
+    @requires_ffmpeg
+    def test_visual(self, client: TestClient, settings: Settings) -> None:
+        download(client)
+        write_sine_wav(settings.library_dir / VIDEO_ID / "video.mp4", seconds=3.0)
+        visual = client.get(f"/api/library/{VIDEO_ID}/visual").json()
+        assert visual["bands"] == 64
+        assert abs(visual["frames"] - 150) <= 2
+        assert len(base64.b64decode(visual["spectrogram"])) == visual["frames"] * visual["bands"]
+        assert len(base64.b64decode(visual["colors"])) == 3 * int(3.0 / visual["colorStep"])
+        assert (settings.library_dir / VIDEO_ID / "visual.npz").is_file()
+        # the stored picture is used the next time (even if the media changes)
+        (settings.library_dir / VIDEO_ID / "video.mp4").write_bytes(b"not audio")
+        assert client.get(f"/api/library/{VIDEO_ID}/visual").json() == visual
+
+    def test_visual_of_a_missing_video(self, client: TestClient) -> None:
+        assert client.get(f"/api/library/{VIDEO_ID}/visual").status_code == 404
 
     def test_thumbnail(self, client: TestClient) -> None:
         download(client)

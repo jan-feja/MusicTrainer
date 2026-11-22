@@ -3,6 +3,7 @@ import type {
   BeatTrackingState,
   DownloadJob,
   LibraryVideo,
+  MusicVisual,
   PlayerSettings,
   SavedLoop,
   SearchResult,
@@ -107,6 +108,11 @@ export const api = {
         body: JSON.stringify(options.hints),
       }),
     })
+  },
+
+  /** Spectrogram, section colors and the beat network's output (computed on first request). */
+  getVisual(videoId: string, signal?: AbortSignal): Promise<MusicVisual> {
+    return request(`${videoPath(videoId)}/visual`, { signal })
   },
 
   getLoops(videoId: string, signal?: AbortSignal): Promise<SavedLoop[]> {
