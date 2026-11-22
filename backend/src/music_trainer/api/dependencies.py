@@ -27,6 +27,10 @@ def get_services(request: Request) -> Services:
     return request.app.state.services
 
 
+def get_settings(request: Request) -> Settings:
+    return get_services(request).settings
+
+
 def get_library(request: Request) -> Library:
     return get_services(request).library
 
@@ -43,6 +47,7 @@ def get_beat_analysis(request: Request) -> BeatAnalysisManager:
     return get_services(request).beat_analysis
 
 
+SettingsDependency = Annotated[Settings, Depends(get_settings)]
 LibraryDependency = Annotated[Library, Depends(get_library)]
 YouTubeDependency = Annotated[YouTubeClient, Depends(get_youtube)]
 DownloadsDependency = Annotated[DownloadManager, Depends(get_downloads)]

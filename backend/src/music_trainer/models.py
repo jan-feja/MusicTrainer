@@ -61,6 +61,8 @@ class LibraryVideo(ApiModel):
     source_url: str
     downloaded_at: datetime | None = None
     media_url: str
+    audio_url: str
+    """A section of the audio as WAV: `?start=&end=` in seconds (for gapless loops)."""
     thumbnail_url: str | None = None
 
 

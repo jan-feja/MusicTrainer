@@ -1,6 +1,8 @@
 """Reading audio out of downloaded media files with ffmpeg."""
 
+import io
 import subprocess
+import wave
 from pathlib import Path
 
 import numpy as np
@@ -21,11 +23,44 @@ def ffmpeg_executable(configured: Path | None) -> str:
 
 def decode_audio(path: Path, sample_rate: int, ffmpeg: str = "ffmpeg") -> np.ndarray:
     """Decode the audio of any media file to mono float32 samples at `sample_rate`."""
-    command = [
+    output = _run_ffmpeg(
+        path, ffmpeg, ["-i", str(path), "-vn", "-ac", "1", "-ar", str(sample_rate), "-f", "f32le"]
+    )
+    samples = np.frombuffer(output, dtype=np.float32)
+    if samples.size == 0:
+        raise AudioDecodeError(f"{path.name} contains no audio")
+    return samples
+
+
+def extract_wav(
+    path: Path, start: float, end: float, sample_rate: int, ffmpeg: str = "ffmpeg"
+) -> bytes:
+    """
+    The audio from `start` to `end` seconds as a 16-bit stereo WAV file.
+
+    Sample-exact: the first sample is the one the browser plays at `start`.
+    Shorter than asked when the media ends earlier.
+    """
+    output = _run_ffmpeg(
+        path,
         ffmpeg,
-        *("-v", "error", "-nostdin", "-i", str(path)),
-        *("-vn", "-ac", "1", "-ar", str(sample_rate), "-f", "f32le", "-"),
-    ]
+        [
+            *("-ss", f"{start:.6f}", "-i", str(path), "-t", f"{end - start:.6f}"),
+            *("-vn", "-ac", "2", "-ar", str(sample_rate), "-f", "s16le"),
+        ],
+    )
+    # written here rather than by ffmpeg, which cannot fill in the sizes when writing to a pipe
+    buffer = io.BytesIO()
+    with wave.open(buffer, "wb") as file:
+        file.setnchannels(2)
+        file.setsampwidth(2)
+        file.setframerate(sample_rate)
+        file.writeframes(output)
+    return buffer.getvalue()
+
+
+def _run_ffmpeg(path: Path, ffmpeg: str, arguments: list[str]) -> bytes:
+    command = [ffmpeg, "-v", "error", "-nostdin", *arguments, "-"]
     try:
         result = subprocess.run(command, capture_output=True, check=True)
     except FileNotFoundError as error:
@@ -35,7 +70,4 @@ def decode_audio(path: Path, sample_rate: int, ffmpeg: str = "ffmpeg") -> np.nda
     except subprocess.CalledProcessError as error:
         detail = error.stderr.decode(errors="replace").strip()[-300:]
         raise AudioDecodeError(f"ffmpeg could not read {path.name}: {detail}") from error
-    samples = np.frombuffer(result.stdout, dtype=np.float32)
-    if samples.size == 0:
-        raise AudioDecodeError(f"{path.name} contains no audio")
-    return samples
+    return result.stdout
