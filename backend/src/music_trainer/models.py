@@ -7,9 +7,9 @@ because they are mainly read by Python code.
 
 from datetime import date, datetime
 from enum import StrEnum
-from typing import Annotated
+from typing import Annotated, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
 
 from music_trainer.video_ids import VIDEO_ID_PATTERN
@@ -146,3 +146,47 @@ class BeatTrackingState(ApiModel):
     status: AnalysisStatus
     analysis: BeatAnalysis | None = None
     error: str | None = None
+
+
+SnapMode = Literal["off", "beat", "bar"]
+"""What loop points snap to: nothing, beats or bar starts."""
+
+LOOP_ID_PATTERN = r"^[A-Za-z0-9_-]{1,40}$"
+MIN_PLAYBACK_RATE = 0.25
+MAX_PLAYBACK_RATE = 2.0
+
+
+class SavedLoop(ApiModel):
+    """A practice loop saved with a video; the video's loops.json holds a list of them."""
+
+    id: str = Field(pattern=LOOP_ID_PATTERN)
+    name: str = Field(min_length=1, max_length=100)
+    start: float = Field(ge=0)
+    end: float = Field(gt=0)
+    snap_mode: SnapMode = "off"
+    """How the loop points were set; selecting the loop sets the snap again."""
+    playback_rate: float = Field(default=1.0, ge=MIN_PLAYBACK_RATE, le=MAX_PLAYBACK_RATE)
+    """The speed the loop is practiced at."""
+
+    @model_validator(mode="after")
+    def _end_after_start(self) -> Self:
+        if self.end <= self.start:
+            raise ValueError("end must be after start")
+        return self
+
+
+class PlayerSettings(ApiModel):
+    """How the player was left for a video (its player.json); restored when it is opened."""
+
+    volume: float = Field(default=1.0, ge=0, le=1)
+    muted: bool = False
+    playback_rate: float = Field(default=1.0, ge=MIN_PLAYBACK_RATE, le=MAX_PLAYBACK_RATE)
+    snap_mode: SnapMode | None = None
+    """None: whatever the browser used last."""
+    position: float = Field(default=0, ge=0)
+    """Playback position in seconds."""
+    loop_start: float | None = Field(default=None, ge=0)
+    loop_end: float | None = Field(default=None, ge=0)
+    loop_enabled: bool = False
+    active_loop_id: str | None = Field(default=None, pattern=LOOP_ID_PATTERN)
+    """The saved loop being played and edited, if any."""

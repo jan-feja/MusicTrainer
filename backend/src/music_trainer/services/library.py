@@ -5,28 +5,34 @@
     <library>/<video_id>/thumbnail.jpg   optional
     <library>/<video_id>/analysis.json   BeatAnalysis (beats and bar starts), once detected
     <library>/<video_id>/beat_activations.npz  beat network output, to decode again with new hints
+    <library>/<video_id>/loops.json      the user's saved loops (list of SavedLoop)
+    <library>/<video_id>/player.json     how the player was left (PlayerSettings)
     <library>/.staging/<video_id>/       downloads in progress, moved into place when done
 
-Later features (stems, loops.json, ...) belong in the same folder.
+Later features (stems, ...) belong in the same folder.
 """
 
 import logging
 import shutil
 import threading
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TypeVar
 
 import numpy as np
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from music_trainer.models import BeatAnalysis, VideoMetadata
+from music_trainer.models import BeatAnalysis, PlayerSettings, SavedLoop, VideoMetadata
 from music_trainer.services.beat_decoding import BeatActivations
 from music_trainer.video_ids import require_valid_video_id
 
 logger = logging.getLogger(__name__)
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
+DELETE_ATTEMPTS = 5
+DELETE_RETRY_SECONDS = 0.1
+_LOOP_LIST = TypeAdapter(list[SavedLoop])
 
 
 class LibraryError(Exception):
@@ -42,6 +48,8 @@ class Library:
     METADATA_FILE = "meta.json"
     ANALYSIS_FILE = "analysis.json"
     ACTIVATIONS_FILE = "beat_activations.npz"
+    LOOPS_FILE = "loops.json"
+    SETTINGS_FILE = "player.json"
     STAGING_DIR = ".staging"
 
     def __init__(self, root: Path) -> None:
@@ -84,12 +92,27 @@ class Library:
         return self._read_json(self._video_dir(video_id) / self.ANALYSIS_FILE, BeatAnalysis)
 
     def write_beat_analysis(self, video_id: str, analysis: BeatAnalysis) -> None:
-        if not self.contains(video_id):
-            raise VideoNotInLibraryError(video_id)
-        target = self._video_dir(video_id) / self.ANALYSIS_FILE
-        partial = target.with_name(target.name + ".part")
-        partial.write_text(analysis.model_dump_json(), encoding="utf-8")
-        partial.replace(target)  # readers never see a half-written file
+        self._write_text(video_id, self.ANALYSIS_FILE, analysis.model_dump_json())
+
+    def read_loops(self, video_id: str) -> list[SavedLoop]:
+        """The saved loops; empty if there are none (or the file is unreadable)."""
+        path = self._video_dir(video_id) / self.LOOPS_FILE
+        if not path.is_file():
+            return []
+        try:
+            return _LOOP_LIST.validate_json(path.read_text(encoding="utf-8"))
+        except (OSError, ValidationError) as error:
+            logger.warning("Ignoring unreadable %s: %s", path, error)
+            return []
+
+    def write_loops(self, video_id: str, loops: list[SavedLoop]) -> None:
+        self._write_text(video_id, self.LOOPS_FILE, _LOOP_LIST.dump_json(loops, indent=2).decode())
+
+    def read_player_settings(self, video_id: str) -> PlayerSettings | None:
+        return self._read_json(self._video_dir(video_id) / self.SETTINGS_FILE, PlayerSettings)
+
+    def write_player_settings(self, video_id: str, settings: PlayerSettings) -> None:
+        self._write_text(video_id, self.SETTINGS_FILE, settings.model_dump_json(indent=2))
 
     def read_beat_activations(self, video_id: str) -> BeatActivations | None:
         """The stored beat network output, or None if missing or unreadable."""
@@ -128,10 +151,17 @@ class Library:
         folder = self._video_dir(video_id)
         if not folder.exists():
             return False
-        try:
-            shutil.rmtree(folder)
-        except OSError as error:  # on Windows: file still open, e.g. being played
-            raise LibraryError(f"Could not delete {video_id}: {error.strerror}") from error
+        for attempt in range(DELETE_ATTEMPTS):
+            try:
+                shutil.rmtree(folder)
+                return True
+            except OSError as error:
+                # on Windows, files open elsewhere cannot be deleted: a background job writing
+                # into the folder is done in a moment, a video being played stays open
+                if attempt == DELETE_ATTEMPTS - 1:
+                    message = f"Could not delete {video_id}: {error.strerror}"
+                    raise LibraryError(message) from error
+                time.sleep(DELETE_RETRY_SECONDS)
         return True
 
     def create_staging_dir(self, video_id: str) -> Path:
@@ -164,6 +194,14 @@ class Library:
 
     def _video_dir(self, video_id: str) -> Path:
         return self._root / require_valid_video_id(video_id)
+
+    def _write_text(self, video_id: str, file_name: str, text: str) -> None:
+        if not self.contains(video_id):
+            raise VideoNotInLibraryError(video_id)
+        target = self._video_dir(video_id) / file_name
+        partial = target.with_name(target.name + ".part")
+        partial.write_text(text, encoding="utf-8")
+        partial.replace(target)  # readers never see a half-written file
 
     def _staging_dir(self, video_id: str) -> Path:
         return self._root / self.STAGING_DIR / require_valid_video_id(video_id)

@@ -1,8 +1,8 @@
-"""/api/library: downloaded videos, their media files and thumbnails."""
+"""/api/library: downloaded videos, their media, thumbnails, saved loops and player settings."""
 
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query, Response, status
+from fastapi import APIRouter, Body, HTTPException, Query, Response, status
 from fastapi.responses import FileResponse
 
 from music_trainer.api.dependencies import (
@@ -12,9 +12,9 @@ from music_trainer.api.dependencies import (
     SettingsDependency,
     VideoIdParameter,
 )
-from music_trainer.models import LibraryVideo, VideoMetadata
+from music_trainer.models import LibraryVideo, PlayerSettings, SavedLoop, VideoMetadata
 from music_trainer.services.audio import AudioDecodeError, extract_wav, ffmpeg_executable
-from music_trainer.services.library import LibraryError
+from music_trainer.services.library import LibraryError, VideoNotInLibraryError
 
 router = APIRouter(prefix="/api/library", tags=["library"])
 
@@ -104,6 +104,52 @@ def get_audio(
     except AudioDecodeError as error:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(error)) from error
     return Response(wav, media_type="audio/wav")
+
+
+MAX_LOOPS = 200
+
+
+@router.get("/{video_id}/loops", response_model=list[SavedLoop])
+def get_loops(video_id: VideoIdParameter, library: LibraryDependency) -> list[SavedLoop]:
+    """The loops saved with the video (stored in its loops.json)."""
+    if not library.contains(video_id):
+        raise _not_found(video_id)
+    return library.read_loops(video_id)
+
+
+@router.put("/{video_id}/loops", response_model=list[SavedLoop])
+def put_loops(
+    video_id: VideoIdParameter,
+    library: LibraryDependency,
+    loops: Annotated[list[SavedLoop], Body(max_length=MAX_LOOPS)],
+) -> list[SavedLoop]:
+    """Replace the saved loops."""
+    if len({loop.id for loop in loops}) != len(loops):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Loop ids must be unique")
+    try:
+        library.write_loops(video_id, loops)
+    except VideoNotInLibraryError as error:
+        raise _not_found(video_id) from error
+    return loops
+
+
+@router.get("/{video_id}/settings", response_model=PlayerSettings)
+def get_player_settings(video_id: VideoIdParameter, library: LibraryDependency) -> PlayerSettings:
+    """How the player was left for the video (defaults if it was never opened)."""
+    if not library.contains(video_id):
+        raise _not_found(video_id)
+    return library.read_player_settings(video_id) or PlayerSettings()
+
+
+@router.put("/{video_id}/settings", response_model=PlayerSettings)
+def put_player_settings(
+    video_id: VideoIdParameter, library: LibraryDependency, settings: PlayerSettings
+) -> PlayerSettings:
+    try:
+        library.write_player_settings(video_id, settings)
+    except VideoNotInLibraryError as error:
+        raise _not_found(video_id) from error
+    return settings
 
 
 @router.get("/{video_id}/thumbnail")

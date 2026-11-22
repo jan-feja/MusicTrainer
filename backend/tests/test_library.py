@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from music_trainer.models import BeatAnalysis, VideoMetadata
+from music_trainer.models import BeatAnalysis, PlayerSettings, SavedLoop, VideoMetadata
 from music_trainer.services.beat_decoding import BeatActivations
 from music_trainer.services.library import Library, VideoNotInLibraryError
 from music_trainer.video_ids import InvalidVideoIdError, watch_url
@@ -133,3 +133,44 @@ def test_unreadable_beat_analysis_is_ignored(library: Library) -> None:
     add_video(library)
     (library.root / VIDEO_ID / "analysis.json").write_text("{broken")
     assert library.read_beat_analysis(VIDEO_ID) is None
+
+
+def test_loops_roundtrip(library: Library) -> None:
+    add_video(library)
+    assert library.read_loops(VIDEO_ID) == []
+    loops = [
+        SavedLoop(id="a1", name="Verse", start=10.5, end=20.25, snap_mode="bar"),
+        SavedLoop(id="b2", name="Solo", start=60, end=66.4, playback_rate=0.75),
+    ]
+    library.write_loops(VIDEO_ID, loops)
+    assert library.read_loops(VIDEO_ID) == loops
+    # files on disk use snake_case
+    assert '"snap_mode": "bar"' in (library.root / VIDEO_ID / "loops.json").read_text()
+
+
+def test_player_settings_roundtrip(library: Library) -> None:
+    add_video(library)
+    assert library.read_player_settings(VIDEO_ID) is None
+    settings = PlayerSettings(
+        volume=0.4, playback_rate=0.8, loop_start=3, loop_end=7, active_loop_id="a1"
+    )
+    library.write_player_settings(VIDEO_ID, settings)
+    assert library.read_player_settings(VIDEO_ID) == settings
+
+
+def test_loops_and_settings_need_the_video(library: Library) -> None:
+    with pytest.raises(VideoNotInLibraryError):
+        library.write_loops(VIDEO_ID, [])
+    with pytest.raises(VideoNotInLibraryError):
+        library.write_player_settings(VIDEO_ID, PlayerSettings())
+
+
+def test_unreadable_loops_are_ignored(library: Library) -> None:
+    add_video(library)
+    (library.root / VIDEO_ID / "loops.json").write_text("[{broken")
+    assert library.read_loops(VIDEO_ID) == []
+
+
+def test_loop_must_end_after_it_starts() -> None:
+    with pytest.raises(ValueError, match="end must be after start"):
+        SavedLoop(id="x", name="Bad", start=5, end=5)
