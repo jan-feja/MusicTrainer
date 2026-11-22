@@ -6,6 +6,7 @@ import type {
   PlayerSettings,
   SavedLoop,
   SearchResult,
+  StemSeparationState,
 } from './types'
 
 const API_BASE = '/api'
@@ -107,6 +108,21 @@ export const api = {
         body: JSON.stringify(options.hints),
       }),
     })
+  },
+
+  getStems(videoId: string, signal?: AbortSignal): Promise<StemSeparationState> {
+    return request(`${videoPath(videoId)}/stems`, { signal })
+  },
+
+  /** Start separating the video into stems; `force` separates again even if stems exist. */
+  separateStems(videoId: string, options: { force?: boolean } = {}): Promise<StemSeparationState> {
+    const query = options.force ? '?force=true' : ''
+    return request(`${videoPath(videoId)}/stems${query}`, { method: 'POST' })
+  },
+
+  /** Where one stem's audio (FLAC) is served. */
+  stemUrl(videoId: string, name: string): string {
+    return `${API_BASE}${videoPath(videoId)}/stems/${encodeURIComponent(name)}`
   },
 
   getLoops(videoId: string, signal?: AbortSignal): Promise<SavedLoop[]> {

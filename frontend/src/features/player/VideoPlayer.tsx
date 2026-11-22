@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import type { PlayerSettings, SavedLoop } from '../../api/types'
+import type { MixerSettings, PlayerSettings, SavedLoop } from '../../api/types'
 import { ExitFullscreenIcon, FullscreenIcon, PauseIcon, PlayIcon } from '../../components/icons'
 import { formatTime } from '../../lib/format'
 import { useLatest } from '../../lib/useLatest'
@@ -28,6 +28,16 @@ import {
   useRestorePlayerSettings,
 } from '../practice/playerSettings'
 import { SavedLoopMarks } from '../practice/SavedLoopMarks'
+import {
+  mixerGains,
+  withMuteToggled,
+  withSoloToggled,
+  withStemsEnabled,
+  withVolume,
+} from '../stems/mixer'
+import { StemsControls } from '../stems/StemsControls'
+import { useStemPlayer } from '../stems/useStemPlayer'
+import { useStems } from '../stems/useStems'
 import { SavedLoops } from '../practice/SavedLoops'
 import { createLoop, describeLoop } from '../practice/loopList'
 import { useSavedLoops } from '../practice/useSavedLoops'
@@ -77,6 +87,8 @@ export interface PlayerPractice {
 }
 
 interface VideoPlayerProps {
+  /** The library video; offers its stems (instruments separated on the server). */
+  videoId?: string
   src: string
   /** Sections of the audio as WAV (`?start=&end=`); lets the loop play without a gap. */
   audioUrl?: string
@@ -94,6 +106,7 @@ interface VideoPlayerProps {
  * state starts over when the video changes.
  */
 export function VideoPlayer({
+  videoId,
   src,
   audioUrl,
   poster,
@@ -117,6 +130,15 @@ export function VideoPlayer({
   )
   useRestorePlayerSettings(videoRef, initialSettings, saved.active, loop)
 
+  const [mixer, setMixer] = useState<MixerSettings | null>(initialSettings?.mixer ?? null)
+  const stemsEnabled = mixer?.enabled ?? false
+  const stems = useStems(videoId ?? '', videoId !== undefined && stemsEnabled)
+  const stemTracks = stems.status.kind === 'ready' ? stems.status.tracks : null
+  const stemGains = useMemo(
+    () => mixerGains(stemTracks?.map((track) => track.name) ?? [], mixer),
+    [stemTracks, mixer],
+  )
+
   const analysis = beatTracking?.analysis ?? null
   const grid = useMemo(
     () => (analysis && analysis.beats.length >= 2 ? createBeatGrid(analysis) : null),
@@ -135,10 +157,18 @@ export function VideoPlayer({
       ? { start: Math.max(0, region.start - lead), end: region.end - lead }
       : null
   const expectedStart = loop.start !== null && loop.end === null ? loop.start - lead : null
-  const gaplessLoop = useGaplessLoop(videoRef, audioUrl, playedRegion, expectedStart)
+  // the stems play loops gapless themselves
+  const stemPlayer = useStemPlayer(videoRef, stemTracks, stemGains, playedRegion)
+  const gaplessLoop = useGaplessLoop(
+    videoRef,
+    stemTracks ? undefined : audioUrl,
+    playedRegion,
+    expectedStart,
+  )
 
   const playback = useVideoPlayback(videoRef, {
     onFrame: (video) => {
+      if (stemPlayer.current?.tick()) return
       if (gaplessLoop.current?.tick()) return
       const target = loopJumpTarget(loopRef.current, video.currentTime, leadRef.current)
       if (target !== null) video.currentTime = target
@@ -146,12 +176,13 @@ export function VideoPlayer({
     // a loop that ends at the very end of the video: start over instead of stopping
     onEnded: (video) => {
       const region = getLoopRegion(loopRef.current)
-      if (loopRef.current.enabled && region && !gaplessLoop.current?.active) {
+      const playedElsewhere = gaplessLoop.current?.active || stemPlayer.current?.active
+      if (loopRef.current.enabled && region && !playedElsewhere) {
         video.currentTime = Math.max(0, region.start - leadRef.current)
         video.play().catch(() => {})
       }
     },
-    clock: () => gaplessLoop.current?.position() ?? null,
+    clock: () => stemPlayer.current?.position() ?? gaplessLoop.current?.position() ?? null,
   })
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
   const duration = playback.duration
@@ -168,6 +199,7 @@ export function VideoPlayer({
       loopEnd: loop.end,
       loopEnabled: loop.enabled,
       activeLoopId: saved.activeId,
+      mixer,
     },
     duration > 0,
     initialSettings,
@@ -475,6 +507,22 @@ export function VideoPlayer({
                 onSnapModeChange={changeSnapMode}
                 onMoveBarStarts={moveBarStarts}
                 onResetBarStarts={resetBarStarts}
+              />
+            </div>
+          )}
+          {videoId && (
+            <div className={controlStyles.row}>
+              <StemsControls
+                stems={stems}
+                enabled={stemsEnabled}
+                gains={stemGains}
+                mixer={mixer}
+                onToggle={() => setMixer((current) => withStemsEnabled(current, !stemsEnabled))}
+                onToggleMute={(name) => setMixer((current) => withMuteToggled(current, name))}
+                onToggleSolo={(name) => setMixer((current) => withSoloToggled(current, name))}
+                onVolumeChange={(name, volume) =>
+                  setMixer((current) => withVolume(current, name, volume))
+                }
               />
             </div>
           )}
