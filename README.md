@@ -8,7 +8,7 @@ An app for practising music with songs. The idea and planned features are in [do
 - **Download** videos into a local library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
 - **Play** from the library:
   - speed 0.25–2× in steps of 0.05, keeping the pitch
-  - an **A–B loop**: set A / B at the playhead, drag the handles on the timeline, nudge each point by 50 ms, turn it on or off
+  - an **A–B loop**: set A / B at the playhead, drag the handles on the timeline, nudge each point by 50 ms, turn it on or off. The jump back to A has no gap, at any speed
   - **beat-synced loops**:
     - beats and bar starts are detected automatically after each download; every bar has the same number of beats
     - switch *Snap loop* to **Beats** or **Bars**, and A / B snap to the grid when set or dragged; the nudge buttons and ← → on a handle step one beat or bar
@@ -29,7 +29,7 @@ Opening a video that isn't downloaded yet starts the download and plays it when 
 ```
 backend/        Python server: REST API, YouTube access, video library, beat detection (FastAPI + yt-dlp + Beat This!)
   src/music_trainer/
-    api/          HTTP routes: /api/search, /api/library (incl. /beats), /api/downloads
+    api/          HTTP routes: /api/search, /api/library (incl. /beats, /audio), /api/downloads
     services/     youtube.py (search, download), library.py (videos on disk), downloads.py (background jobs),
                   beats.py + beat_analysis.py (beat detection and its background job),
                   beat_decoding.py (beat grid from the network output), audio.py (ffmpeg decoding)
@@ -41,7 +41,7 @@ frontend/       Browser UI (React + TypeScript + Vite)
     api/          typed client for the backend API
     app/          app shell: routes, header
     components/   shared UI pieces (video card, grid, progress bar, ...)
-    features/     search/, library/, downloads/, player/ (player, A–B loop, speed), beats/ (beat grid, snapping)
+    features/     search/, library/, downloads/, player/ (player, A–B loop, gapless loop audio, speed), beats/ (beat grid, snapping)
     lib/          small helpers and hooks
 docs/           planning documents, app survey, implementation report
 experiments/    feasibility tests from the research phase (independent of the app)
@@ -138,7 +138,14 @@ Environment variables, or a `.env` file in the folder you start the backend from
 
   Accuracy: see [docs/beat-tracking.md](docs/beat-tracking.md). Detected beats sit 10-20 ms after sharp attacks, so a loop snapped to the grid jumps 30 ms early and keeps the first note's attack.
 - **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json` and `beat_activations.npz`. Later features (stems, `loops.json`) belong in the same folder; see [docs/functionalities.md](docs/functionalities.md).
-- **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`. The loop end is checked on every animation frame (about every 16 ms). Jumping back to A seeks the video; in Chrome that took about 9 ms per jump. The audio engine planned in [docs/implementation-report.md](docs/implementation-report.md) (Web Audio + Signalsmith Stretch) would make loops gapless and add per-instrument tracks.
+- **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`.
+- **Gapless loops** (`frontend/src/features/player/gaplessLoop.ts`): seeking the `<video>` back to A silences it while the browser's media pipeline restarts, 5–190 ms per jump on the library songs. So the loop's sound comes from Web Audio instead:
+  1. When A is set, the browser fetches the audio around it once (`GET /api/library/<id>/audio?start=&end=`, a WAV cut sample-exactly by ffmpeg, about 0.2 s for 40 s of audio).
+  2. When the video reaches B, a [Signalsmith Stretch](https://github.com/Signalsmith-Audio/signalsmith-stretch) node (MIT, WebAssembly in an AudioWorklet) takes over the sound, exactly at B. It loops the audio sample-exactly and keeps the pitch at any speed.
+  3. The video plays on muted and is moved back to A at each pass; it may lag the sound by up to ~0.1 s right after the jump.
+  4. Pausing, seeking out of the loop or turning it off gives the sound back to the video. Without Web Audio support, or if the audio cannot be fetched, the loop seeks back as before.
+
+  Measured in Chrome on a 100 BPM metronome: the click spacing across the jump stays 600.0 ± 0.1 ms (before: 5–190 ms longer), and the first jump, where the stretcher takes over from the video, is 1–4 ms early. Per-instrument tracks ([docs/implementation-report.md](docs/implementation-report.md)) can later go through the same Web Audio path.
 
 ## Note
 

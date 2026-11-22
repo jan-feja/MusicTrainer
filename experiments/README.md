@@ -52,3 +52,4 @@ Tools (portable, no install): [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/rele
 | [test_scoring.py](test_scoring.py) | scoring a simulated user take |
 | [test_sections.py](test_sections.py) | song section detection |
 | [run_browser_tests.py](run_browser_tests.py) + [browser/](browser/) | real-time speed change, alphaTab notation, essentia.js analysis in headless Chromium |
+| [test_gapless_loop.py](test_gapless_loop.py) | gapless loops in the running app: click spacing of a metronome across the loop jump, at 1× and 0.75× (system Chrome; intervals short by multiples of 2.7 ms are audio blocks Chrome skipped under CPU load, they show up before the loop too) |

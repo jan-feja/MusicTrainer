@@ -179,6 +179,10 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
   - **Loops:** on real songs, both ends of a 1-, 2- or 4-bar loop landed on the true bar lines 86–88 % of the time. The misses come from soft intros without drums; once the band plays, it scores 0.97–0.99.
   - **Details:** [../experiments/test_beats_followup.py](../experiments/test_beats_followup.py).
 - **Second follow-up (22 November 2026), now implemented:** Beat This!'s peak picking let bars have any length (20 % odd bars in a real song). The app now decodes the network output into a grid with steady bars, and the user can fix tempo octave, meter and bar starts. Tested on real held-out music (GTZAN) and on test songs written as scores: [beat-tracking.md](beat-tracking.md).
+- **Third follow-up (22 November 2026), now implemented: gapless loops.** Jumping the `<video>` back to the loop start left 5–190 ms of silence (the media pipeline restarts; an audio-only element was no faster). The loop's sound now comes from Web Audio, as planned for the stems:
+  - **Audio:** the backend cuts the audio around the loop with ffmpeg and sends it as WAV (`/api/library/<id>/audio`). The cut matches Chrome's own decoding sample for sample. Decoding the whole file in the browser instead took 1.8 s and 130 MB for a 6-minute song, too much for long lesson videos.
+  - **Playback:** one Signalsmith Stretch node with its built-in loop points. Offline at 1×, its output matched the original closely (spectral error 0.053 vs 0.036 for the original shifted by 1 ms), with no level dip at the wrap and no drift over passes.
+  - **In the app:** click spacing across the jump stays exact (600.0 ± 0.1 ms at 100 BPM; ±2 ms at 0.75×, the stretcher's transient jitter). The video follows muted.
 
 ##### 9. Beat-synced loops (M, ✅)
 - **Build:**
