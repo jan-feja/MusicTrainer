@@ -15,6 +15,7 @@
  */
 import type { StretchNode } from 'signalsmith-stretch'
 import { clamp } from '../../lib/math'
+import { heardTime } from './audioClock'
 import type { LoopRegion } from './loop'
 import {
   type AudioWindow,
@@ -63,15 +64,6 @@ function elementAudioFor(video: HTMLMediaElement): ElementAudio {
     elementAudio.set(video, audio)
   }
   return audio
-}
-
-/** The audio-clock time being heard right now. */
-function heardTime(context: AudioContext): number {
-  const { contextTime, performanceTime } = context.getOutputTimestamp()
-  if (!contextTime || !performanceTime) {
-    return context.currentTime - context.baseLatency - (context.outputLatency || 0)
-  }
-  return contextTime + (performance.now() - performanceTime) / 1000
 }
 
 function fadeTo(gain: GainNode, value: number, at: number): void {
@@ -134,6 +126,7 @@ export class GaplessLoop {
     this.video = video
     this.audioUrl = audioUrl
     const listeners: [string, () => void][] = [
+      ['durationchange', this.onDurationChange],
       ['pause', this.onPause],
       ['play', this.onPlay],
       ['seeking', this.onSeeking],
@@ -396,6 +389,8 @@ export class GaplessLoop {
   private volume(): number {
     return this.video.muted ? 0 : this.video.volume
   }
+
+  private readonly onDurationChange = () => this.load()
 
   private readonly onSeeking = () => {
     if (this.isOwnSeek()) return
