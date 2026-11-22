@@ -24,7 +24,8 @@ Metrics (70 ms tolerance):
   odd_bars              share of detected bars whose beat count differs from the most common one
 
 Activations (Beat This! frame logits, 50 fps) are cached per checkpoint in MT_DATA/activations/.
-Usage: python test_beat_tracking.py [method ...]   (needs CKPT_DIR with <checkpoint>.ckpt files)
+Usage: python test_beat_tracking.py [method ...] [--sets score,synth,harmonix,gtzan,library]
+       (needs CKPT_DIR with <checkpoint>.ckpt files; missing test sets are skipped)
 """
 
 import json
@@ -251,6 +252,7 @@ METHODS: dict[str, Method] = {
     "beat_this_minimal": beat_this_minimal,
     "madmom_dbn": madmom_dbn,
     "app": app_decoder(),
+    "app_ensemble": app_decoder(("final0", "final1", "final2")),
 }
 
 
@@ -298,15 +300,26 @@ def print_summary(summary: dict, metrics: list[str] = METRICS) -> None:
             print(f"{method[:28]:28s}" + "".join(f"{values[m]:10.3f}" for m in metrics))
 
 
+ALL_SETS = ("score", "synth", "harmonix", "gtzan", "library")
+
+
 def main() -> None:
-    chosen = sys.argv[1:] or list(METHODS)
-    items = load_items()
-    results = run({m: METHODS[m] for m in chosen}, items)
+    args = sys.argv[1:]
+    sets = ALL_SETS
+    if "--sets" in args:
+        at = args.index("--sets")
+        sets = tuple(args[at + 1].split(","))
+        args = args[:at] + args[at + 2 :]
+    chosen = args or list(METHODS)
+    items = load_items(sets)
+    results = run({m: METHODS[m] for m in chosen}, items, verbose=False)
     by_set = summarize(results, items, "set")
-    by_category = summarize(results, [i for i in items if i.set == "score"], "category")
+    by_category = summarize(results, [i for i in items if i.set in ("score", "gtzan")], "category")
     print_summary(by_set)
-    print_summary(by_category)
-    save_result("beat_tracking", {"per_song": results, "by_set": by_set, "by_category": by_category})
+    print_summary(by_category, ["beat_F", "down_F", "down_CMLt", "loop_1bar", "loop_4bar", "meter_ok"])
+    # per-song rows except GTZAN's 1000 clips (its summaries are kept)
+    per_song = {m: {k: r for k, r in rows.items() if not k.startswith("gtzan/")} for m, rows in results.items()}
+    save_result("beat_tracking", {"by_set": by_set, "by_category": by_category, "per_song": per_song})
 
 
 if __name__ == "__main__":

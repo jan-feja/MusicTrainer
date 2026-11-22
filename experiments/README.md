@@ -20,6 +20,8 @@ Tools (portable, no install): [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/rele
 | `MT_DATA` | data folder (songs, synthetic songs, models; not in git) |
 | `MT_DEVICE` | `cuda` or `cpu` |
 | `BEAT_THIS_CKPT` | path to Beat This! weights (the official download server was rate-limiting; see the report) |
+| `CKPT_DIR` | folder with Beat This! checkpoints as `<name>.ckpt` (`final0`, `final1`, `final2`, `small0`) for the beat tracking scripts |
+| `MT_LIBRARY` | the app's `data/library`, for checks on downloaded songs (default: the repository's) |
 | `FLUIDSYNTH`, `SOUNDFONT` | for rendering the synthetic songs |
 
 #### Data
@@ -27,12 +29,21 @@ Tools (portable, no install): [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/rele
 2. Real songs: 8 songs from the [Harmonix Set](https://github.com/urinieto/harmonixset) (human-annotated beats and sections), audio downloaded from YouTube with yt-dlp into `%MT_DATA%/songs/`, annotations into `%MT_DATA%/harmonix/`.
 3. `python make_scores.py`: bass tab (.gp5) and MusicXML made from the synthetic song's MIDI.
 4. MUSDB18 7-second previews download automatically (`musdb` package).
+5. Score songs for beat tracking (exact answers, music no model was trained on):
+   ```
+   python make_score_songs.py %MT_DATA%/score_midi 3        # 17 songs x 3 tempo variants, as MIDI
+   python score_to_audio.py %MT_DATA%/score_songs %MT_DATA%/score_midi  [more .mid / .gp5 files or folders]
+   ```
+   `score_to_audio.py` also takes Guitar Pro 3/4/5 tabs and any MIDI file: drop a tab of a song into the list and it becomes a test song.
+6. GTZAN (real music, held out from Beat This! training): audio `genres.tar.gz` from the Hugging Face dataset `marsyas/gtzan`, unpacked to `%MT_DATA%/gtzan/genres/`; annotations from [CPJKU/beat_this_annotations](https://github.com/CPJKU/beat_this_annotations) unpacked to `%MT_DATA%/gtzan/beat_this_annotations-main/`.
 
 #### Scripts
 | Script | Feature |
 |---|---|
 | [test_beats.py](test_beats.py) | BPM, beats, downbeats: librosa, Beat This!, madmom |
 | [test_beats_followup.py](test_beats_followup.py) | Beat This! final0 vs small0, timing precision, loop accuracy (needs `CKPT_DIR`) |
+| [make_score_songs.py](make_score_songs.py), [score_to_audio.py](score_to_audio.py) | beat tracking test songs written as scores, rendered with exact answers |
+| [test_beat_tracking.py](test_beat_tracking.py) | beat grid decoding: the app's decoder vs peak picking vs madmom's DBN on score songs, GTZAN, Harmonix and library songs ([../docs/beat-tracking.md](../docs/beat-tracking.md)) |
 | [test_separation.py](test_separation.py) | stem separation quality and speed: Demucs models |
 | [test_stretch.py](test_stretch.py) | offline speed change / pitch shift in Python |
 | [test_harmony.py](test_harmony.py) | key, chords, tuning |

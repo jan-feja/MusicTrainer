@@ -178,6 +178,7 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
   - **Other checks:** a song without drums still worked (0.98); AAC input gave the same beats as WAV.
   - **Loops:** on real songs, both ends of a 1-, 2- or 4-bar loop landed on the true bar lines 86–88 % of the time. The misses come from soft intros without drums; once the band plays, it scores 0.97–0.99.
   - **Details:** [../experiments/test_beats_followup.py](../experiments/test_beats_followup.py).
+- **Second follow-up (22 November 2026), now implemented:** Beat This!'s peak picking let bars have any length (20 % odd bars in a real song). The app now decodes the network output into a grid with steady bars, and the user can fix tempo octave, meter and bar starts. Tested on real held-out music (GTZAN) and on test songs written as scores: [beat-tracking.md](beat-tracking.md).
 
 ##### 9. Beat-synced loops (M, ✅)
 - **Build:**
