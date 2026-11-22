@@ -30,6 +30,8 @@ interface PlaybackOptions {
   /** Called on every animation frame while playing. */
   onFrame?: (video: HTMLVideoElement) => void
   onEnded?: (video: HTMLVideoElement) => void
+  /** The time being heard while something else plays the sound (null: the video's own time). */
+  clock?: () => number | null
 }
 
 const INITIAL_STATE: PlaybackState = {
@@ -56,11 +58,12 @@ const STATE_EVENTS = [
 /** Mirrors a <video> element's state into React and offers controls for it. */
 export function useVideoPlayback(
   videoRef: RefObject<HTMLVideoElement | null>,
-  { onFrame, onEnded }: PlaybackOptions = {},
+  { onFrame, onEnded, clock }: PlaybackOptions = {},
 ): PlaybackState & PlaybackControls {
   const [state, setState] = useState(INITIAL_STATE)
   const onFrameRef = useLatest(onFrame)
   const onEndedRef = useLatest(onEnded)
+  const clockRef = useLatest(clock)
 
   useEffect(() => {
     const video = videoRef.current
@@ -68,9 +71,10 @@ export function useVideoPlayback(
     // keep the pitch when slowing down or speeding up (the browser default, made explicit)
     video.preservesPitch = true
 
+    const timeNow = () => clockRef.current?.() ?? video.currentTime
     const readState = () =>
       setState({
-        currentTime: video.currentTime,
+        currentTime: timeNow(),
         duration: Number.isFinite(video.duration) ? video.duration : 0,
         isPlaying: !video.paused && !video.ended,
         playbackRate: video.playbackRate,
@@ -83,9 +87,8 @@ export function useVideoPlayback(
     let frame = 0
     const onAnimationFrame = () => {
       onFrameRef.current?.(video)
-      setState((s) =>
-        s.currentTime === video.currentTime ? s : { ...s, currentTime: video.currentTime },
-      )
+      const time = timeNow()
+      setState((s) => (s.currentTime === time ? s : { ...s, currentTime: time }))
       frame = requestAnimationFrame(onAnimationFrame)
     }
     const startFrames = () => {
@@ -111,12 +114,13 @@ export function useVideoPlayback(
       video.removeEventListener('ended', handleEnded)
       stopFrames()
     }
-  }, [videoRef, onFrameRef, onEndedRef])
+  }, [videoRef, onFrameRef, onEndedRef, clockRef])
 
   const controls = useMemo<PlaybackControls>(() => {
     const withVideo = (action: (video: HTMLVideoElement) => void) => {
       if (videoRef.current) action(videoRef.current)
     }
+    const timeOf = (video: HTMLVideoElement) => clockRef.current?.() ?? video.currentTime
     const play = (video: HTMLVideoElement) => {
       // play() rejects when interrupted by pause() or blocked by autoplay rules; nothing to do then
       video.play().catch(() => {})
@@ -131,7 +135,7 @@ export function useVideoPlayback(
         }),
       seekBy: (seconds) =>
         withVideo((video) => {
-          video.currentTime = clamp(video.currentTime + seconds, 0, video.duration || 0)
+          video.currentTime = clamp(timeOf(video) + seconds, 0, video.duration || 0)
         }),
       setPlaybackRate: (rate) =>
         withVideo((video) => {
@@ -151,9 +155,9 @@ export function useVideoPlayback(
         withVideo((video) => {
           video.muted = !video.muted
         }),
-      getCurrentTime: () => videoRef.current?.currentTime ?? 0,
+      getCurrentTime: () => (videoRef.current ? timeOf(videoRef.current) : 0),
     }
-  }, [videoRef])
+  }, [videoRef, clockRef])
 
   return { ...state, ...controls }
 }

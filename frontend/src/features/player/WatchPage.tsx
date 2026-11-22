@@ -57,6 +57,7 @@ function WatchVideo({ videoId }: { videoId: string }) {
         <VideoPlayer
           key={video.data.videoId}
           src={video.data.mediaUrl}
+          audioUrl={video.data.audioUrl}
           poster={video.data.thumbnailUrl ?? undefined}
           beatTracking={beatTracking}
         />

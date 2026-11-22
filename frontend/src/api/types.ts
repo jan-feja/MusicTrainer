@@ -23,6 +23,8 @@ export interface LibraryVideo {
   /** ISO date-time */
   downloadedAt: string | null
   mediaUrl: string
+  /** Sections of the audio as WAV: `?start=&end=` in seconds. */
+  audioUrl: string
   thumbnailUrl: string | null
 }
 

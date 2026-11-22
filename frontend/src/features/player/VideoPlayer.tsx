@@ -27,6 +27,7 @@ import { ShortcutHelp } from './ShortcutHelp'
 import { SpeedControl } from './SpeedControl'
 import { useFullscreen } from './useFullscreen'
 import { usePlayerShortcuts } from './usePlayerShortcuts'
+import { useGaplessLoop } from './useGaplessLoop'
 import { useVideoPlayback } from './useVideoPlayback'
 import { VolumeControl } from './VolumeControl'
 import controlStyles from './PlayerControls.module.css'
@@ -44,6 +45,8 @@ type LoopPoint = 'start' | 'end'
 
 interface VideoPlayerProps {
   src: string
+  /** Sections of the audio as WAV (`?start=&end=`); lets the loop play without a gap. */
+  audioUrl?: string
   poster?: string
   autoPlay?: boolean
   /** Beat grid of the video; lets the loop snap to beats and bars. */
@@ -54,7 +57,13 @@ interface VideoPlayerProps {
  * Video player with speed control and an A–B loop that can snap to the beat
  * grid. Give it a `key` per video so the loop resets when the video changes.
  */
-export function VideoPlayer({ src, poster, autoPlay = true, beatTracking }: VideoPlayerProps) {
+export function VideoPlayer({
+  src,
+  audioUrl,
+  poster,
+  autoPlay = true,
+  beatTracking,
+}: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [loop, dispatchLoop] = useReducer(loopReducer, EMPTY_LOOP)
@@ -72,19 +81,29 @@ export function VideoPlayer({ src, poster, autoPlay = true, beatTracking }: Vide
   const loopRef = useLatest(loop)
   const leadRef = useLatest(lead)
 
+  const region = getLoopRegion(loop)
+  const playedRegion =
+    loop.enabled && region
+      ? { start: Math.max(0, region.start - lead), end: region.end - lead }
+      : null
+  const expectedStart = loop.start !== null && loop.end === null ? loop.start - lead : null
+  const gaplessLoop = useGaplessLoop(videoRef, audioUrl, playedRegion, expectedStart)
+
   const playback = useVideoPlayback(videoRef, {
     onFrame: (video) => {
+      if (gaplessLoop.current?.tick()) return
       const target = loopJumpTarget(loopRef.current, video.currentTime, leadRef.current)
       if (target !== null) video.currentTime = target
     },
     // a loop that ends at the very end of the video: start over instead of stopping
     onEnded: (video) => {
       const region = getLoopRegion(loopRef.current)
-      if (loopRef.current.enabled && region) {
+      if (loopRef.current.enabled && region && !gaplessLoop.current?.active) {
         video.currentTime = Math.max(0, region.start - leadRef.current)
         video.play().catch(() => {})
       }
     },
+    clock: () => gaplessLoop.current?.position() ?? null,
   })
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
   const duration = playback.duration
@@ -178,7 +197,6 @@ export function VideoPlayer({ src, poster, autoPlay = true, beatTracking }: Vide
     toggleFullscreen,
   })
 
-  const region = getLoopRegion(loop)
   let lengthLabel: string | null = null
   if (region && snapPoints && snapUnit) {
     const steps = stepsBetween(snapPoints, region.start, region.end)
