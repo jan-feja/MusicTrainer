@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { loadingProgress, orderStems, quietStems, stemLabel } from './stems'
+import {
+  computePeaks,
+  loadingProgress,
+  orderStems,
+  peakBetween,
+  quietStems,
+  stemLabel,
+} from './stems'
 
 const stem = (name: string, rms = 0.1) => ({ name, file: `${name}.flac`, rms })
 
@@ -43,5 +50,19 @@ describe('stems', () => {
     const done = { loaded: 100, total: 100, decoded: true }
     expect(loadingProgress([done, done])).toBeCloseTo(1)
     expect(loadingProgress([done, { loaded: 10, total: null, decoded: false }])).toBeCloseTo(0.5)
+  })
+
+  it('keeps the loudest sample of any channel per stretch', () => {
+    const left = new Float32Array([0.1, -0.5, 0.2, 0, 0.3, 0.1, 0, 0])
+    const right = new Float32Array([0, 0, 0, 0, 0, -0.9, 0, 0.05])
+    // 8 samples at 8 Hz, 2 peaks per second: stretches of 4 samples
+    expect(Array.from(computePeaks([left, right], 8, 2))).toEqual([0.5, 0.8999999761581421])
+  })
+
+  it('finds the loudest peak between two times', () => {
+    const peaks = new Float32Array([0.1, 0.4, 0.2, 0.9])
+    expect(peakBetween(peaks, 0, 1, 2)).toBeCloseTo(0.4) // peaks 0 and 1
+    expect(peakBetween(peaks, 1.2, 1.3, 2)).toBeCloseTo(0.2) // always at least one
+    expect(peakBetween(peaks, 1, 9, 2)).toBeCloseTo(0.9)
   })
 })

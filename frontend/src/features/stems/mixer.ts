@@ -8,12 +8,15 @@ function mixer(m: MixerSettings): MixerSettings {
   return { enabled: m.enabled, volumes: m.volumes, muted: m.muted, solo: m.solo }
 }
 
-/** The gain of each stem: its volume, 0 when muted, and when any stem is soloed only those. */
+/**
+ * The gain of each stem: its volume; 0 when muted; and when any stem is soloed,
+ * 0 for the others. Mute wins over solo, so a slider at 0 always silences.
+ */
 export function mixerGains(names: readonly string[], settings: MixerSettings | null) {
   const { volumes, muted, solo } = settings ?? EMPTY_MIXER
   return Object.fromEntries(
     names.map((name) => {
-      const heard = solo.length > 0 ? solo.includes(name) : !muted.includes(name)
+      const heard = !muted.includes(name) && (solo.length === 0 || solo.includes(name))
       return [name, heard ? (volumes[name] ?? 1) : 0]
     }),
   )
@@ -42,4 +45,42 @@ export function withVolume(settings: MixerSettings | null, name: string, volume:
   const current = settings ?? EMPTY_MIXER
   const clamped = Math.min(1, Math.max(0, Math.round(volume * 100) / 100))
   return mixer({ ...current, volumes: { ...current.volumes, [name]: clamped } })
+}
+
+/** The volume a stem comes back at when unmuted: its own, or full if that was 0. */
+function restoredVolume(settings: MixerSettings, name: string): number {
+  const volume = settings.volumes[name] ?? 1
+  return volume > 0 ? volume : 1
+}
+
+/**
+ * What a stem's slider shows: the level it is heard at, so 0 while it is muted
+ * or another stem is soloed.
+ */
+export function stemLevel(settings: MixerSettings | null, name: string): number {
+  return mixerGains([name], settings)[name] ?? 1
+}
+
+/**
+ * Move a stem's slider. Like the player's volume: 0 mutes the stem (keeping its
+ * volume for unmuting), anything else sets the volume and makes the stem heard
+ * again: unmuted, and joined to the solo when other stems are soloed.
+ */
+export function withLevel(settings: MixerSettings | null, name: string, level: number) {
+  const current = settings ?? EMPTY_MIXER
+  if (level <= 0) {
+    return current.muted.includes(name) ? mixer(current) : withMuteToggled(current, name)
+  }
+  const next = withVolume(current, name, level)
+  const muted = next.muted.filter((n) => n !== name)
+  const solo = next.solo.length > 0 && !next.solo.includes(name) ? [...next.solo, name] : next.solo
+  return mixer({ ...next, muted, solo })
+}
+
+/** Mute or unmute a stem; unmuting brings back its volume (full if it was 0). */
+export function withMuteSwitched(settings: MixerSettings | null, name: string) {
+  const current = settings ?? EMPTY_MIXER
+  const next = withMuteToggled(current, name)
+  if (next.muted.includes(name)) return next
+  return withVolume(next, name, restoredVolume(next, name))
 }

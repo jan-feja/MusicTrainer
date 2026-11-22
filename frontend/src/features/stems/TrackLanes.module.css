@@ -1,0 +1,108 @@
+.lanes {
+  --lane-height: 44px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  margin-top: 4px;
+  border: 1px solid var(--player-track);
+  border-radius: var(--radius-small, 6px);
+  overflow: hidden;
+}
+
+.headers {
+  border-right: 1px solid var(--player-track);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--lane-height);
+  padding: 0 10px;
+  font-size: 0.8125rem;
+}
+
+.header + .header,
+.wave + .wave {
+  border-top: 1px solid rgb(255 255 255 / 8%);
+}
+
+.swatch {
+  flex: none;
+  width: 4px;
+  height: 22px;
+  border-radius: 2px;
+}
+
+.name {
+  width: 4.5em;
+}
+
+.header[data-heard='false'] .name {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.toggle {
+  min-width: 26px;
+  padding-inline: 6px;
+}
+
+/* more specific than the global pressed button */
+.toggle.solo[aria-pressed='true'] {
+  background: #d4a017;
+  color: #0f0f0f;
+}
+
+.volume {
+  width: 72px;
+  accent-color: var(--color-accent);
+}
+
+.timeline {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.wave {
+  height: var(--lane-height);
+  padding: 4px 0;
+}
+
+.wave[data-heard='false'] {
+  opacity: 0.3;
+}
+
+.loop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--player-loop-off);
+  pointer-events: none;
+}
+
+.loop[data-enabled='true'] {
+  background: rgb(250 204 21 / 18%);
+  box-shadow:
+    inset 2px 0 var(--player-loop-handle),
+    inset -2px 0 var(--player-loop-handle);
+}
+
+/* bar and beat lines run through all lanes: fainter than on the timeline */
+.ticks {
+  position: absolute;
+  inset: 0;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-accent);
+  transform: translateX(-50%);
+  pointer-events: none;
+}

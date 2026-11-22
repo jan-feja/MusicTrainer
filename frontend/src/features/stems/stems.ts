@@ -10,6 +10,9 @@ export const QUIET_SHARE = 0.05
 /** Instruments in the order they are shown; unknown names go after them. */
 const STEM_ORDER = ['drums', 'bass', 'vocals', 'guitar', 'piano', 'other']
 
+/** Waveform resolution: loudest sample per this many seconds is kept (zoomed in to ~1 s, 1 per pixel). */
+export const PEAKS_PER_SECOND = 400
+
 /** Share of the loading progress taken by downloading; the rest is decoding. */
 const DOWNLOAD_SHARE = 0.9
 
@@ -19,6 +22,8 @@ export interface StemTrack {
   /** Hardly anything in it, e.g. piano in a song without piano. */
   quiet: boolean
   buffer: AudioBuffer
+  /** Loudest sample (of any channel) in each 1 / PEAKS_PER_SECOND s, for the waveform. */
+  peaks: Float32Array
 }
 
 export type StemsStatus =
@@ -71,4 +76,41 @@ export function loadingProgress(files: readonly FileProgress[]): number {
     }, 0) / files.length
   const decode = files.filter((file) => file.decoded).length / files.length
   return DOWNLOAD_SHARE * download + (1 - DOWNLOAD_SHARE) * decode
+}
+
+/** The loudest sample of any channel in each stretch of `sampleRate / peaksPerSecond` samples. */
+export function computePeaks(
+  channels: readonly Float32Array[],
+  sampleRate: number,
+  peaksPerSecond = PEAKS_PER_SECOND,
+): Float32Array {
+  const length = channels[0]?.length ?? 0
+  const step = sampleRate / peaksPerSecond
+  const peaks = new Float32Array(Math.ceil(length / step))
+  for (const samples of channels) {
+    for (let i = 0; i < peaks.length; i++) {
+      const end = Math.min(length, Math.round((i + 1) * step))
+      let peak = peaks[i]
+      for (let j = Math.round(i * step); j < end; j++) {
+        const value = Math.abs(samples[j])
+        if (value > peak) peak = value
+      }
+      peaks[i] = peak
+    }
+  }
+  return peaks
+}
+
+/** The loudest of `peaks` between two song times (at least the one peak at `start`). */
+export function peakBetween(
+  peaks: Float32Array,
+  start: number,
+  end: number,
+  peaksPerSecond = PEAKS_PER_SECOND,
+): number {
+  const first = Math.max(0, Math.floor(start * peaksPerSecond))
+  const last = Math.min(peaks.length, Math.max(first + 1, Math.ceil(end * peaksPerSecond)))
+  let peak = 0
+  for (let i = first; i < last; i++) if (peaks[i] > peak) peak = peaks[i]
+  return peak
 }

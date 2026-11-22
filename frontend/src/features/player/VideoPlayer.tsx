@@ -30,12 +30,13 @@ import {
 import { SavedLoopMarks } from '../practice/SavedLoopMarks'
 import {
   mixerGains,
-  withMuteToggled,
+  withLevel,
+  withMuteSwitched,
   withSoloToggled,
   withStemsEnabled,
-  withVolume,
 } from '../stems/mixer'
 import { StemsControls } from '../stems/StemsControls'
+import { TrackLanes } from '../stems/TrackLanes'
 import { useStemPlayer } from '../stems/useStemPlayer'
 import { useStems } from '../stems/useStems'
 import { SavedLoops } from '../practice/SavedLoops'
@@ -134,6 +135,10 @@ export function VideoPlayer({
   const stemsEnabled = mixer?.enabled ?? false
   const stems = useStems(videoId ?? '', videoId !== undefined && stemsEnabled)
   const stemTracks = stems.status.kind === 'ready' ? stems.status.tracks : null
+  const visibleStemTracks = useMemo(
+    () => stemTracks?.filter((track) => !track.quiet) ?? [],
+    [stemTracks],
+  )
   const stemGains = useMemo(
     () => mixerGains(stemTracks?.map((track) => track.name) ?? [], mixer),
     [stemTracks, mixer],
@@ -515,16 +520,31 @@ export function VideoPlayer({
               <StemsControls
                 stems={stems}
                 enabled={stemsEnabled}
-                gains={stemGains}
-                mixer={mixer}
                 onToggle={() => setMixer((current) => withStemsEnabled(current, !stemsEnabled))}
-                onToggleMute={(name) => setMixer((current) => withMuteToggled(current, name))}
-                onToggleSolo={(name) => setMixer((current) => withSoloToggled(current, name))}
-                onVolumeChange={(name, volume) =>
-                  setMixer((current) => withVolume(current, name, volume))
-                }
               />
             </div>
+          )}
+          {stemTracks && (
+            <TrackLanes
+              // stems hardly in the song are not shown (they still play, as part of the mix)
+              tracks={visibleStemTracks}
+              mixer={mixer}
+              gains={stemGains}
+              duration={duration}
+              currentTime={playback.currentTime}
+              view={view}
+              loop={loop}
+              bars={grid?.bars}
+              beats={showBeatMarks ? grid?.beats : undefined}
+              onSeek={playback.seek}
+              onZoom={zoom.zoomBy}
+              onPan={zoom.pan}
+              onToggleMute={(name) => setMixer((current) => withMuteSwitched(current, name))}
+              onToggleSolo={(name) => setMixer((current) => withSoloToggled(current, name))}
+              onLevelChange={(name, level) =>
+                setMixer((current) => withLevel(current, name, level))
+              }
+            />
           )}
         </div>
       </div>

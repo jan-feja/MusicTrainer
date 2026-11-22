@@ -1,6 +1,13 @@
 import { api } from '../../api/client'
 import type { StemSet } from '../../api/types'
-import { type FileProgress, type StemTrack, orderStems, quietStems, stemLabel } from './stems'
+import {
+  type FileProgress,
+  type StemTrack,
+  computePeaks,
+  orderStems,
+  quietStems,
+  stemLabel,
+} from './stems'
 
 async function download(
   url: string,
@@ -59,10 +66,17 @@ export async function loadStems(
       return buffer
     }),
   )
-  return ordered.map((stem, index) => ({
-    name: stem.name,
-    label: stemLabel(stem.name),
-    quiet: quiet.has(stem.name),
-    buffer: buffers[index],
-  }))
+  return ordered.map((stem, index) => {
+    const buffer = buffers[index]
+    const channels = Array.from({ length: buffer.numberOfChannels }, (_, c) =>
+      buffer.getChannelData(c),
+    )
+    return {
+      name: stem.name,
+      label: stemLabel(stem.name),
+      quiet: quiet.has(stem.name),
+      buffer,
+      peaks: computePeaks(channels, buffer.sampleRate),
+    }
+  })
 }
