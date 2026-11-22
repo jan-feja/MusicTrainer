@@ -5,6 +5,7 @@ import { formatTime } from '../../lib/format'
 import { useLatest } from '../../lib/useLatest'
 import { BeatSnapControls } from '../beats/BeatSnapControls'
 import { BeatTicks } from '../beats/BeatTicks'
+import { useChords } from '../chords/useChords'
 import {
   type GridUnit,
   SNAP_LEAD_SECONDS,
@@ -149,6 +150,8 @@ export function VideoPlayer({
     () => (analysis && analysis.beats.length >= 2 ? createBeatGrid(analysis) : null),
     [analysis],
   )
+  // the chord lane is part of the stem lanes, and its chords come from the pitched stems
+  const chords = useChords(videoId ?? '', analysis, stemTracks !== null)
   const snapUnit: GridUnit | null = grid && snapMode !== 'off' ? snapMode : null
   const snapPoints = grid && snapUnit ? gridPoints(grid, snapUnit) : null
   // a loop snapped to the grid plays slightly early so the first note keeps its attack
@@ -528,6 +531,7 @@ export function VideoPlayer({
             <TrackLanes
               // stems hardly in the song are not shown (they still play, as part of the mix)
               tracks={visibleStemTracks}
+              chords={analysis ? chords : undefined}
               mixer={mixer}
               gains={stemGains}
               duration={duration}

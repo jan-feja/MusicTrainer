@@ -1,5 +1,6 @@
 """Test doubles and helpers shared by the tests."""
 
+import itertools
 import threading
 import time
 from pathlib import Path
@@ -7,9 +8,10 @@ from pathlib import Path
 import numpy as np
 from fastapi.testclient import TestClient
 
-from music_trainer.models import SearchResult, StemInfo, StemSet, VideoMetadata
+from music_trainer.models import Chord, SearchResult, StemInfo, StemSet, VideoMetadata
 from music_trainer.services.beat_decoding import FRAMES_PER_SECOND, BeatActivations
 from music_trainer.services.beats import BeatTrackingError, analyze_activations
+from music_trainer.services.chords import ChordDetectionError
 from music_trainer.services.stems import ProgressCallback as StemProgressCallback
 from music_trainer.services.stems import StemSeparationError
 from music_trainer.services.youtube import DownloadProgress, ProgressCallback, YouTubeError
@@ -161,6 +163,27 @@ class FakeStemSeparator:
         self.error = self.error or "Separation was stopped"
 
 
+class FakeChordDetector:
+    """Stands in for LibrosaChordDetector: C and G alternating every 4 beats."""
+
+    method = "fake"
+
+    def __init__(self) -> None:
+        self.calls: list[tuple[Path, list[Path], list[float]]] = []
+        self.error: str | None = None
+        """When set, detect() raises ChordDetectionError with this message."""
+
+    def detect(self, media_path: Path, stem_paths, beats) -> list[Chord]:
+        self.calls.append((media_path, list(stem_paths), list(beats)))
+        if self.error:
+            raise ChordDetectionError(self.error)
+        bounds = [0.0, *beats[4::4], beats[-1] + 0.5]
+        return [
+            Chord(start=start, end=end, label="C:maj" if i % 2 == 0 else "G:maj")
+            for i, (start, end) in enumerate(itertools.pairwise(bounds))
+        ]
+
+
 def wait_for_download(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:
     """Poll the download until it is no longer active; return the final job."""
     deadline = time.monotonic() + timeout
@@ -181,6 +204,17 @@ def wait_for_beats(client: TestClient, video_id: str, timeout: float = 5.0) -> d
             return state
         time.sleep(0.02)
     raise AssertionError(f"beat detection of {video_id} did not finish within {timeout} s")
+
+
+def wait_for_chords(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:
+    """Poll chord detection until it is no longer queued or running; return the final state."""
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        state = client.get(f"/api/library/{video_id}/chords").json()
+        if state["status"] not in ("queued", "analyzing"):
+            return state
+        time.sleep(0.02)
+    raise AssertionError(f"chord detection of {video_id} did not finish within {timeout} s")
 
 
 def wait_for_stems(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:

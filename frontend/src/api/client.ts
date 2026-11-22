@@ -1,6 +1,7 @@
 import type {
   BeatGridHints,
   BeatTrackingState,
+  ChordDetectionState,
   DownloadJob,
   LibraryVideo,
   PlayerSettings,
@@ -123,6 +124,16 @@ export const api = {
   /** Where one stem's audio (FLAC) is served. */
   stemUrl(videoId: string, name: string): string {
     return `${API_BASE}${videoPath(videoId)}/stems/${encodeURIComponent(name)}`
+  },
+
+  getChords(videoId: string, signal?: AbortSignal): Promise<ChordDetectionState> {
+    return request(`${videoPath(videoId)}/chords`, { signal })
+  },
+
+  /** Start chord detection (needs the beat grid: 409 before it is there). */
+  detectChords(videoId: string, options: { force?: boolean } = {}): Promise<ChordDetectionState> {
+    const query = options.force ? '?force=true' : ''
+    return request(`${videoPath(videoId)}/chords${query}`, { method: 'POST' })
   },
 
   getLoops(videoId: string, signal?: AbortSignal): Promise<SavedLoop[]> {

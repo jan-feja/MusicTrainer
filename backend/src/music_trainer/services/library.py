@@ -19,6 +19,7 @@ import logging
 import shutil
 import threading
 import time
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TypeVar
@@ -26,7 +27,14 @@ from typing import TypeVar
 import numpy as np
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from music_trainer.models import BeatAnalysis, PlayerSettings, SavedLoop, StemSet, VideoMetadata
+from music_trainer.models import (
+    BeatAnalysis,
+    ChordAnalysis,
+    PlayerSettings,
+    SavedLoop,
+    StemSet,
+    VideoMetadata,
+)
 from music_trainer.services.beat_decoding import BeatActivations
 from music_trainer.video_ids import require_valid_video_id
 
@@ -56,6 +64,7 @@ class Library:
     STEMS_DIR = "stems"
     STEMS_STAGING_DIR = "stems.partial"
     STEMS_FILE = "stems.json"
+    CHORDS_FILE = "chords.json"
     STAGING_DIR = ".staging"
 
     def __init__(self, root: Path) -> None:
@@ -151,6 +160,17 @@ class Library:
                 model=np.str_(activations.model),
             )
         partial.replace(target)
+
+    def read_chords(self, video_id: str) -> ChordAnalysis | None:
+        return self._read_json(self._video_dir(video_id) / self.CHORDS_FILE, ChordAnalysis)
+
+    def write_chords(self, video_id: str, chords: ChordAnalysis) -> None:
+        self._write_text(video_id, self.CHORDS_FILE, chords.model_dump_json())
+
+    def stem_paths(self, video_id: str, names: Sequence[str]) -> list[Path]:
+        """The audio files of those of the named stems that were separated."""
+        paths = (self.stem_path(video_id, name) for name in names)
+        return [path for path in paths if path is not None]
 
     def read_stems(self, video_id: str) -> StemSet | None:
         """The separated stems, or None if there are none (or a file is missing)."""

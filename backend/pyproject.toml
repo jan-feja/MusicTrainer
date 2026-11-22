@@ -19,6 +19,8 @@ dependencies = [
     "numpy>=1.24",
     # separating songs into instruments (drums, bass, vocals, guitar, piano, other)
     "demucs>=4.1",
+    # chords: chroma (constant-Q transform) of the song
+    "librosa>=0.10",
 ]
 
 [project.optional-dependencies]

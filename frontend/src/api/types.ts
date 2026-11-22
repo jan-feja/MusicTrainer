@@ -145,6 +145,10 @@ export interface ChordAnalysis {
   method: string
   /** In time order, without gaps. */
   chords: Chord[]
+  /** The beat grid they were found on. */
+  grid: string | null
+  /** Found on the pitched stems (no drums or vocals) rather than the whole mix. */
+  fromStems: boolean
 }
 
 export interface ChordDetectionState {

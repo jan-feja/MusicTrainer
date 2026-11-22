@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 
 from music_trainer.api.dependencies import (
     BeatAnalysisDependency,
+    ChordDetectionDependency,
     DownloadsDependency,
     LibraryDependency,
     SettingsDependency,
@@ -54,6 +55,7 @@ def delete_video(
     downloads: DownloadsDependency,
     beat_analysis: BeatAnalysisDependency,
     stem_separation: StemSeparationDependency,
+    chord_detection: ChordDetectionDependency,
 ) -> Response:
     stem_separation.forget(video_id)  # stops a separation writing into the folder
     try:
@@ -65,6 +67,7 @@ def delete_video(
     # so the video can be downloaded and analysed again
     downloads.forget(video_id)
     beat_analysis.forget(video_id)
+    chord_detection.forget(video_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

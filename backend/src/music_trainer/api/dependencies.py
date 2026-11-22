@@ -8,6 +8,7 @@ from fastapi import Path as PathParameter
 
 from music_trainer.config import Settings
 from music_trainer.services.beat_analysis import BeatAnalysisManager
+from music_trainer.services.chord_detection import ChordDetectionManager
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
 from music_trainer.services.stem_separation import StemSeparationManager
@@ -23,6 +24,7 @@ class Services:
     downloads: DownloadManager
     beat_analysis: BeatAnalysisManager
     stem_separation: StemSeparationManager
+    chord_detection: ChordDetectionManager
 
 
 def get_services(request: Request) -> Services:
@@ -53,12 +55,17 @@ def get_stem_separation(request: Request) -> StemSeparationManager:
     return get_services(request).stem_separation
 
 
+def get_chord_detection(request: Request) -> ChordDetectionManager:
+    return get_services(request).chord_detection
+
+
 SettingsDependency = Annotated[Settings, Depends(get_settings)]
 LibraryDependency = Annotated[Library, Depends(get_library)]
 YouTubeDependency = Annotated[YouTubeClient, Depends(get_youtube)]
 DownloadsDependency = Annotated[DownloadManager, Depends(get_downloads)]
 BeatAnalysisDependency = Annotated[BeatAnalysisManager, Depends(get_beat_analysis)]
 StemSeparationDependency = Annotated[StemSeparationManager, Depends(get_stem_separation)]
+ChordDetectionDependency = Annotated[ChordDetectionManager, Depends(get_chord_detection)]
 VideoIdParameter = Annotated[
     str, PathParameter(pattern=VIDEO_ID_PATTERN, description="YouTube video ID")
 ]

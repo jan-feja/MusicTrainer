@@ -11,12 +11,14 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from music_trainer import __version__
-from music_trainer.api import beats, downloads, library, search, stems
+from music_trainer.api import beats, chords, downloads, library, search, stems
 from music_trainer.api.dependencies import Services
 from music_trainer.config import Settings
 from music_trainer.services.audio import ffmpeg_executable
 from music_trainer.services.beat_analysis import BeatAnalysisManager
 from music_trainer.services.beats import BeatThisTracker, BeatTracker
+from music_trainer.services.chord_detection import ChordDetectionManager
+from music_trainer.services.chords import ChordDetector, LibrosaChordDetector
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
 from music_trainer.services.stem_separation import StemSeparationManager
@@ -31,6 +33,7 @@ def create_app(
     youtube: YouTubeClient | None = None,
     beat_tracker: BeatTracker | None = None,
     stem_separator: StemSeparator | None = None,
+    chord_detector: ChordDetector | None = None,
 ) -> FastAPI:
     """Create the app. Tests pass their own settings and fakes for YouTube and the models."""
     settings = settings or Settings()
@@ -55,6 +58,9 @@ def create_app(
             ffmpeg_executable(settings.ffmpeg_path),
         )
     stem_separation = StemSeparationManager(stem_separator, video_library)
+    if chord_detector is None:
+        chord_detector = LibrosaChordDetector(ffmpeg_executable(settings.ffmpeg_path))
+    chord_detection = ChordDetectionManager(chord_detector, video_library)
 
     def after_download(video_id: str) -> None:
         if settings.analyze_beats_after_download:
@@ -72,10 +78,17 @@ def create_app(
         download_manager.shutdown()
         beat_analysis.shutdown()
         stem_separation.shutdown()
+        chord_detection.shutdown()
 
     app = FastAPI(title="Music Trainer", version=__version__, lifespan=lifespan)
     app.state.services = Services(
-        settings, video_library, youtube, download_manager, beat_analysis, stem_separation
+        settings,
+        video_library,
+        youtube,
+        download_manager,
+        beat_analysis,
+        stem_separation,
+        chord_detection,
     )
 
     @app.get("/api/health", tags=["health"])
@@ -87,6 +100,7 @@ def create_app(
     app.include_router(downloads.router)
     app.include_router(beats.router)
     app.include_router(stems.router)
+    app.include_router(chords.router)
     _serve_frontend(app, settings.frontend_dist_dir)
     return app
 

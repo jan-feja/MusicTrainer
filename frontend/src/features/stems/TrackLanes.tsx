@@ -2,6 +2,8 @@ import { useRef } from 'react'
 import type { MixerSettings } from '../../api/types'
 import { clamp } from '../../lib/math'
 import { BeatTicks } from '../beats/BeatTicks'
+import { ChordLane, ChordLaneHeader } from '../chords/ChordLane'
+import type { Chords } from '../chords/useChords'
 import { type LoopState, getLoopRegion } from '../player/loop'
 import { useWheelZoom } from '../player/useWheelZoom'
 import type { TimeView } from '../player/timelineView'
@@ -24,6 +26,8 @@ const STEM_COLORS: Record<string, string> = {
 export interface TrackLanesProps {
   /** The stems to show (not the ones hardly in the song). */
   tracks: StemTrack[]
+  /** The chord lane on top; none without a beat grid. */
+  chords?: Chords
   mixer: MixerSettings | null
   /** What each stem is heard at (after mute and solo). */
   gains: Record<string, number>
@@ -46,6 +50,7 @@ export interface TrackLanesProps {
 /** One lane per stem, like a video editor: mixer controls on the left, the waveform on the right. */
 export function TrackLanes({
   tracks,
+  chords,
   mixer,
   gains,
   duration,
@@ -81,6 +86,7 @@ export function TrackLanes({
   return (
     <div className={styles.lanes} role="group" aria-label="Stem tracks">
       <div className={styles.headers}>
+        {chords && <ChordLaneHeader chords={chords} currentTime={currentTime} />}
         {tracks.map((track) => (
           <LaneHeader
             key={track.name}
@@ -99,6 +105,7 @@ export function TrackLanes({
         title="Click or drag to seek; Ctrl + scroll to zoom"
         {...seekDrag}
       >
+        {chords && <ChordLane chords={chords} view={view} currentTime={currentTime} />}
         {tracks.map((track) => (
           <div key={track.name} className={styles.wave} data-heard={(gains[track.name] ?? 1) > 0}>
             <StemWaveform

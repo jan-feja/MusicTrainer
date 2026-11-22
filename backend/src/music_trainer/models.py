@@ -248,6 +248,11 @@ class ChordAnalysis(ApiModel):
     """How they were found, e.g. 'chroma-templates+beats'."""
     chords: list[Chord]
     """In time order, without gaps between neighbours."""
+    grid: str | None = None
+    """The beat grid the chords were found on (see chords.beat_grid_key); other grids
+    detect them again."""
+    from_stems: bool = False
+    """Found on the pitched stems (no drums or vocals) rather than the whole mix."""
 
 
 class ChordDetectionState(ApiModel):
