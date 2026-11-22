@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     port: int = 8000
 
     data_dir: Path = REPOSITORY_ROOT / "data"
-    """Where downloaded videos (and later stems, analysis, ...) are stored."""
+    """Where downloaded videos, their analysis and stems, and model weights are stored."""
 
     frontend_dist_dir: Path = REPOSITORY_ROOT / "frontend" / "dist"
     """Built frontend; served at / when it exists (run `npm run build` in frontend/)."""
@@ -46,6 +46,17 @@ class Settings(BaseSettings):
 
     analyze_beats_after_download: bool = True
     """Detect the beats of every new download right away, in the background."""
+
+    stem_model: str = "htdemucs_6s"
+    """Demucs model separating songs into stems: 'htdemucs_6s' (drums, bass, vocals, guitar,
+    piano, other) or 'htdemucs' (drums, bass, vocals, other; slightly cleaner)."""
+
+    separation_device: str = "cpu"
+    """PyTorch device for stem separation: 'cpu' or 'cuda'."""
+
+    separate_stems_after_download: bool = False
+    """Separate every new download into stems right away (about 2 CPU minutes per song);
+    otherwise only when the player asks for stems."""
 
     @property
     def library_dir(self) -> Path:

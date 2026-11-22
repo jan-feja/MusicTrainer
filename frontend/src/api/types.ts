@@ -101,4 +101,67 @@ export interface PlayerSettings {
   loopEnabled: boolean
   /** The saved loop being played and edited. */
   activeLoopId: string | null
+  /** The stem mixer; null or missing: stems were never turned on for this video. */
+  mixer?: MixerSettings | null
+}
+
+/** One separated instrument track, e.g. 'drums', 'bass', 'vocals', 'guitar', 'piano', 'other'. */
+export interface StemInfo {
+  name: string
+  /** File name inside the video's stems/ folder (FLAC). */
+  file: string
+  /** Loudness 0–1; near 0: the instrument is not in the song. */
+  rms: number
+}
+
+/** The separated tracks of a song: same sample rate and length, all starting at time 0. */
+export interface StemSet {
+  /** e.g. 'demucs:htdemucs_6s' */
+  model: string
+  sampleRate: number
+  duration: number
+  stems: StemInfo[]
+}
+
+export interface StemSeparationState {
+  videoId: string
+  status: AnalysisStatus
+  /** Share separated (0–1) while 'analyzing'; null if unknown. */
+  progress: number | null
+  /** Set once the status is 'completed'. */
+  stems: StemSet | null
+  error: string | null
+}
+
+export interface Chord {
+  start: number
+  end: number
+  /** e.g. 'A:min', 'C:maj'; 'N' for no chord */
+  label: string
+}
+
+/** The chords of a song, changing only on beats. */
+export interface ChordAnalysis {
+  method: string
+  /** In time order, without gaps. */
+  chords: Chord[]
+}
+
+export interface ChordDetectionState {
+  videoId: string
+  status: AnalysisStatus
+  /** Set once the status is 'completed'. */
+  analysis: ChordAnalysis | null
+  error: string | null
+}
+
+/** The stem mixer of a video, kept in its player.json. */
+export interface MixerSettings {
+  /** Play the stems instead of the video's own sound. */
+  enabled: boolean
+  /** Per stem, 0–1; a stem not listed plays at 1. */
+  volumes: Record<string, number>
+  muted: string[]
+  /** When not empty, only these stems are heard. */
+  solo: string[]
 }

@@ -3,7 +3,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from music_trainer.models import BeatAnalysis, PlayerSettings, SavedLoop, VideoMetadata
+from music_trainer.models import (
+    BeatAnalysis,
+    MixerSettings,
+    PlayerSettings,
+    SavedLoop,
+    VideoMetadata,
+)
 from music_trainer.services.beat_decoding import BeatActivations
 from music_trainer.services.library import Library, VideoNotInLibraryError
 from music_trainer.video_ids import InvalidVideoIdError, watch_url
@@ -156,6 +162,18 @@ def test_player_settings_roundtrip(library: Library) -> None:
     )
     library.write_player_settings(VIDEO_ID, settings)
     assert library.read_player_settings(VIDEO_ID) == settings
+
+
+def test_player_settings_keep_the_mixer(library: Library) -> None:
+    add_video(library)
+    mixer = MixerSettings(enabled=True, volumes={"bass": 0.5}, muted=["vocals"], solo=["drums"])
+    library.write_player_settings(VIDEO_ID, PlayerSettings(mixer=mixer))
+    assert library.read_player_settings(VIDEO_ID) == PlayerSettings(mixer=mixer)
+
+
+def test_mixer_rejects_odd_stem_names() -> None:
+    with pytest.raises(ValueError):
+        MixerSettings(muted=["../video"])
 
 
 def test_loops_and_settings_need_the_video(library: Library) -> None:

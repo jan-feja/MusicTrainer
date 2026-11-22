@@ -10,6 +10,7 @@ from music_trainer.api.dependencies import (
     DownloadsDependency,
     LibraryDependency,
     SettingsDependency,
+    StemSeparationDependency,
     VideoIdParameter,
 )
 from music_trainer.models import LibraryVideo, PlayerSettings, SavedLoop, VideoMetadata
@@ -52,7 +53,9 @@ def delete_video(
     library: LibraryDependency,
     downloads: DownloadsDependency,
     beat_analysis: BeatAnalysisDependency,
+    stem_separation: StemSeparationDependency,
 ) -> Response:
+    stem_separation.forget(video_id)  # stops a separation writing into the folder
     try:
         deleted = library.delete_video(video_id)
     except LibraryError as error:
