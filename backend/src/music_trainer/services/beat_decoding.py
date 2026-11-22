@@ -32,7 +32,8 @@ import numpy as np
 FRAMES_PER_SECOND = 50  # Beat This! output rate
 METERS = (3, 4, 5, 6, 7)  # beats per bar the decoder chooses from (2 only as a user hint:
 # on GTZAN it turned 13 % of 4/4 songs into half bars, and real 2/4 is rare)
-UNUSUAL_METER_COST = 0.0  # log-probability cost per bar of 5, 6 or 7 beats
+UNUSUAL_METER_COST = 2.0  # log-probability cost per bar of 5, 6 or 7 beats (GTZAN: meter right
+# 93 -> 95 %, odd-meter test songs unchanged)
 DEFAULT_METER = 4  # when the bar starts are no different from other beats (a click track)
 MIN_BAR_CONTRAST = 0.15  # bar-start probability at bar starts minus at other beats
 LONG_INPUT_METERS = (3, 4)  # for inputs whose back pointers would exceed MAX_POINTER_BYTES
