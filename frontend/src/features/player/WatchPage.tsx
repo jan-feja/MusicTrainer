@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router'
 import { api, isNotFoundError } from '../../api/client'
+import type { LibraryVideo } from '../../api/types'
 import type { WatchLocationState } from '../../app/paths'
 import { NotFoundPage } from '../../app/NotFoundPage'
 import { StatusMessage } from '../../components/StatusMessage'
@@ -9,10 +10,12 @@ import { useAsync } from '../../lib/useAsync'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
 import { useOnChange } from '../../lib/useOnChange'
 import { isValidVideoId } from '../../lib/youtube'
+import { type BeatTracking, useBeatTracking } from '../beats/useBeatTracking'
 import { useDownloadJob, useDownloads } from '../downloads/downloadsContext'
 import { DownloadPanel } from './DownloadPanel'
+import { usePracticeStorage } from '../practice/usePracticeStorage'
 import { VideoDetails } from './VideoDetails'
-import { VideoPlayer } from './VideoPlayer'
+import { type PlayerPractice, VideoPlayer } from './VideoPlayer'
 import styles from './WatchPage.module.css'
 
 export function WatchPage() {
@@ -31,6 +34,7 @@ function WatchVideo({ videoId }: { videoId: string }) {
   const job = useDownloadJob(videoId)
   const video = useAsync((signal) => api.getVideo(videoId, signal), videoId)
   const [startError, setStartError] = useState<string | null>(null)
+  const beatTracking = useBeatTracking(videoId, video.status === 'success')
 
   const isMissing = video.status === 'error' && isNotFoundError(video.error)
   const title =
@@ -52,11 +56,7 @@ function WatchVideo({ videoId }: { videoId: string }) {
   if (video.status === 'success') {
     return (
       <article className={styles.page}>
-        <VideoPlayer
-          key={video.data.videoId}
-          src={video.data.mediaUrl}
-          poster={video.data.thumbnailUrl ?? undefined}
-        />
+        <PracticePlayer video={video.data} beatTracking={beatTracking} />
         <VideoDetails video={video.data} />
       </article>
     )
@@ -88,5 +88,48 @@ function WatchVideo({ videoId }: { videoId: string }) {
         onRetry={retry}
       />
     </article>
+  )
+}
+
+/** The player, with the video's saved loops and settings loaded first and changes stored. */
+function PracticePlayer({
+  video,
+  beatTracking,
+}: {
+  video: LibraryVideo
+  beatTracking: BeatTracking
+}) {
+  const storage = usePracticeStorage(video.videoId)
+  const { data } = storage
+  if (data.status === 'loading') {
+    return <StatusMessage kind="loading">Loading…</StatusMessage>
+  }
+  const practice: PlayerPractice | undefined =
+    data.status === 'success'
+      ? {
+          loops: data.data.loops,
+          settings: data.data.settings,
+          onLoopsChange: storage.saveLoops,
+          onSettingsChange: storage.saveSettings,
+          saveError: storage.saveError,
+        }
+      : undefined
+  return (
+    <>
+      {data.status === 'error' && (
+        <StatusMessage kind="error" onRetry={data.reload}>
+          Saved loops and settings could not be loaded: {errorMessage(data.error)}
+        </StatusMessage>
+      )}
+      <VideoPlayer
+        // loaded later (after a retry), the saved state starts the player over
+        key={`${video.videoId}:${practice ? 'saved' : 'unsaved'}`}
+        src={video.mediaUrl}
+        audioUrl={video.audioUrl}
+        poster={video.thumbnailUrl ?? undefined}
+        beatTracking={beatTracking}
+        practice={practice}
+      />
+    </>
   )
 }

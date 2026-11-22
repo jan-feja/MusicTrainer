@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from music_trainer.app import create_app
 from music_trainer.config import Settings
-from tests.fakes import FakeYouTubeClient
+from tests.fakes import FakeBeatTracker, FakeYouTubeClient
 
 
 def make_client(tmp_path: Path) -> TestClient:
@@ -14,7 +14,8 @@ def make_client(tmp_path: Path) -> TestClient:
     (dist / "assets" / "app.js").write_text("console.log(1)")
     (dist / "favicon.svg").write_text("<svg/>")
     settings = Settings(data_dir=tmp_path / "data", frontend_dist_dir=dist)
-    return TestClient(create_app(settings, youtube=FakeYouTubeClient()))
+    app = create_app(settings, youtube=FakeYouTubeClient(), beat_tracker=FakeBeatTracker())
+    return TestClient(app)
 
 
 def test_serves_built_frontend(tmp_path: Path) -> None:

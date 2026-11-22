@@ -11,9 +11,12 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from music_trainer import __version__
-from music_trainer.api import downloads, library, search
+from music_trainer.api import beats, downloads, library, search
 from music_trainer.api.dependencies import Services
 from music_trainer.config import Settings
+from music_trainer.services.audio import ffmpeg_executable
+from music_trainer.services.beat_analysis import BeatAnalysisManager
+from music_trainer.services.beats import BeatThisTracker, BeatTracker
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
 from music_trainer.services.youtube import YouTubeClient, YtDlpClient
@@ -21,23 +24,41 @@ from music_trainer.services.youtube import YouTubeClient, YtDlpClient
 logger = logging.getLogger(__name__)
 
 
-def create_app(settings: Settings | None = None, youtube: YouTubeClient | None = None) -> FastAPI:
-    """Create the app. Tests pass their own settings and a fake YouTube client."""
+def create_app(
+    settings: Settings | None = None,
+    youtube: YouTubeClient | None = None,
+    beat_tracker: BeatTracker | None = None,
+) -> FastAPI:
+    """Create the app. Tests pass their own settings and fakes for YouTube and beat detection."""
     settings = settings or Settings()
     video_library = Library(settings.library_dir)
     video_library.clear_staging()
     if youtube is None:
         _warn_about_missing_tools(settings)
         youtube = YtDlpClient(settings.max_video_height, settings.deno_path, settings.ffmpeg_path)
-    download_manager = DownloadManager(youtube, video_library, settings.max_parallel_downloads)
+    if beat_tracker is None:
+        beat_tracker = BeatThisTracker(
+            settings.beat_model,
+            settings.models_dir,
+            settings.analysis_device,
+            ffmpeg_executable(settings.ffmpeg_path),
+        )
+    beat_analysis = BeatAnalysisManager(beat_tracker, video_library)
+    download_manager = DownloadManager(
+        youtube,
+        video_library,
+        settings.max_parallel_downloads,
+        on_completed=beat_analysis.start if settings.analyze_beats_after_download else None,
+    )
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
         yield
         download_manager.shutdown()
+        beat_analysis.shutdown()
 
     app = FastAPI(title="Music Trainer", version=__version__, lifespan=lifespan)
-    app.state.services = Services(settings, video_library, youtube, download_manager)
+    app.state.services = Services(settings, video_library, youtube, download_manager, beat_analysis)
 
     @app.get("/api/health", tags=["health"])
     def health() -> dict[str, str]:
@@ -46,6 +67,7 @@ def create_app(settings: Settings | None = None, youtube: YouTubeClient | None =
     app.include_router(search.router)
     app.include_router(library.router)
     app.include_router(downloads.router)
+    app.include_router(beats.router)
     _serve_frontend(app, settings.frontend_dist_dir)
     return app
 

@@ -2,7 +2,9 @@
 
 from fastapi.testclient import TestClient
 
+from music_trainer.config import Settings
 from tests.fakes import FAKE_MEDIA, OTHER_VIDEO_ID, VIDEO_ID, FakeYouTubeClient, wait_for_download
+from tests.test_audio import read_wav, requires_ffmpeg, write_sine_wav
 
 
 def download(client: TestClient, video_id: str = VIDEO_ID) -> dict:
@@ -111,6 +113,7 @@ class TestLibrary:
         video = client.get(f"/api/library/{VIDEO_ID}").json()
         assert video["title"] == f"Video {VIDEO_ID}"
         assert video["mediaUrl"] == f"/api/library/{VIDEO_ID}/media"
+        assert video["audioUrl"] == f"/api/library/{VIDEO_ID}/audio"
         assert video["thumbnailUrl"] == f"/api/library/{VIDEO_ID}/thumbnail"
         assert "mediaFile" not in video
 
@@ -123,6 +126,34 @@ class TestLibrary:
         part = client.get(f"/api/library/{VIDEO_ID}/media", headers={"Range": "bytes=100-199"})
         assert part.status_code == 206
         assert part.content == FAKE_MEDIA[100:200]
+
+    @requires_ffmpeg
+    def test_audio_section(self, client: TestClient, settings: Settings) -> None:
+        download(client)
+        write_sine_wav(settings.library_dir / VIDEO_ID / "video.mp4", seconds=3.0)
+        response = client.get(
+            f"/api/library/{VIDEO_ID}/audio", params={"start": 1, "end": 2, "sampleRate": 44100}
+        )
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "audio/wav"
+        params, _ = read_wav(response.content)
+        assert (params.nchannels, params.framerate, params.nframes) == (2, 44100, 44100)
+
+    def test_audio_section_rejects_bad_ranges(self, client: TestClient) -> None:
+        download(client)
+        url = f"/api/library/{VIDEO_ID}/audio"
+        assert client.get(url, params={"start": 2, "end": 1}).status_code == 422
+        assert client.get(url, params={"start": -1, "end": 1}).status_code == 422
+        assert client.get(url, params={"start": 0, "end": 901}).status_code == 422
+        assert client.get(url, params={"start": 0}).status_code == 422
+        assert client.get(url, params={"start": 0, "end": 1, "sampleRate": 1}).status_code == 422
+
+    @requires_ffmpeg
+    def test_unreadable_audio_is_server_error(self, client: TestClient) -> None:
+        download(client)  # the fake media file is not audio
+        response = client.get(f"/api/library/{VIDEO_ID}/audio", params={"start": 0, "end": 1})
+        assert response.status_code == 500
+        assert "could not read" in response.json()["detail"]
 
     def test_thumbnail(self, client: TestClient) -> None:
         download(client)
@@ -141,6 +172,67 @@ class TestLibrary:
         assert download(client)["status"] == "completed"
         assert client.get(f"/api/library/{VIDEO_ID}").status_code == 200
 
+    def test_saved_loops(self, client: TestClient) -> None:
+        download(client)
+        url = f"/api/library/{VIDEO_ID}/loops"
+        assert client.get(url).json() == []
+        loops = [
+            {
+                "id": "l1",
+                "name": "Verse",
+                "start": 10,
+                "end": 20,
+                "snapMode": "bar",
+                "playbackRate": 0.8,
+            },
+            {"id": "l2", "name": "Solo", "start": 60.5, "end": 66.25},
+        ]
+        assert client.put(url, json=loops).status_code == 200
+        stored = client.get(url).json()
+        assert stored[0] == loops[0]
+        assert stored[1] == {**loops[1], "snapMode": "off", "playbackRate": 1.0}
+
+    def test_saved_loops_are_validated(self, client: TestClient) -> None:
+        download(client)
+        url = f"/api/library/{VIDEO_ID}/loops"
+        loop = {"id": "l1", "name": "Verse", "start": 10, "end": 20}
+        assert client.put(url, json=[loop, loop]).status_code == 422  # same id twice
+        assert client.put(url, json=[{**loop, "end": 5}]).status_code == 422
+        assert client.put(url, json=[{**loop, "playbackRate": 3}]).status_code == 422
+        assert client.put(url, json=[{**loop, "snapMode": "half"}]).status_code == 422
+        assert client.put(url, json=[{**loop, "id": "../x"}]).status_code == 422
+        many = [{**loop, "id": f"l{i}"} for i in range(201)]
+        assert client.put(url, json=many).status_code == 422
+
+    def test_player_settings(self, client: TestClient) -> None:
+        download(client)
+        url = f"/api/library/{VIDEO_ID}/settings"
+        defaults = client.get(url).json()
+        assert defaults["volume"] == 1.0
+        assert defaults["snapMode"] is None
+        assert defaults["activeLoopId"] is None
+        settings = {
+            **defaults,
+            "volume": 0.3,
+            "muted": True,
+            "playbackRate": 0.85,
+            "snapMode": "beat",
+            "position": 42.5,
+            "loopStart": 10,
+            "loopEnd": 20,
+            "loopEnabled": True,
+            "activeLoopId": "l1",
+        }
+        assert client.put(url, json=settings).json() == settings
+        assert client.get(url).json() == settings
+        assert client.put(url, json={**settings, "volume": 2}).status_code == 422
+
     def test_missing_video_is_404(self, client: TestClient) -> None:
         assert client.get(f"/api/library/{VIDEO_ID}").status_code == 404
         assert client.get(f"/api/library/{VIDEO_ID}/media").status_code == 404
+        audio = client.get(f"/api/library/{VIDEO_ID}/audio", params={"start": 0, "end": 1})
+        assert audio.status_code == 404
+        assert client.get(f"/api/library/{VIDEO_ID}/loops").status_code == 404
+        assert client.put(f"/api/library/{VIDEO_ID}/loops", json=[]).status_code == 404
+        assert client.get(f"/api/library/{VIDEO_ID}/settings").status_code == 404
+        assert client.put(f"/api/library/{VIDEO_ID}/settings", json={}).status_code == 404

@@ -5,6 +5,12 @@
   padding: 2px 16px 14px;
 }
 
+/* holds the overview of a zoomed timeline; as high when empty */
+.overviewSlot {
+  height: 16px;
+  margin-top: -4px;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -73,4 +79,12 @@
   color: var(--color-text-muted);
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
+}
+
+.tempo {
+  min-width: 4.5em;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }

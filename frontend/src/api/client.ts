@@ -1,4 +1,12 @@
-import type { DownloadJob, LibraryVideo, SearchResult } from './types'
+import type {
+  BeatGridHints,
+  BeatTrackingState,
+  DownloadJob,
+  LibraryVideo,
+  PlayerSettings,
+  SavedLoop,
+  SearchResult,
+} from './types'
 
 const API_BASE = '/api'
 
@@ -78,4 +86,56 @@ export const api = {
   listDownloads(signal?: AbortSignal): Promise<DownloadJob[]> {
     return request('/downloads', { signal })
   },
+
+  getBeats(videoId: string, signal?: AbortSignal): Promise<BeatTrackingState> {
+    return request(`${videoPath(videoId)}/beats`, { signal })
+  },
+
+  /**
+   * Start beat detection. `force` runs the beat network again even if a result
+   * exists; `hints` only decodes the grid again with them (a few seconds).
+   */
+  detectBeats(
+    videoId: string,
+    options: { force?: boolean; hints?: BeatGridHints } = {},
+  ): Promise<BeatTrackingState> {
+    const query = options.force ? '?force=true' : ''
+    return request(`${videoPath(videoId)}/beats${query}`, {
+      method: 'POST',
+      ...(options.hints && {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(options.hints),
+      }),
+    })
+  },
+
+  getLoops(videoId: string, signal?: AbortSignal): Promise<SavedLoop[]> {
+    return request(`${videoPath(videoId)}/loops`, { signal })
+  },
+
+  /** `keepalive` lets the request finish while the page is being closed. */
+  saveLoops(videoId: string, loops: SavedLoop[], keepalive = false): Promise<SavedLoop[]> {
+    return request(`${videoPath(videoId)}/loops`, putJson(loops, keepalive))
+  },
+
+  getPlayerSettings(videoId: string, signal?: AbortSignal): Promise<PlayerSettings> {
+    return request(`${videoPath(videoId)}/settings`, { signal })
+  },
+
+  savePlayerSettings(
+    videoId: string,
+    settings: PlayerSettings,
+    keepalive = false,
+  ): Promise<PlayerSettings> {
+    return request(`${videoPath(videoId)}/settings`, putJson(settings, keepalive))
+  },
+}
+
+function putJson(body: unknown, keepalive: boolean): RequestInit {
+  return {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    keepalive,
+  }
 }

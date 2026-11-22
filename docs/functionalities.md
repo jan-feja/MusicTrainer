@@ -49,16 +49,21 @@ Play the song for practice.
 - starting points: Rubber Band or SoundTouch (time-stretching)
 
 #### Shared song folder (agree on this first)
+As implemented in `backend/src/music_trainer/services/library.py`:
 ```
-songs/<song-id>/
-  meta.json       title, source URL, duration          <- part 1
-  original.wav    (+ video.mp4)                        <- part 1
-  stems/          drums.wav, bass.wav, vocals.wav, ... <- part 1
-  analysis.json   bpm, beats[], downbeats[], time signature (times in seconds) <- part 2
-  loops.json      [{ name, start, end }]               <- part 2 format, created from part 3 UI
+data/library/<video-id>/
+  meta.json       title, channel, duration, source URL, media file name   <- part 1 (done)
+  video.mp4       downloaded video with audio                              <- part 1 (done)
+  thumbnail.jpg                                                            <- part 1 (done)
+  analysis.json   bpm, beats_per_bar, beats[], downbeats[], analyzer, hints <- part 2 (done)
+  beat_activations.npz  beat network output (50 per second), to decode again  <- part 2 (done)
+  loops.json      [{ id, name, start, end, snap_mode, playback_rate }]      <- part 3 UI (done)
+  player.json     volume, muted, playback_rate, snap_mode, position, loop, active loop  <- part 3 UI (done)
+  stems/          drums.wav, bass.wav, vocals.wav, ...                     <- part 1 (to do)
 ```
-Example `analysis.json`:
+Example `analysis.json` (times in seconds; every downbeat is also a beat; `hints` are the user's fixes, see [beat-tracking.md](beat-tracking.md)):
 ```json
-{ "bpm": 120.0, "time_signature": 4, "beats": [0.51, 1.01, 1.51], "downbeats": [0.51, 2.51] }
+{ "bpm": 120.0, "beats_per_bar": 4, "beats": [0.51, 1.01, 1.51, 2.01, 2.51], "downbeats": [0.51, 2.51], "analyzer": "beat_this:final0+grid",
+  "hints": { "beats_per_bar": null, "tempo_bpm": null, "bar_starts": [], "steady_tempo": false } }
 ```
 Part 3 doesn't have to wait for parts 1 and 2: it can start with any audio file and a hand-written `analysis.json`.

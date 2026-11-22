@@ -9,8 +9,8 @@ function isTextInput(target: EventTarget | null): boolean {
   )
 }
 
-/** Runs the matching action when a player shortcut key is pressed. */
-export function usePlayerShortcuts(actions: Record<ShortcutId, () => void>): void {
+/** Runs the matching action when a player shortcut key is pressed; it gets the key. */
+export function usePlayerShortcuts(actions: Record<ShortcutId, (key: string) => void>): void {
   const actionsRef = useLatest(actions)
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export function usePlayerShortcuts(actions: Record<ShortcutId, () => void>): voi
       if (!shortcut) return
       // also stops Space from scrolling the page or clicking the focused button
       event.preventDefault()
-      actionsRef.current[shortcut]()
+      actionsRef.current[shortcut](event.key)
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)

@@ -2,6 +2,7 @@
 
 import logging
 import threading
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
@@ -37,9 +38,17 @@ class DownloadManager:
     Jobs live in memory only; finished videos are found through the Library.
     """
 
-    def __init__(self, youtube: YouTubeClient, library: Library, max_parallel: int = 2) -> None:
+    def __init__(
+        self,
+        youtube: YouTubeClient,
+        library: Library,
+        max_parallel: int = 2,
+        on_completed: Callable[[str], object] | None = None,
+    ) -> None:
+        """`on_completed(video_id)` runs after a video was added to the library."""
         self._youtube = youtube
         self._library = library
+        self._on_completed = on_completed
         self._executor = ThreadPoolExecutor(max_workers=max_parallel, thread_name_prefix="download")
         self._jobs: dict[str, _Job] = {}
         self._lock = threading.Lock()
@@ -104,9 +113,18 @@ class DownloadManager:
             )
         else:
             self._update(job, status=DownloadStatus.COMPLETED, progress=1.0, title=metadata.title)
+            self._notify_completed(job.video_id)
         finally:
             if job.status is not DownloadStatus.COMPLETED:
                 self._library.discard_staging(job.video_id)
+
+    def _notify_completed(self, video_id: str) -> None:
+        if self._on_completed is None:
+            return
+        try:
+            self._on_completed(video_id)
+        except Exception:  # a failing follow-up step must not fail the download
+            logger.exception("Post-download step for %s failed", video_id)
 
     def _on_progress(self, job: _Job, progress: DownloadProgress) -> None:
         status = (

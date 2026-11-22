@@ -1,26 +1,33 @@
 import { LoopIcon } from '../../components/icons'
 import { formatTimePrecise } from '../../lib/format'
-import { LOOP_NUDGE_SECONDS, type LoopState, getLoopRegion } from './loop'
+import { type LoopState, getLoopRegion } from './loop'
 import styles from './PlayerControls.module.css'
 
 interface LoopControlsProps {
   loop: LoopState
   onSetStart: () => void
   onSetEnd: () => void
-  onMoveStart: (time: number) => void
-  onMoveEnd: (time: number) => void
+  /** Move a point one step earlier (-1) or later (+1). */
+  onNudgeStart: (direction: -1 | 1) => void
+  onNudgeEnd: (direction: -1 | 1) => void
   onToggle: () => void
   onClear: () => void
+  /** Size of one nudge step, e.g. "50 ms" or "1 beat". */
+  stepLabel: string
+  /** Loop length, e.g. "7.5 s" or "4 bars"; null without a loop. */
+  lengthLabel: string | null
 }
 
 export function LoopControls({
   loop,
   onSetStart,
   onSetEnd,
-  onMoveStart,
-  onMoveEnd,
+  onNudgeStart,
+  onNudgeEnd,
   onToggle,
   onClear,
+  stepLabel,
+  lengthLabel,
 }: LoopControlsProps) {
   const region = getLoopRegion(loop)
 
@@ -35,7 +42,7 @@ export function LoopControls({
       >
         Set A
       </button>
-      <LoopPoint name="A" time={loop.start} onMove={onMoveStart} />
+      <LoopPoint name="A" time={loop.start} stepLabel={stepLabel} onNudge={onNudgeStart} />
       <button
         type="button"
         className="button button-small"
@@ -44,7 +51,7 @@ export function LoopControls({
       >
         Set B
       </button>
-      <LoopPoint name="B" time={loop.end} onMove={onMoveEnd} />
+      <LoopPoint name="B" time={loop.end} stepLabel={stepLabel} onNudge={onNudgeEnd} />
       <button
         type="button"
         className="button button-small"
@@ -64,9 +71,7 @@ export function LoopControls({
       >
         Clear
       </button>
-      {region && (
-        <span className={styles.loopLength}>{(region.end - region.start).toFixed(1)} s</span>
-      )}
+      {region && lengthLabel && <span className={styles.loopLength}>{lengthLabel}</span>}
     </div>
   )
 }
@@ -74,20 +79,20 @@ export function LoopControls({
 interface LoopPointProps {
   name: string
   time: number | null
-  onMove: (time: number) => void
+  stepLabel: string
+  onNudge: (direction: -1 | 1) => void
 }
 
 /** A loop point's time with buttons to nudge it earlier or later. */
-function LoopPoint({ name, time, onMove }: LoopPointProps) {
-  const nudge = `${LOOP_NUDGE_SECONDS * 1000} ms`
+function LoopPoint({ name, time, stepLabel, onNudge }: LoopPointProps) {
   return (
     <span className={styles.loopPoint}>
       <button
         type="button"
         className="icon-button icon-button-small"
-        onClick={() => time !== null && onMove(time - LOOP_NUDGE_SECONDS)}
+        onClick={() => onNudge(-1)}
         disabled={time === null}
-        aria-label={`Move ${name} ${nudge} earlier`}
+        aria-label={`Move ${name} ${stepLabel} earlier`}
       >
         ‹
       </button>
@@ -97,9 +102,9 @@ function LoopPoint({ name, time, onMove }: LoopPointProps) {
       <button
         type="button"
         className="icon-button icon-button-small"
-        onClick={() => time !== null && onMove(time + LOOP_NUDGE_SECONDS)}
+        onClick={() => onNudge(1)}
         disabled={time === null}
-        aria-label={`Move ${name} ${nudge} later`}
+        aria-label={`Move ${name} ${stepLabel} later`}
       >
         ›
       </button>

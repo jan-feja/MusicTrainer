@@ -13,9 +13,11 @@ interface SpeedControlProps {
   onChange: (rate: number) => void
   /** Change the rate by steps of 0.05 (− / + buttons). */
   onStep: (steps: number) => void
+  /** Tempo of the song; shown as the tempo at the current speed. */
+  bpm?: number | null
 }
 
-export function SpeedControl({ rate, onChange, onStep }: SpeedControlProps) {
+export function SpeedControl({ rate, onChange, onStep, bpm }: SpeedControlProps) {
   const preset = (PLAYBACK_RATE_PRESETS as readonly number[]).includes(rate) ? String(rate) : ''
 
   return (
@@ -65,6 +67,14 @@ export function SpeedControl({ rate, onChange, onStep }: SpeedControlProps) {
           </option>
         ))}
       </select>
+      {bpm != null && (
+        <span
+          className={styles.tempo}
+          title={`Song tempo ${Math.round(bpm)} BPM × ${formatPlaybackRate(rate)}`}
+        >
+          {Math.round(bpm * rate)} BPM
+        </span>
+      )}
     </div>
   )
 }
