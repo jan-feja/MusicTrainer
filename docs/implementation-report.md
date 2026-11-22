@@ -208,6 +208,7 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
   - The piano stem basically fails.
   - Guitar is fine on a single distorted rhythm guitar but untested on songs with several guitars.
   - Stronger models exist: BS-RoFormer is ~1.3 dB better in one 2026 benchmark. Its Python package clashed with Beat This!'s dependencies, so I didn't test it.
+- **Implemented (22 November 2026):** `htdemucs_6s` in a worker process, queued after each download (the song open in the player first), stems stored as FLAC. The player mixes them as in the architecture above, with mute, solo (one stem) and volume per stem, and a waveform lane each.
 
 ##### 11. Show / import tabs and scores (M, ✅)
 - **Build:** [alphaTab](https://alphatab.net) (MPL-2.0). It renders Guitar Pro 3–8 and MusicXML as tab + notation. It has its own player with speed, loop range and a playback cursor, and can follow a real recording via sync points; Guitar Pro 8 files can carry the recording inside.
@@ -237,6 +238,7 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
   - a "simple chords" mode
   - letting the user edit chords
   - correcting for tuning first (essentia.js failed completely on the detuned song)
+- **Implemented (22 November 2026):** librosa templates (no madmom), averaged per beat and smoothed with a Viterbi pass, so chords change only on beats; on the pitched stems once they exist. Shown in a lane under the timeline. Still major / minor only, and not editable.
 
 ##### 13. Record and compare by ear (M, ⚠️)
 - **Build:** `getUserMedia` with echo cancellation, noise suppression and auto gain turned off, plus an AudioWorklet recorder. Store the takes, and play a take together with the song, shifted by the latency.
