@@ -121,6 +121,80 @@ def harmonix_offset(song_id, wav):
     return float(best_d)
 
 
+MEL = {"sr": 22050, "n_mels": 80, "n_fft": 2048, "hop_length": 1024}  # Harmonix_melspecs.tgz info.json
+WARP_WINDOW = 10.0  # seconds: the DTW path is smoothed by straight-line fits over windows this long
+WARP_SLOPE = 0.02  # a beat is kept where the fit runs at the same speed (+-2 %) ...
+WARP_RESIDUAL = 0.05  # ... and follows the path closely (seconds RMS): no cut inside the window
+WARP_MIN_SHARE = 0.5  # the longest stretch of kept beats must cover this share of the song
+WARP_FINE = 0.08  # seconds: last, the beats are shifted (at most this far) onto the strongest onsets
+
+
+def harmonix_warped(song_id, wav):
+    """Annotated beats and bar positions moved onto the YouTube audio, or None if too little matches.
+
+    A constant shift (harmonix_offset) is not enough for many songs: YouTube versions can have a
+    longer intro, a cut verse, an inserted interlude or another master. The Harmonix authors align
+    YouTube audio to the audio they annotated with DTW on mel spectrograms and publish those
+    spectrograms (Harmonix_melspecs.tgz, unpacked to MT_DATA/harmonix_melspecs/melspecs/). Here:
+      1. DTW between the published and the YouTube mel spectrogram (log, cosine distance);
+      2. every annotated beat is mapped by a straight-line fit to the path over +-5 s (sub-frame
+         precision); it is kept where that line runs at the same speed and fits the path, i.e.
+         no cut or insertion nearby;
+      3. the longest unbroken stretch of kept beats is the song's answer (at least half the song);
+      4. as in harmonix_offset, a last small shift puts the beats on the strongest onsets (the
+         published spectrograms lag the annotations by about an MP3 decoder delay, ~25 ms).
+    Returns (beat times, beat positions in the bar) in YouTube time; cached in harmonix/aligned/.
+    """
+    cache = os.path.join(DATA, "harmonix", "aligned", f"{song_id}.json")
+    if os.path.exists(cache):
+        data = json.load(open(cache))
+        return None if data is None else (np.array(data["beats"]), np.array(data["positions"]))
+    import librosa
+
+    reference = np.load(os.path.join(DATA, "harmonix_melspecs", "melspecs", f"{song_id}-mel.npy"))
+    y, _ = librosa.load(wav, sr=MEL["sr"], mono=True)
+    ours = librosa.feature.melspectrogram(y=y, **MEL)
+    ref_log, our_log = np.log1p(reference) + 1e-3, np.log1p(ours) + 1e-3  # no all-zero frames (cosine)
+    _, path = librosa.sequence.dtw(X=ref_log, Y=our_log, metric="cosine")
+    path = path[::-1].astype(float) * MEL["hop_length"] / MEL["sr"]  # (reference time, YouTube time)
+    rows = np.loadtxt(os.path.join(DATA, "harmonix", "ann", f"{song_id}.beats_and_downbeats.txt"))
+    beats, positions = rows[:, 0], rows[:, 1].astype(int)
+    duration = len(y) / MEL["sr"]
+    mapped, kept = np.empty(len(beats)), np.zeros(len(beats), dtype=bool)
+    for i, t in enumerate(beats):
+        near = np.abs(path[:, 0] - t) <= WARP_WINDOW / 2
+        slope, intercept = np.polyfit(path[near, 0], path[near, 1], 1)
+        residual = np.sqrt(np.mean((slope * path[near, 0] + intercept - path[near, 1]) ** 2))
+        mapped[i] = slope * t + intercept
+        kept[i] = abs(slope - 1) < WARP_SLOPE and residual < WARP_RESIDUAL and 0.05 < mapped[i] < duration - 0.05
+    # longest unbroken run of kept beats
+    best, run_start = (0, 0), None
+    for i, k in enumerate(np.append(kept, False)):
+        if k and run_start is None:
+            run_start = i
+        elif not k and run_start is not None:
+            best = max(best, (i - run_start, run_start))
+            run_start = None
+    length, first = best
+    result = None
+    if length >= WARP_MIN_SHARE * len(beats):
+        run = slice(first, first + length)
+        hop = 220  # 10 ms
+        envelope = librosa.onset.onset_strength(y=y, sr=MEL["sr"], hop_length=hop)
+        times = mapped[run]
+
+        def onset_score(shift: float) -> float:
+            frames = np.round((times + shift) * MEL["sr"] / hop).astype(int)
+            frames = frames[(frames >= 1) & (frames < len(envelope) - 1)]
+            return float(np.mean(np.maximum(np.maximum(envelope[frames - 1], envelope[frames]), envelope[frames + 1])))
+
+        shift = max(np.arange(-WARP_FINE, WARP_FINE + 1e-9, 0.005), key=onset_score)
+        result = {"beats": (times + shift).tolist(), "positions": positions[run].tolist(), "shift": float(shift)}
+    os.makedirs(os.path.dirname(cache), exist_ok=True)
+    json.dump(result, open(cache, "w"))
+    return None if result is None else (np.array(result["beats"]), np.array(result["positions"]))
+
+
 @contextmanager
 def timer(store, key):
     t0 = time.perf_counter()

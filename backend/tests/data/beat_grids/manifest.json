@@ -1,0 +1,1598 @@
+[
+ {
+  "id": "score/acoustic_nodrums_85",
+  "group": "steady",
+  "category": "no drums",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/acoustic_nodrums_85_v1",
+  "group": "steady",
+  "category": "no drums",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/acoustic_nodrums_85_v2",
+  "group": "steady",
+  "category": "no drums",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/ballad_75_feels",
+  "group": "steady",
+  "category": "feel changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/ballad_75_feels_v1",
+  "group": "steady",
+  "category": "feel changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/ballad_75_feels_v2",
+  "group": "steady",
+  "category": "feel changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/folk_6-8_66",
+  "group": "steady",
+  "category": "compound",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/folk_6-8_66_v1",
+  "group": "steady",
+  "category": "compound",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/folk_6-8_66_v2",
+  "group": "steady",
+  "category": "compound",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/funk_100",
+  "group": "steady",
+  "category": "syncopation",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/funk_100_v1",
+  "group": "steady",
+  "category": "syncopation",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/funk_100_v2",
+  "group": "steady",
+  "category": "syncopation",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/live_drift_110",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/live_drift_110_v1",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/live_drift_110_v2",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/metal_180",
+  "group": "steady",
+  "category": "feel changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/metal_180_v1",
+  "group": "steady",
+  "category": "feel changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/metal_180_v2",
+  "group": "steady",
+  "category": "feel changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_5-4_110",
+  "group": "steady",
+  "category": "odd meter",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_5-4_110_v1",
+  "group": "steady",
+  "category": "odd meter",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_5-4_110_v2",
+  "group": "steady",
+  "category": "odd meter",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_7-4_130",
+  "group": "steady",
+  "category": "odd meter",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_7-4_130_v1",
+  "group": "steady",
+  "category": "odd meter",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_7-4_130_v2",
+  "group": "steady",
+  "category": "odd meter",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_bars_100",
+  "group": "meter",
+  "category": "odd bars",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_bars_100_v1",
+  "group": "meter",
+  "category": "odd bars",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/odd_bars_100_v2",
+  "group": "meter",
+  "category": "odd bars",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/reggae_onedrop_75",
+  "group": "steady",
+  "category": "syncopation",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/reggae_onedrop_75_v1",
+  "group": "steady",
+  "category": "syncopation",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/reggae_onedrop_75_v2",
+  "group": "steady",
+  "category": "syncopation",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/rock_120",
+  "group": "steady",
+  "category": "steady",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/rock_120_v1",
+  "group": "steady",
+  "category": "steady",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/rock_120_v2",
+  "group": "steady",
+  "category": "steady",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/rubato_intro",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/rubato_intro_v1",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/rubato_intro_v2",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/shuffle_12-8_70",
+  "group": "steady",
+  "category": "compound",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/shuffle_12-8_70_v1",
+  "group": "steady",
+  "category": "compound",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/shuffle_12-8_70_v2",
+  "group": "steady",
+  "category": "compound",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/stops_100",
+  "group": "steady",
+  "category": "stops",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/stops_100_v1",
+  "group": "steady",
+  "category": "stops",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/stops_100_v2",
+  "group": "steady",
+  "category": "stops",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/swing_160",
+  "group": "steady",
+  "category": "swing",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/swing_160_v1",
+  "group": "steady",
+  "category": "swing",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/swing_160_v2",
+  "group": "steady",
+  "category": "swing",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/tempo_jump",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/tempo_jump_v1",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/tempo_jump_v2",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/waltz_3-4_150",
+  "group": "steady",
+  "category": "3/4",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/waltz_3-4_150_v1",
+  "group": "steady",
+  "category": "3/4",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score/waltz_3-4_150_v2",
+  "group": "steady",
+  "category": "3/4",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/cycle_4-4-4-3",
+  "group": "meter",
+  "category": "meter patterns",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/cycle_4-4-4-3_v1",
+  "group": "meter",
+  "category": "meter patterns",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/cycle_4-4-4-3_v2",
+  "group": "meter",
+  "category": "meter patterns",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/pneuma_like",
+  "group": "meter",
+  "category": "meter patterns",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/pneuma_like_v1",
+  "group": "meter",
+  "category": "meter patterns",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/pneuma_like_v2",
+  "group": "meter",
+  "category": "meter patterns",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/rubato_ballad",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/rubato_ballad_v1",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/rubato_ballad_v2",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_3-4_4-4",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_3-4_4-4_v1",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_3-4_4-4_v2",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_5-4_4-4",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_5-4_4-4_v1",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_5-4_4-4_v2",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_6-4_4-4",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_6-4_4-4_v1",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_6-4_4-4_v2",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_7-4_4-4",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_7-4_4-4_v1",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_7-4_4-4_v2",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_7-8_4-4",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_7-8_4-4_v1",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/sections_7-8_4-4_v2",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/tempo_sections",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/tempo_sections_v1",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/tempo_sections_v2",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/waltz_accelerando",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/waltz_accelerando_v1",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/waltz_accelerando_v2",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/waltz_verse_rock_chorus",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/waltz_verse_rock_chorus_v1",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "score_changes/waltz_verse_rock_chorus_v2",
+  "group": "meter",
+  "category": "meter sections",
+  "source": "score song",
+  "title": ""
+ },
+ {
+  "id": "harmonix_changes/0009_americanmusic",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "Violent Femmes - American Music"
+ },
+ {
+  "id": "harmonix_changes/0014_babaoriley",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "The Who - Baba O'Riley"
+ },
+ {
+  "id": "harmonix_changes/0027_blackened",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Metallica - Blackened"
+ },
+ {
+  "id": "harmonix_changes/0028_blackmagic",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "Baboon - Secret Room"
+ },
+ {
+  "id": "harmonix_changes/0044_cameraeye",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Rush - The Camera Eye"
+ },
+ {
+  "id": "harmonix_changes/0058_criticalacclaim",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Avenged Sevenfold - Critical Acclaim"
+ },
+ {
+  "id": "harmonix_changes/0065_deadandbloated",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Stone Temple Pilots - Dead & Bloated"
+ },
+ {
+  "id": "harmonix_changes/0066_decentdaysandnights",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "The Futureheads - Decent Days and Nights"
+ },
+ {
+  "id": "harmonix_changes/0068_devilsisland",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "Megadeth - Devil’s Island"
+ },
+ {
+  "id": "harmonix_changes/0096_fivemagics",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Megadeth - Five Magics"
+ },
+ {
+  "id": "harmonix_changes/0100_futureperfecttense",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Sweet Billy Pilgrim - Future Perfect Tense"
+ },
+ {
+  "id": "harmonix_changes/0117_goodmorningblackfriday",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "Megadeth - Good Mourning / Black Friday"
+ },
+ {
+  "id": "harmonix_changes/0142_indestructible",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Disturbed - Indestructible"
+ },
+ {
+  "id": "harmonix_changes/0162_lobotomy",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Green Day - Before the Lobotomy"
+ },
+ {
+  "id": "harmonix_changes/0182_mycurse",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Killswitch Engage - My Curse"
+ },
+ {
+  "id": "harmonix_changes/0191_newslang",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "The Shins - New Slang"
+ },
+ {
+  "id": "harmonix_changes/0199_numberofthebeast2",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Iron Maiden - The Number of the Beast"
+ },
+ {
+  "id": "harmonix_changes/0243_saucyjack",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Spın̈al Tap - Saucy Jack"
+ },
+ {
+  "id": "harmonix_changes/0255_sleepwalker",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "Megadeth - Sleepwalker"
+ },
+ {
+  "id": "harmonix_changes/0265_straightlines",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Silverchair - Straight Lines"
+ },
+ {
+  "id": "harmonix_changes/0280_thedayitriedtolive",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Soundgarden - The Day I Tried to Live"
+ },
+ {
+  "id": "harmonix_changes/0289_thisisexile",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Whitechapel - This Is Exile"
+ },
+ {
+  "id": "harmonix_changes/0293_tomsawyer2",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Rush - Tom Sawyer"
+ },
+ {
+  "id": "harmonix_changes/0301_unclejohnsband",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Grateful Dead - Uncle John's Band"
+ },
+ {
+  "id": "harmonix_changes/0303_wakeupdead",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Megadeth - Wake Up Dead"
+ },
+ {
+  "id": "harmonix_changes/0312_whitefalconfuzz",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "The Mother Hips - White Falcon Fuzz"
+ },
+ {
+  "id": "harmonix_changes/0400_heatofthemoment",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Asia - Heat of the Moment"
+ },
+ {
+  "id": "harmonix_changes/0426_justcantgetenough",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "The Black Eyed Peas - Just Can't Get Enough"
+ },
+ {
+  "id": "harmonix_changes/0462_oldalabama",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "Brad Paisley - Old Alabama"
+ },
+ {
+  "id": "harmonix_changes/0744_immabe",
+  "group": "tempo",
+  "category": "tempo changes",
+  "source": "Harmonix Set",
+  "title": "The Black Eyed Peas - Imma Be"
+ },
+ {
+  "id": "harmonix_changes/0838_nowimallmessedup",
+  "group": "meter",
+  "category": "meter changes",
+  "source": "Harmonix Set",
+  "title": "Tegan and Sara - Now I'm All Messed Up"
+ },
+ {
+  "id": "harmonix/0038_bringmetolife",
+  "group": "steady",
+  "category": "real",
+  "source": "Harmonix Set",
+  "title": "Evanescence - Bring Me to Life"
+ },
+ {
+  "id": "harmonix/0566_americanwoman",
+  "group": "steady",
+  "category": "real",
+  "source": "Harmonix Set",
+  "title": "Lenny Kravitz - American Woman"
+ },
+ {
+  "id": "harmonix/0625_complicated",
+  "group": "steady",
+  "category": "real",
+  "source": "Harmonix Set",
+  "title": "Avril Lavigne - Complicated"
+ },
+ {
+  "id": "harmonix/0734_iftodaywasyourlastday",
+  "group": "steady",
+  "category": "real",
+  "source": "Harmonix Set",
+  "title": "Nickelback - If Today Was Your Last Day"
+ },
+ {
+  "id": "harmonix/0343_banjo",
+  "group": "steady",
+  "category": "real",
+  "source": "Harmonix Set",
+  "title": "Rascal Flatts - Banjo"
+ },
+ {
+  "id": "harmonix/0110_girlsandboys",
+  "group": "steady",
+  "category": "real",
+  "source": "Harmonix Set",
+  "title": "Blur - Girls & Boys"
+ },
+ {
+  "id": "harmonix/0362_crazygirl",
+  "group": "steady",
+  "category": "real",
+  "source": "Harmonix Set",
+  "title": "Eli Young Band - Crazy Girl"
+ },
+ {
+  "id": "harmonix/0380_everybodytalks",
+  "group": "steady",
+  "category": "real",
+  "source": "Harmonix Set",
+  "title": "Neon Trees - Everybody Talks"
+ },
+ {
+  "id": "gtzan/blues.00001",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00003",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00007",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00017",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00025",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00029",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00047",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00058",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00077",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/blues.00081",
+  "group": "steady",
+  "category": "blues",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00000",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00003",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00025",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00037",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00054",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00063",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00075",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00076",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00083",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/classical.00085",
+  "group": "steady",
+  "category": "classical",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00000",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00002",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00011",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00037",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00038",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00043",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00052",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00064",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00065",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/country.00096",
+  "group": "steady",
+  "category": "country",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00013",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00037",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00057",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00060",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00062",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00065",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00067",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00078",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00085",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/disco.00087",
+  "group": "steady",
+  "category": "disco",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00006",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00024",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00031",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00033",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00049",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00054",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00059",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00063",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00071",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/hiphop.00085",
+  "group": "steady",
+  "category": "hiphop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00005",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00008",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00028",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00034",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00038",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00041",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00059",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00077",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00080",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/jazz.00099",
+  "group": "steady",
+  "category": "jazz",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00004",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00019",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00021",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00039",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00055",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00065",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00072",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00073",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00081",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/metal.00098",
+  "group": "steady",
+  "category": "metal",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00004",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00010",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00018",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00034",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00049",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00061",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00062",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00069",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00076",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/pop.00087",
+  "group": "steady",
+  "category": "pop",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00001",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00032",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00044",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00056",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00075",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00081",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00085",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00091",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00093",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/reggae.00094",
+  "group": "steady",
+  "category": "reggae",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00011",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00012",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00017",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00066",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00068",
+  "group": "meter",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00072",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00086",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00088",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00092",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "gtzan/rock.00097",
+  "group": "steady",
+  "category": "rock",
+  "source": "GTZAN",
+  "title": ""
+ },
+ {
+  "id": "library/GG9m0jA8tdc",
+  "group": "library",
+  "category": "real (no answers)",
+  "source": "app library",
+  "title": "Joe Satriani - Cryin'",
+  "checks": {
+   "beats_per_bar": 4,
+   "bpm": 75.5,
+   "max_tempo_spread": 1.1
+  }
+ },
+ {
+  "id": "library/wNvOUkRTkz8",
+  "group": "library",
+  "category": "real (no answers)",
+  "source": "app library",
+  "title": "Red Hot Chili Peppers - Charlie",
+  "checks": {
+   "beats_per_bar": 4,
+   "bpm": 111.3
+  }
+ },
+ {
+  "id": "library/IGMabBGydC0",
+  "group": "library",
+  "category": "real (no answers)",
+  "source": "app library",
+  "title": "Rusted Root - Send Me On My Way",
+  "checks": {
+   "beats_per_bar": 4,
+   "bpm": 122.2,
+   "max_tempo_spread": 1.15
+  }
+ }
+]

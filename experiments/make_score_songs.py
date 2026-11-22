@@ -11,9 +11,10 @@ feels, sustained leads, odd and compound meters, single odd bars, tempo jumps,
 rubato, ritardando, no drums, swing, off-beat accents, stops and a drifting
 live tempo. A sidecar <name>.json holds the category and render options.
 
-Usage: python make_score_songs.py <out_dir> [variants]
+Usage: python make_score_songs.py <out_dir> [variants] [--set basic|changes]
   variants (default 1): also write <name>_v1, _v2, ... with the tempo scaled
   (x0.87, x1.15, x0.93, x1.07) and other random choices (fills, melodies, mix)
+  --set changes: the songs whose meter or tempo changes (CHANGE_SONGS), not the basic set
 """
 
 import json
@@ -50,6 +51,11 @@ class Section:
     chords: tuple[str, ...] = ("Am", "F", "C", "G")  # one per bar, repeated
     fill: bool = True  # drum fill in the last bar
     fermata: bool = False  # the last beat lasts four times as long
+    meters: tuple[tuple[int, int], ...] = ()  # a cycle of time signatures, one per bar (overrides meter)
+    quarter_tempo: bool = False  # tempo counts quarter notes, not beats (keeps the eighth steady across 6/8 and 5/8)
+
+    def bar_meter(self, bar: int) -> tuple[int, int]:
+        return self.meters[bar % len(self.meters)] if self.meters else self.meter
 
 
 @dataclass
@@ -63,6 +69,7 @@ class Song:
     drift_period_bars: float = 16.0
     humanize: float = 1.0  # timing-jitter scale used by score_to_audio.py
     effects: str = "band"  # mix preset used by score_to_audio.py
+    eighth_beats: bool = False  # ground truth: every eighth of a /8 meter is a beat, 6/8 too (score_to_audio.py)
 
 
 def beat_layout(meter: tuple[int, int]) -> tuple[int, float, int]:
@@ -378,18 +385,19 @@ def build(song: Song) -> Score:
     key_root = chord_tones(song.sections[0].chords[0])[0]
     scale = sorted({60 + (key_root + i) % 12 + 12 * octave for i in (0, 3, 5, 7, 10) for octave in (0, 1)})
     position, bar_index, last_meter = 0.0, 0, None
-    for s_idx, section in enumerate(song.sections):
+    for section in song.sections:
         score.markers.append((position, section.name))
-        beats, beat_len, _ = beat_layout(section.meter)
-        if section.meter != last_meter:
-            score.meters.append((position, section.meter))
-            last_meter = section.meter
-        total_beats = section.bars * beats
-        noise = 0.0
+        total_beats = sum(beat_layout(section.bar_meter(bar))[0] for bar in range(section.bars))
+        noise, i = 0.0, 0
         for bar in range(section.bars):
+            meter = section.bar_meter(bar)
+            beats, beat_len, _ = beat_layout(meter)
+            if meter != last_meter:
+                score.meters.append((position, meter))
+                last_meter = meter
             chord = section.chords[bar % len(section.chords)]
             next_chord = section.chords[(bar + 1) % len(section.chords)]
-            b = Bar(score, position, section.meter, chord, next_chord)
+            b = Bar(score, position, meter, chord, next_chord)
             first, last = bar == 0, bar == section.bars - 1
             drums(b, section.drums, first, last, section.fill)
             bass(b, section.bass)
@@ -397,7 +405,6 @@ def build(song: Song) -> Score:
             keys(b, section.keys)
             lead(b, section.lead, scale)
             for beat in range(beats):
-                i = bar * beats + beat
                 if isinstance(section.tempo, tuple):
                     a, z = section.tempo
                     bpm = a + (z - a) * i / max(1, total_beats - 1)
@@ -412,7 +419,8 @@ def build(song: Song) -> Score:
                     bpm *= 1 + song.drift * math.sin(2 * math.pi * bar_index / song.drift_period_bars)
                 if section.fermata and last and beat == beats - 1:
                     bpm /= 4
-                score.tempos.append((position + beat * beat_len, bpm * beat_len))
+                score.tempos.append((position + beat * beat_len, bpm if section.quarter_tempo else bpm * beat_len))
+                i += 1
             position += beats * beat_len
             bar_index += 1
     score.end = position  # type: ignore[attr-defined]
@@ -572,6 +580,90 @@ SONGS = [
 ]
 
 
+# Songs whose meter or tempo changes: sections in another meter, repeating cycles of bar lengths,
+# a verse in mixed /8 bars (like the verse of Tool's "Pneuma": 6+6+5+6+5+5 eighths), tempo jumps
+# and ramps. Written with: python make_score_songs.py <out_dir> 3 --set changes
+PNEUMA_VERSE = ((6, 8), (6, 8), (5, 8), (6, 8), (5, 8), (5, 8))
+CHANGE_SONGS = [
+    Song("sections_3-4_4-4", "meter sections", [
+        S("intro", 4, (4, 4), 112, guitar="arpeggio", chords=("G", "D", "C", "G")),
+        S("verse", 8, (3, 4), 112, drums="waltz", bass="quarters", guitar="arpeggio", keys="pad", chords=("G", "Em", "C", "D")),
+        S("chorus", 8, (4, 4), 112, guitar="strum", lead="melody", chords=("C", "G", "D", "G")),
+        S("verse", 8, (3, 4), 112, drums="waltz", bass="quarters", guitar="arpeggio", keys="pad", chords=("G", "Em", "C", "D")),
+        S("chorus", 8, (4, 4), 112, guitar="strum", lead="melody", chords=("C", "G", "D", "G")),
+        S("outro", 2, (4, 4), 112, guitar="sustain", bass="whole", drums="halftime", fermata=True, chords=("G",)),
+    ], programs={"bass": 33, "guitar": 25, "keys": 48, "lead": 73}, seed=31),
+    Song("sections_6-4_4-4", "meter sections", [
+        S("verse", 8, (6, 4), 100, guitar="power", chords=("Dm", "C", "Bb", "A")),
+        S("chorus", 8, (4, 4), 100, guitar="strum", keys="pad", lead="melody", chords=("F", "C", "Bb", "A")),
+        S("verse", 8, (6, 4), 100, guitar="power", chords=("Dm", "C", "Bb", "A")),
+        S("chorus", 8, (4, 4), 100, guitar="strum", keys="pad", lead="melody", fermata=True, chords=("F", "C", "Bb", "A")),
+    ], programs={"bass": 34, "guitar": 29, "keys": 48, "lead": 30}, seed=32),
+    Song("sections_7-4_4-4", "meter sections", [
+        S("intro", 4, (4, 4), 140, guitar="power", chords=("E", "G", "A", "E")),
+        S("verse", 6, (7, 4), 140, guitar="strum", chords=("E", "D")),
+        S("chorus", 8, (4, 4), 140, guitar="power", lead="melody", chords=("A", "E", "D", "E")),
+        S("verse", 6, (7, 4), 140, guitar="strum", chords=("E", "D")),
+        S("chorus", 8, (4, 4), 140, guitar="power", lead="melody", fermata=True, chords=("A", "E", "D", "E")),
+    ], programs={"bass": 34, "guitar": 29, "keys": 0, "lead": 30}, seed=33),
+    Song("sections_5-4_4-4", "meter sections", [
+        S("verse", 8, (5, 4), 120, guitar="arpeggio", keys="pad", chords=("Am", "G", "F", "E")),
+        S("chorus", 8, (4, 4), 120, guitar="power", lead="melody", chords=("C", "G", "Am", "E")),
+        S("verse", 8, (5, 4), 120, guitar="arpeggio", keys="pad", chords=("Am", "G", "F", "E")),
+        S("chorus", 8, (4, 4), 120, guitar="power", lead="melody", fermata=True, chords=("C", "G", "Am", "E")),
+    ], programs={"bass": 33, "guitar": 27, "keys": 89, "lead": 81}, seed=34),
+    Song("sections_7-8_4-4", "meter sections", [
+        S("intro", 4, (4, 4), 126, quarter_tempo=True, guitar="power", chords=("Em", "C")),
+        S("riff", 8, (7, 8), 126, quarter_tempo=True, guitar="power", bass="eighths", chords=("Em", "Em", "G", "A")),
+        S("chorus", 8, (4, 4), 126, quarter_tempo=True, guitar="strum", lead="melody", chords=("C", "G", "D", "Em")),
+        S("riff", 8, (7, 8), 126, quarter_tempo=True, guitar="power", bass="eighths", chords=("Em", "Em", "G", "A")),
+        S("outro", 4, (4, 4), 126, quarter_tempo=True, guitar="power", fermata=True, chords=("Em", "C", "D", "Em")),
+    ], programs={"bass": 34, "guitar": 30, "keys": 0, "lead": 30}, seed=35, eighth_beats=True),
+    Song("cycle_4-4-4-3", "meter patterns", [
+        S("intro", 4, (4, 4), 130, guitar="power", chords=("D", "A", "G", "D")),
+        S("verse", 12, meters=((4, 4), (4, 4), (4, 4), (3, 4)), tempo=130, guitar="strum", fill=False, chords=("D", "A", "G", "G")),
+        S("chorus", 8, (4, 4), 130, guitar="power", lead="melody", chords=("G", "D", "A", "D")),
+        S("verse", 12, meters=((4, 4), (4, 4), (4, 4), (3, 4)), tempo=130, guitar="strum", fill=False, chords=("D", "A", "G", "G")),
+        S("chorus", 8, (4, 4), 130, guitar="power", lead="melody", fermata=True, chords=("G", "D", "A", "D")),
+    ], programs={"bass": 33, "guitar": 29, "keys": 0, "lead": 30}, seed=36),
+    Song("pneuma_like", "meter patterns", [
+        S("intro", 4, (4, 4), 115, quarter_tempo=True, drums="halftime", guitar="arpeggio", keys="pad", chords=("Dm", "Dm", "C", "Dm")),
+        S("verse", 18, meters=PNEUMA_VERSE, tempo=115, quarter_tempo=True, guitar="power", bass="eighths", fill=False, chords=("Dm", "Dm", "C", "Dm", "Bb", "C")),
+        S("chorus", 8, (4, 4), 115, quarter_tempo=True, guitar="power", keys="pad", lead="long", chords=("F", "C", "Dm", "Dm")),
+        S("verse", 18, meters=PNEUMA_VERSE, tempo=115, quarter_tempo=True, guitar="power", bass="eighths", fill=False, chords=("Dm", "Dm", "C", "Dm", "Bb", "C")),
+        S("chorus", 8, (4, 4), 115, quarter_tempo=True, guitar="power", keys="pad", lead="long", chords=("F", "C", "Dm", "Dm")),
+        S("outro", 2, (4, 4), 115, quarter_tempo=True, drums="halftime", guitar="sustain", bass="whole", fermata=True, chords=("Dm",)),
+    ], programs={"bass": 34, "guitar": 30, "keys": 89, "lead": 30}, seed=37, effects="metal", eighth_beats=True),
+    Song("waltz_verse_rock_chorus", "meter sections", [
+        S("verse", 16, (3, 4), 150, drums="waltz", bass="quarters", guitar="none", keys="waltz", lead="melody", chords=("A", "A", "D", "E")),
+        S("chorus", 8, (4, 4), 100, guitar="power", chords=("D", "A", "E", "A")),
+        S("verse", 16, (3, 4), 150, drums="waltz", bass="quarters", guitar="none", keys="waltz", lead="melody", chords=("A", "A", "D", "E")),
+        S("chorus", 8, (4, 4), 100, guitar="power", fermata=True, chords=("D", "A", "E", "A")),
+    ], programs={"bass": 33, "guitar": 29, "keys": 0, "lead": 73}, seed=38),
+    Song("tempo_sections", "tempo changes", [
+        S("intro", 4, tempo=96, guitar="arpeggio", chords=("Am", "F", "C", "G")),
+        S("verse", 8, tempo=96, guitar="arpeggio", chords=("Am", "F", "C", "G")),
+        S("chorus", 8, tempo=132, guitar="power", lead="melody", chords=("F", "G", "Am", "Am")),
+        S("bridge", 8, tempo=76, drums="halftime", guitar="sustain", keys="pad", chords=("Dm", "Am", "Dm", "E")),
+        S("accelerando", 16, tempo=(76, 140), guitar="strum", chords=("Am", "F", "C", "G")),
+        S("chorus", 8, tempo=140, guitar="power", lead="melody", chords=("F", "G", "Am", "Am")),
+        S("ritardando", 4, tempo=(140, 70), guitar="strum", fermata=True, chords=("F", "G", "Am", "Am")),
+    ], programs={"bass": 34, "guitar": 29, "keys": 48, "lead": 30}, seed=39),
+    Song("rubato_ballad", "tempo changes", [
+        S("a", 8, tempo=68, rubato=0.08, drums="none", bass="none", guitar="none", keys="rubato_piano", lead="long", chords=("C", "G", "Am", "F")),
+        S("a ritardando", 4, tempo=(68, 50), rubato=0.08, drums="none", bass="none", guitar="none", keys="rubato_piano", fermata=True, chords=("C", "G", "F", "C")),
+        S("b", 8, tempo=74, rubato=0.08, drums="brushes", bass="half", guitar="none", keys="piano", lead="long", chords=("F", "G", "Em", "Am")),
+        S("b ritardando", 4, tempo=(74, 52), rubato=0.08, drums="none", bass="whole", guitar="none", keys="rubato_piano", fermata=True, chords=("F", "G", "C", "C")),
+    ], programs={"bass": 32, "guitar": 24, "keys": 0, "lead": 48}, seed=40, humanize=1.5, effects="acoustic"),
+    Song("waltz_accelerando", "tempo changes", [
+        S("slow", 8, (3, 4), 110, drums="waltz", bass="quarters", guitar="none", keys="waltz", chords=("D", "A", "A", "D")),
+        S("accelerando", 16, (3, 4), (110, 190), drums="waltz", bass="quarters", guitar="none", keys="waltz", lead="melody", chords=("D", "G", "A", "D")),
+        S("fast", 16, (3, 4), 190, drums="waltz", bass="quarters", guitar="arpeggio", keys="waltz", chords=("G", "D", "A", "D")),
+        S("ritardando", 8, (3, 4), (190, 90), drums="waltz", bass="quarters", guitar="none", keys="waltz", fermata=True, chords=("D", "A", "D", "D")),
+    ], programs={"bass": 32, "guitar": 24, "keys": 21, "lead": 73}, seed=41),
+]
+SETS = {"basic": SONGS, "changes": CHANGE_SONGS}
+
 TEMPO_FACTORS = (1.0, 0.87, 1.15, 0.93, 1.07)
 
 
@@ -589,14 +681,20 @@ def variant(song: Song, index: int) -> Song:
 
 
 def main() -> None:
-    out = Path(sys.argv[1])
-    variants = int(sys.argv[2]) if len(sys.argv) > 2 else 1
+    args = sys.argv[1:]
+    songs = SONGS
+    if "--set" in args:
+        at = args.index("--set")
+        songs = SETS[args[at + 1]]
+        del args[at : at + 2]
+    out = Path(args[0])
+    variants = int(args[1]) if len(args) > 1 else 1
     out.mkdir(parents=True, exist_ok=True)
-    for song in (variant(base, i) for base in SONGS for i in range(variants)):
+    for song in (variant(base, i) for base in songs for i in range(variants)):
         score = build(song)
         write_midi(song, score, out / f"{song.name}.mid")
         meta = {k: v for k, v in asdict(song).items() if k not in ("sections",)}
-        meta["sections"] = [{"name": s.name, "bars": s.bars, "meter": s.meter, "tempo": s.tempo} for s in song.sections]
+        meta["sections"] = [{"name": s.name, "bars": s.bars, "meter": s.meters or s.meter, "tempo": s.tempo} for s in song.sections]
         (out / f"{song.name}.json").write_text(json.dumps(meta, indent=1))
         print(f"{song.name:22s} {song.category:14s} {sum(s.bars for s in song.sections):3d} bars")
 

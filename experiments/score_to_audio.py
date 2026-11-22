@@ -11,7 +11,8 @@ For every score, <out_dir>/<name>/ gets:
                       category (from the <name>.json sidecar of make_score_songs.py)
 
 Beats come from the score: one per denominator note, except compound meters
-(6/8, 9/8, 12/8) where a beat is a dotted quarter. Beats before the first note
+(6/8, 9/8, 12/8) where a beat is a dotted quarter (unless the sidecar sets
+eighth_beats, for songs that mix 6/8 with 5/8 or 7/8 bars: then every eighth is a beat). Beats before the first note
 and after the last note onset are left out (nothing to hear there).
 
 Rendering: every part separately with FluidSynth, small random timing jitter
@@ -167,7 +168,7 @@ def write_tracks(tracks: list[list[tuple[int, mido.Message]]], ticks_per_quarter
 # --- ground truth ---------------------------------------------------------------------------------
 
 
-def score_grid(pm: pretty_midi.PrettyMIDI, end_tick: int) -> tuple[list[float], list[float], list[dict]]:
+def score_grid(pm: pretty_midi.PrettyMIDI, end_tick: int, eighth_beats: bool = False) -> tuple[list[float], list[float], list[dict]]:
     """Beats, bar starts (seconds) and time signatures, from the tempo map and meters."""
     resolution = pm.resolution
     signatures = sorted(pm.time_signature_changes, key=lambda ts: ts.time) or [pretty_midi.TimeSignature(4, 4, 0.0)]
@@ -175,7 +176,7 @@ def score_grid(pm: pretty_midi.PrettyMIDI, end_tick: int) -> tuple[list[float], 
     beats, downbeats, meters = [], [], []
     for i, (tick, num, den) in enumerate(changes):
         stop = changes[i + 1][0] if i + 1 < len(changes) else end_tick
-        compound = den == 8 and num % 3 == 0 and num > 3
+        compound = den == 8 and num % 3 == 0 and num > 3 and not eighth_beats
         beat_ticks = resolution * 4 / den * (3 if compound else 1)
         per_bar = num // 3 if compound else num
         meters.append({"time": pm.tick_to_time(tick) + LEAD_IN, "numerator": num, "denominator": den, "beats_per_bar": per_bar})
@@ -274,11 +275,11 @@ def render(midi_path: Path, out_dir: Path, meta: dict, seed: int) -> dict:
     return {"seconds": round(len(mix) / SR, 2)}
 
 
-def ground_truth(midi_path: Path) -> dict:
+def ground_truth(midi_path: Path, eighth_beats: bool = False) -> dict:
     pm = pretty_midi.PrettyMIDI(str(midi_path))
     onsets = sorted(n.start for inst in pm.instruments for n in inst.notes)
     end_tick = max(pm.time_to_tick(max(n.end for inst in pm.instruments for n in inst.notes)), 1) + pm.resolution
-    beats, downbeats, meters = score_grid(pm, end_tick)
+    beats, downbeats, meters = score_grid(pm, end_tick, eighth_beats)
     first, last = onsets[0] - 0.07, onsets[-1] + 0.07
     keep = lambda times: [round(t + LEAD_IN, 5) for t in times if first <= t <= last]  # noqa: E731
     beats_kept = keep(beats)
@@ -316,7 +317,7 @@ def main() -> None:
             source = "midi"
         sidecar = score.with_suffix(".json")
         meta = json.loads(sidecar.read_text()) if sidecar.exists() else {"category": "other"}
-        gt = ground_truth(midi)
+        gt = ground_truth(midi, bool(meta.get("eighth_beats")))
         gt.update({"name": score.stem, "source": source, "category": meta.get("category", "other")})
         gt.update(render(midi, out, meta, seed=1000 + i))
         (out / "ground_truth.json").write_text(json.dumps(gt, indent=1))

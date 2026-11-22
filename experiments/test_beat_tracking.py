@@ -6,6 +6,13 @@ Test sets (all under MT_DATA):
   synth     synth_<variant>/ from make_synth_song.py
   harmonix  real songs with human annotations. Beat This! was trained on the Harmonix Set, so these
             numbers are optimistic for the network itself; they still show what the decoding does.
+  score_changes     score_songs_changes/<name>/: score songs whose meter or tempo changes (sections in
+                    3/4, 5/4, 6/4, 7/4 or 7/8, bar cycles like 4+4+4+3 or 6+6+5+6+5+5 eighths, tempo
+                    jumps and ramps, rubato); make_score_songs.py --set changes
+  harmonix_changes  Harmonix songs whose meter or tempo changes (harmonix/changes.json from
+                    get_harmonix_changes.py), category "meter changes" / "tempo changes"; the
+                    annotations are moved onto the YouTube audio by DTW (harmonix_warped), songs
+                    whose YouTube audio does not line up with them are left out
   gtzan     GTZAN: 1000 real 30-second clips, 10 genres (gtzan/genres/<genre>/*.wav), annotations from
             github.com/CPJKU/beat_this_annotations (gtzan/beat_this_annotations-main/). The Beat This!
             "final" models were trained on everything except GTZAN: the honest real-music test.
@@ -24,7 +31,8 @@ Metrics (70 ms tolerance):
   odd_bars              share of detected bars whose beat count differs from the most common one
 
 Activations (Beat This! frame logits, 50 fps) are cached per checkpoint in MT_DATA/activations/.
-Usage: python test_beat_tracking.py [method ...] [--sets score,synth,harmonix,gtzan,library]
+Usage: python test_beat_tracking.py [method ...] [--sets score,synth,harmonix,gtzan,library] [--out name]
+       (--out: results/<name>.json, default beat_tracking)
        (needs CKPT_DIR with <checkpoint>.ckpt files; missing test sets are skipped)
 """
 
@@ -41,7 +49,7 @@ from pathlib import Path
 
 import numpy as np
 
-from common import DATA, DEVICE, harmonix_beats, harmonix_offset, harmonix_songs, save_result
+from common import DATA, DEVICE, harmonix_beats, harmonix_offset, harmonix_songs, harmonix_warped, save_result
 
 warnings.filterwarnings("ignore")
 SR = 22050
@@ -93,6 +101,20 @@ def load_items(sets: tuple[str, ...] = ("score", "synth", "harmonix", "library")
                 gt = json.loads((folder / "ground_truth.json").read_text())
                 items.append(Item("synth", variant, folder / "mix.wav", np.array(gt["beats"]),
                                   np.array(gt["downbeats"]), "steady" if variant != "live" else "tempo changes", 4))
+    if "score_changes" in sets:
+        for gt_path in sorted(Path(DATA, "score_songs_changes").glob("*/ground_truth.json")):
+            gt = json.loads(gt_path.read_text())
+            per_bar = Counter(np.diff(np.searchsorted(gt["beats"], np.array(gt["downbeats"]) - 1e-6)).tolist()).most_common(1)[0][0]
+            items.append(Item("score_changes", gt["name"], gt_path.parent / "mix.wav", np.array(gt["beats"]),
+                              np.array(gt["downbeats"]), gt["category"], int(per_bar)))
+    if "harmonix_changes" in sets and Path(DATA, "harmonix", "changes.json").exists():
+        for song in json.loads(Path(DATA, "harmonix", "changes.json").read_text(encoding="utf-8")):
+            item = Item("harmonix_changes", song["file"], Path(DATA, "songs", song["file"] + ".wav"),
+                        category=song["kind"], beats_per_bar=song["beats_per_bar"])
+            aligned = harmonix_aligned(item)
+            if aligned is not None:
+                item.beats, item.downbeats = aligned
+                items.append(item)
     if "harmonix" in sets:
         for song_id, wav, _ in harmonix_songs():
             beats, downbeats = harmonix_beats(song_id)
@@ -109,6 +131,37 @@ def load_items(sets: tuple[str, ...] = ("score", "synth", "harmonix", "library")
                     items.append(Item("library", info.get("title", folder.name), folder / info.get("media_file", "video.mp4"),
                                       category="real (no answers)"))
     return items
+
+
+MIN_BEAT_AGREEMENT = 0.85  # share of annotated beats with a network beat within 70 ms
+
+
+def harmonix_aligned(item: Item) -> tuple[np.ndarray, np.ndarray] | None:
+    """Harmonix annotations on the YouTube audio: DTW alignment, else a constant shift; None if neither fits.
+
+    Fits = most annotated beats have a beat of the network nearby (Beat This! was trained on these
+    annotations, so where they line up with the audio it finds those beats). Songs where neither
+    alignment fits are another version or edit and are left out.
+    """
+    rows = np.loadtxt(os.path.join(DATA, "harmonix", "ann", f"{item.name}.beats_and_downbeats.txt"))
+    beat, _ = activations(item)
+    peaks = np.flatnonzero((beat[1:-1] > 0) & (beat[1:-1] >= beat[:-2]) & (beat[1:-1] > beat[2:])) + 1
+    peaks = peaks / FPS
+
+    def agreement(times: np.ndarray) -> float:
+        nearest = np.abs(peaks[np.clip(np.searchsorted(peaks, times), 1, len(peaks) - 1)[:, None] - [1, 0]] - times[:, None])
+        return float(np.mean(nearest.min(axis=1) < TOLERANCE))
+
+    candidates = []
+    warped = harmonix_warped(item.name, str(item.audio))
+    if warped is not None:
+        candidates.append(warped)
+    if warped is None or agreement(warped[0]) < MIN_BEAT_AGREEMENT:
+        candidates.append((rows[:, 0] + harmonix_offset(item.name, str(item.audio)), rows[:, 1].astype(int)))
+    beats, positions = max(candidates, key=lambda c: agreement(c[0]))
+    if agreement(beats) < MIN_BEAT_AGREEMENT:
+        return None
+    return beats, beats[positions == 1]
 
 
 # --- activations -----------------------------------------------------------------------------------
@@ -300,7 +353,7 @@ def print_summary(summary: dict, metrics: list[str] = METRICS) -> None:
             print(f"{method[:28]:28s}" + "".join(f"{values[m]:10.3f}" for m in metrics))
 
 
-ALL_SETS = ("score", "synth", "harmonix", "gtzan", "library")
+ALL_SETS = ("score", "synth", "harmonix", "gtzan", "library", "score_changes", "harmonix_changes")
 
 
 def main() -> None:
@@ -310,16 +363,21 @@ def main() -> None:
         at = args.index("--sets")
         sets = tuple(args[at + 1].split(","))
         args = args[:at] + args[at + 2 :]
+    out = "beat_tracking"
+    if "--out" in args:
+        at = args.index("--out")
+        out = args[at + 1]
+        args = args[:at] + args[at + 2 :]
     chosen = args or list(METHODS)
     items = load_items(sets)
     results = run({m: METHODS[m] for m in chosen}, items, verbose=False)
     by_set = summarize(results, items, "set")
-    by_category = summarize(results, [i for i in items if i.set in ("score", "gtzan")], "category")
+    by_category = summarize(results, [i for i in items if i.set in ("score", "gtzan", "score_changes", "harmonix_changes")], "category")
     print_summary(by_set)
     print_summary(by_category, ["beat_F", "down_F", "down_CMLt", "loop_1bar", "loop_4bar", "meter_ok"])
     # per-song rows except GTZAN's 1000 clips (its summaries are kept)
     per_song = {m: {k: r for k, r in rows.items() if not k.startswith("gtzan/")} for m, rows in results.items()}
-    save_result("beat_tracking", {"by_set": by_set, "by_category": by_category, "per_song": per_song})
+    save_result(out, {"by_set": by_set, "by_category": by_category, "per_song": per_song})
 
 
 if __name__ == "__main__":

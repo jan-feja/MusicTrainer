@@ -33,8 +33,9 @@ testpaths = ["tests"]
 pythonpath = ["."]
 markers = [
     "network: talks to YouTube or downloads the beat model; run with `pytest -m network`",
+    "beat_regression: decodes the beat grid regression set (slow); run with `pytest -m beat_regression -s`",
 ]
-addopts = "-m 'not network'"
+addopts = "-m 'not network and not beat_regression'"
 
 [tool.ruff]
 line-length = 100
