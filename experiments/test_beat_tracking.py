@@ -281,24 +281,36 @@ def madmom_dbn(acts: Activations) -> tuple[np.ndarray, np.ndarray]:
     return np.asarray(b), np.asarray(d)
 
 
-def app_decoder(checkpoints: tuple[str, ...] = ("final0",), **options) -> Method:
+def app_decoder(checkpoints: tuple[str, ...] = ("final0",), constants: dict | None = None, **options) -> Method:
     """The app's decoder (backend/src/music_trainer/services/beat_decoding.py).
 
-    `checkpoints`: average the logits of several networks; `options`: DecodingOptions fields.
+    `checkpoints`: average the logits of several networks; `constants`: decoder constants to set
+    for this method (e.g. the first version's); `options`: DecodingOptions fields.
     """
 
     def run(acts: Activations) -> tuple[np.ndarray, np.ndarray]:
         if str(BACKEND_SRC) not in sys.path:
             sys.path.insert(0, str(BACKEND_SRC))
-        from music_trainer.services.beat_decoding import DecodingOptions, decode_beats
+        from music_trainer.services import beat_decoding
 
-        logits = [acts(c) for c in checkpoints]
-        beat = np.mean([b for b, _ in logits], axis=0)
-        down = np.mean([d for _, d in logits], axis=0)
-        grid = decode_beats(beat, down, DecodingOptions(**options))
+        saved = {name: getattr(beat_decoding, name) for name in constants or {}}
+        try:
+            for name, value in (constants or {}).items():
+                setattr(beat_decoding, name, value)
+            logits = [acts(c) for c in checkpoints]
+            beat = np.mean([b for b, _ in logits], axis=0)
+            down = np.mean([d for _, d in logits], axis=0)
+            grid = beat_decoding.decode_beats(beat, down, beat_decoding.DecodingOptions(**options))
+        finally:
+            for name, value in saved.items():
+                setattr(beat_decoding, name, value)
         return np.asarray(grid.beats), np.asarray(grid.downbeats)
 
     return run
+
+
+# decoder 1: one meter per song, tempo octave enforced from a spread of 1.6
+DECODER_1 = {"METER_CHANGE_COST": float("inf"), "OCTAVE_CONFLICT": 1.6}
 
 
 METHODS: dict[str, Method] = {
@@ -306,6 +318,7 @@ METHODS: dict[str, Method] = {
     "madmom_dbn": madmom_dbn,
     "app": app_decoder(),
     "app_ensemble": app_decoder(("final0", "final1", "final2")),
+    "app_decoder1": app_decoder(constants=DECODER_1),
 }
 
 

@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from music_trainer.app import create_app
 from music_trainer.config import Settings
-from music_trainer.models import BeatAnalysis
+from music_trainer.models import BeatAnalysis, BeatGridHints
 from music_trainer.services.beats import (
     BeatThisTracker,
     BeatTrackingError,
@@ -81,7 +81,7 @@ class TestBeatsApi:
             "beatsPerBar": 4,
             "beats": FAKE_BEATS.beats,
             "downbeats": FAKE_BEATS.downbeats,
-            "analyzer": "fake+grid",
+            "analyzer": "fake+grid2",
             "hints": {"beatsPerBar": None, "tempoBpm": None, "barStarts": [], "steadyTempo": False},
         }
         assert len(FAKE_BEATS.beats) == 16
@@ -218,7 +218,28 @@ class TestBeatsApi:
         (settings.library_dir / VIDEO_ID / "analysis.json").write_text(old.model_dump_json())
         assert client.get(f"/api/library/{VIDEO_ID}/beats").json()["status"] == "not_started"
         client.post(f"/api/library/{VIDEO_ID}/beats")
-        assert wait_for_beats(client, VIDEO_ID)["analysis"]["analyzer"] == "fake+grid"
+        assert wait_for_beats(client, VIDEO_ID)["analysis"]["analyzer"] == "fake+grid2"
+
+    def test_grids_of_an_older_decoder_are_decoded_again_with_their_hints(
+        self, client: TestClient, settings: Settings
+    ) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        older = BeatAnalysis(
+            bpm=120.0,
+            beats_per_bar=3,
+            beats=[1.0],
+            downbeats=[1.0],
+            analyzer="fake+grid",
+            hints=BeatGridHints(beats_per_bar=3),
+        )
+        (settings.library_dir / VIDEO_ID / "analysis.json").write_text(older.model_dump_json())
+        assert client.get(f"/api/library/{VIDEO_ID}/beats").json()["status"] == "not_started"
+        client.post(f"/api/library/{VIDEO_ID}/beats")
+        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        assert analysis["analyzer"] == "fake+grid2"
+        assert analysis["hints"]["beatsPerBar"] == 3
+        assert analysis["beatsPerBar"] == 3
 
     def test_failure_is_reported_and_can_be_retried(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker

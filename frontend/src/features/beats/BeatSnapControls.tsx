@@ -1,5 +1,5 @@
 import type { BeatAnalysis, BeatGridHints } from '../../api/types'
-import { SNAP_MODES, type SnapMode } from './beatGrid'
+import { SNAP_MODES, type SnapMode, barLengths } from './beatGrid'
 import type { BeatTracking } from './useBeatTracking'
 import styles from './BeatSnapControls.module.css'
 
@@ -139,6 +139,9 @@ function GridHints({
   disabled: boolean
 }) {
   const { hints, bpm, beatsPerBar } = analysis
+  // sections in other meters show as e.g. "Auto (4, 3)"
+  const detected = barLengths(analysis)
+  const autoLabel = detected.length > 0 ? detected.join(', ') : beatsPerBar
   // a new tempo or meter makes new beats: bar starts the user placed no longer fit
   const setTempo = (tempoBpm: number | null) => onChange({ ...hints, tempoBpm, barStarts: [] })
   return (
@@ -201,10 +204,10 @@ function GridHints({
             onChange({ ...hints, beatsPerBar, barStarts: [] })
           }}
           aria-label="Beats per bar"
-          title="Beats per bar: detected, or set it if the bars come out wrong"
+          title="Beats per bar: detected (several when the meter changes between sections), or set one for the whole song if the bars come out wrong"
         >
           <option value="auto">
-            {hints.beatsPerBar === null && beatsPerBar !== null ? `Auto (${beatsPerBar})` : 'Auto'}
+            {hints.beatsPerBar === null && autoLabel !== null ? `Auto (${autoLabel})` : 'Auto'}
           </option>
           {BEATS_PER_BAR_CHOICES.map((count) => (
             <option key={count} value={count}>

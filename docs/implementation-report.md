@@ -183,6 +183,11 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
   - **Audio:** the backend cuts the audio around the loop with ffmpeg and sends it as WAV (`/api/library/<id>/audio`). The cut matches Chrome's own decoding sample for sample. Decoding the whole file in the browser instead took 1.8 s and 130 MB for a 6-minute song, too much for long lesson videos.
   - **Playback:** one Signalsmith Stretch node with its built-in loop points. Offline at 1×, its output matched the original closely (spectral error 0.053 vs 0.036 for the original shifted by 1 ms), with no level dip at the wrap and no drift over passes.
   - **In the app:** click spacing across the jump stays exact (600.0 ± 0.1 ms at 100 BPM; ±2 ms at 0.75×, the stretcher's transient jitter). The video follows muted.
+- **Fourth follow-up (22 November 2026), now implemented: meter and tempo changes.** The decoder assumed one meter and one tempo octave per song. Test data was added first, plus a regression test over 226 songs (`pytest -m beat_regression`):
+  - songs written as scores with sections in other meters, bar cycles and tempo changes;
+  - 31 Harmonix songs whose meter or tempo changes.
+
+  The meter may now change between sections of at least 4 bars, and real tempo changes are followed. Bar starts on songs with meter changes went from 0.67 to 0.73 (4-bar loops 0.41 → 0.50), on songs with tempo changes from 0.88 to 0.92 (0.71 → 0.82), with steady songs unchanged. Mixed /8 meters (Tool's *Pneuma*) and single odd bars still need the user; a section-by-section assisted mode is proposed: [beat-tracking.md](beat-tracking.md#meter-and-tempo-changes).
 
 ##### 9. Beat-synced loops (M, ✅)
 - **Build:**

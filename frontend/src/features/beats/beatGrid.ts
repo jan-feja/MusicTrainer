@@ -37,6 +37,20 @@ export function createBeatGrid(analysis: BeatAnalysis): BeatGrid {
 }
 
 /**
+ * The numbers of beats per bar in the grid, most common first: [4] for a song in
+ * 4/4, [4, 3] for one with sections in 3/4 (the last, unfinished bar is left out).
+ */
+export function barLengths(analysis: BeatAnalysis): number[] {
+  const counts = new Map<number, number>()
+  for (let bar = 0; bar + 1 < analysis.downbeats.length; bar += 1) {
+    const start = nearestIndex(analysis.beats, analysis.downbeats[bar])
+    const length = nearestIndex(analysis.beats, analysis.downbeats[bar + 1]) - start
+    if (length > 0) counts.set(length, (counts.get(length) ?? 0) + 1)
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]).map(([length]) => length)
+}
+
+/**
  * The bar starts to send as a hint when the user moves the bars one beat
  * earlier (-1) or later (+1) from the bar at `time` on. Their other bar starts
  * stay, so a fix after an odd bar keeps the bars before it.

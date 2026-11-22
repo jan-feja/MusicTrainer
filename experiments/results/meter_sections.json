@@ -1,0 +1,1269 @@
+{
+ "old": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9413,
+    "bar_F": 0.6664,
+    "loop_1bar": 0.5486,
+    "loop_4bar": 0.4103,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.8948,
+    "bar_F": 0.8219,
+    "loop_1bar": 0.7501,
+    "loop_4bar": 0.7429,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.8986,
+    "bar_F": 0.8831,
+    "loop_1bar": 0.7523,
+    "loop_4bar": 0.7055,
+    "songs": 27
+   }
+  },
+  "better": 0,
+  "worse": 0,
+  "broke": [],
+  "changed": {}
+ },
+ "sections_30": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9413,
+    "bar_F": 0.7342,
+    "loop_1bar": 0.6355,
+    "loop_4bar": 0.5066,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.8948,
+    "bar_F": 0.8171,
+    "loop_1bar": 0.7477,
+    "loop_4bar": 0.7398,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.8986,
+    "bar_F": 0.8892,
+    "loop_1bar": 0.7585,
+    "loop_4bar": 0.7119,
+    "songs": 27
+   }
+  },
+  "better": 19,
+  "worse": 2,
+  "broke": [
+   "score/swing_160"
+  ],
+  "changed": {
+   "score/ballad_75_feels": [
+    0.6667,
+    0.7843
+   ],
+   "score/shuffle_12-8_70_v1": [
+    0.6667,
+    0.6118
+   ],
+   "score/swing_160": [
+    1.0,
+    0.2947
+   ],
+   "score_changes/cycle_4-4-4-3": [
+    0.7126,
+    0.8095
+   ],
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_7-4_4-4": [
+    0.7027,
+    0.8169
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.9583
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.9046
+   ],
+   "harmonix_changes/0068_devilsisland": [
+    0.8728,
+    0.9275
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.8318
+   ],
+   "harmonix_changes/0142_indestructible": [
+    0.7303,
+    0.8208
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.96
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.6894
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.8829
+   ]
+  }
+ },
+ "sections_40": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9413,
+    "bar_F": 0.7281,
+    "loop_1bar": 0.6315,
+    "loop_4bar": 0.5027,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.8948,
+    "bar_F": 0.822,
+    "loop_1bar": 0.7531,
+    "loop_4bar": 0.7456,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.8986,
+    "bar_F": 0.8893,
+    "loop_1bar": 0.7584,
+    "loop_4bar": 0.7115,
+    "songs": 27
+   }
+  },
+  "better": 16,
+  "worse": 1,
+  "broke": [],
+  "changed": {
+   "score/ballad_75_feels": [
+    0.6667,
+    0.7843
+   ],
+   "score/shuffle_12-8_70_v1": [
+    0.6667,
+    0.6118
+   ],
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.9583
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.9046
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.8318
+   ],
+   "harmonix_changes/0142_indestructible": [
+    0.7303,
+    0.8208
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.96
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.6713
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.8829
+   ]
+  }
+ },
+ "sections_50": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9413,
+    "bar_F": 0.7249,
+    "loop_1bar": 0.6288,
+    "loop_4bar": 0.4995,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.8948,
+    "bar_F": 0.8224,
+    "loop_1bar": 0.7531,
+    "loop_4bar": 0.7456,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.8986,
+    "bar_F": 0.8893,
+    "loop_1bar": 0.7584,
+    "loop_4bar": 0.7115,
+    "songs": 27
+   }
+  },
+  "better": 15,
+  "worse": 0,
+  "broke": [],
+  "changed": {
+   "score/ballad_75_feels": [
+    0.6667,
+    0.7843
+   ],
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.9583
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.9046
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.8318
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.9138
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.6364
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.8829
+   ]
+  }
+ },
+ "sections_60": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9413,
+    "bar_F": 0.7173,
+    "loop_1bar": 0.6177,
+    "loop_4bar": 0.4866,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.8948,
+    "bar_F": 0.8227,
+    "loop_1bar": 0.7532,
+    "loop_4bar": 0.7458,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.8986,
+    "bar_F": 0.8893,
+    "loop_1bar": 0.7584,
+    "loop_4bar": 0.7115,
+    "songs": 27
+   }
+  },
+  "better": 15,
+  "worse": 0,
+  "broke": [],
+  "changed": {
+   "score/ballad_75_feels": [
+    0.6667,
+    0.7843
+   ],
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    0.8649
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.7957
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.9046
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.8318
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.9138
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.6364
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.8829
+   ]
+  }
+ },
+ "sections_50_meters_3-7": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9413,
+    "bar_F": 0.7242,
+    "loop_1bar": 0.6278,
+    "loop_4bar": 0.499,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.8948,
+    "bar_F": 0.8216,
+    "loop_1bar": 0.75,
+    "loop_4bar": 0.7427,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.8986,
+    "bar_F": 0.8862,
+    "loop_1bar": 0.7547,
+    "loop_4bar": 0.7079,
+    "songs": 27
+   }
+  },
+  "better": 13,
+  "worse": 0,
+  "broke": [],
+  "changed": {
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.9583
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.8829
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.9138
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.6298
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.8829
+   ]
+  }
+ },
+ "sections_50_meters_2-7": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9413,
+    "bar_F": 0.7278,
+    "loop_1bar": 0.6281,
+    "loop_4bar": 0.4982,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.8948,
+    "bar_F": 0.8176,
+    "loop_1bar": 0.7402,
+    "loop_4bar": 0.7331,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.8986,
+    "bar_F": 0.8992,
+    "loop_1bar": 0.7969,
+    "loop_4bar": 0.7527,
+    "songs": 27
+   }
+  },
+  "better": 21,
+  "worse": 6,
+  "broke": [
+   "score/ballad_75_feels_v2",
+   "harmonix/0343_banjo",
+   "gtzan/classical.00000",
+   "gtzan/classical.00085"
+  ],
+  "changed": {
+   "score/ballad_75_feels_v2": [
+    1.0,
+    0.8791
+   ],
+   "score/odd_bars_100_v2": [
+    0.8706,
+    0.9213
+   ],
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/tempo_sections": [
+    0.8283,
+    0.9558
+   ],
+   "score_changes/tempo_sections_v1": [
+    0.7677,
+    0.8624
+   ],
+   "score_changes/tempo_sections_v2": [
+    0.6882,
+    0.8
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.9583
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.8829
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.9138
+   ],
+   "harmonix_changes/0191_newslang": [
+    0.249,
+    0.3197
+   ],
+   "harmonix_changes/0243_saucyjack": [
+    0.6667,
+    0.7647
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.6298
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.8829
+   ],
+   "harmonix/0343_banjo": [
+    0.9255,
+    0.8744
+   ],
+   "gtzan/blues.00029": [
+    0.25,
+    0.1667
+   ],
+   "gtzan/classical.00000": [
+    0.9167,
+    0.6111
+   ],
+   "gtzan/classical.00025": [
+    0.8235,
+    0.56
+   ],
+   "gtzan/classical.00085": [
+    1.0,
+    0.6829
+   ],
+   "gtzan/jazz.00080": [
+    0.6842,
+    1.0
+   ],
+   "gtzan/reggae.00032": [
+    0.4828,
+    0.6842
+   ]
+  }
+ },
+ "octave_1.95": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9436,
+    "bar_F": 0.6696,
+    "loop_1bar": 0.5533,
+    "loop_4bar": 0.4149,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.894,
+    "bar_F": 0.8219,
+    "loop_1bar": 0.7501,
+    "loop_4bar": 0.7429,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.9311,
+    "bar_F": 0.9167,
+    "loop_1bar": 0.8488,
+    "loop_4bar": 0.8139,
+    "songs": 27
+   }
+  },
+  "better": 7,
+  "worse": 0,
+  "broke": [],
+  "changed": {
+   "score_changes/tempo_sections": [
+    0.8283,
+    0.9474
+   ],
+   "score_changes/tempo_sections_v1": [
+    0.7677,
+    0.9649
+   ],
+   "score_changes/waltz_accelerando": [
+    0.7654,
+    1.0
+   ],
+   "score_changes/waltz_accelerando_v1": [
+    0.8193,
+    0.9897
+   ],
+   "score_changes/waltz_accelerando_v2": [
+    0.7,
+    0.7765
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.8898
+   ],
+   "harmonix_changes/0303_wakeupdead": [
+    0.6505,
+    0.7749
+   ]
+  }
+ },
+ "octave_2.2": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9471,
+    "bar_F": 0.6708,
+    "loop_1bar": 0.5554,
+    "loop_4bar": 0.4186,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.894,
+    "bar_F": 0.8219,
+    "loop_1bar": 0.7513,
+    "loop_4bar": 0.743,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.9511,
+    "bar_F": 0.9388,
+    "loop_1bar": 0.888,
+    "loop_4bar": 0.8578,
+    "songs": 27
+   }
+  },
+  "better": 11,
+  "worse": 1,
+  "broke": [
+   "score/ballad_75_feels_v2"
+  ],
+  "changed": {
+   "score/ballad_75_feels": [
+    0.6667,
+    0.7843
+   ],
+   "score/ballad_75_feels_v2": [
+    1.0,
+    0.8791
+   ],
+   "score_changes/tempo_sections": [
+    0.8283,
+    0.9474
+   ],
+   "score_changes/tempo_sections_v1": [
+    0.7677,
+    0.9649
+   ],
+   "score_changes/tempo_sections_v2": [
+    0.6882,
+    0.9273
+   ],
+   "score_changes/waltz_accelerando": [
+    0.7654,
+    1.0
+   ],
+   "score_changes/waltz_accelerando_v1": [
+    0.8193,
+    0.9897
+   ],
+   "score_changes/waltz_accelerando_v2": [
+    0.7,
+    0.7765
+   ],
+   "harmonix_changes/0014_babaoriley": [
+    0.5354,
+    0.8935
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.8898
+   ],
+   "harmonix_changes/0293_tomsawyer2": [
+    0.6073,
+    0.6796
+   ],
+   "harmonix_changes/0303_wakeupdead": [
+    0.6505,
+    0.7749
+   ]
+  }
+ },
+ "app": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9436,
+    "bar_F": 0.7277,
+    "loop_1bar": 0.6325,
+    "loop_4bar": 0.5035,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.894,
+    "bar_F": 0.8225,
+    "loop_1bar": 0.7531,
+    "loop_4bar": 0.7456,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.9311,
+    "bar_F": 0.921,
+    "loop_1bar": 0.8512,
+    "loop_4bar": 0.8163,
+    "songs": 27
+   }
+  },
+  "better": 21,
+  "worse": 0,
+  "broke": [],
+  "changed": {
+   "score/ballad_75_feels": [
+    0.6667,
+    0.7843
+   ],
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/tempo_sections": [
+    0.8283,
+    0.9474
+   ],
+   "score_changes/tempo_sections_v1": [
+    0.7677,
+    0.9649
+   ],
+   "score_changes/waltz_accelerando": [
+    0.7654,
+    1.0
+   ],
+   "score_changes/waltz_accelerando_v1": [
+    0.8193,
+    0.9897
+   ],
+   "score_changes/waltz_accelerando_v2": [
+    0.7,
+    0.7765
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.9583
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.9216
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.8898
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.9138
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.6364
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.8829
+   ],
+   "harmonix_changes/0303_wakeupdead": [
+    0.6505,
+    0.7749
+   ]
+  }
+ },
+ "odd_20": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9436,
+    "bar_F": 0.7654,
+    "loop_1bar": 0.6606,
+    "loop_4bar": 0.5283,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.894,
+    "bar_F": 0.8196,
+    "loop_1bar": 0.7495,
+    "loop_4bar": 0.7402,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.9311,
+    "bar_F": 0.9235,
+    "loop_1bar": 0.854,
+    "loop_4bar": 0.8191,
+    "songs": 27
+   }
+  },
+  "better": 37,
+  "worse": 2,
+  "broke": [
+   "score/swing_160",
+   "gtzan/classical.00000"
+  ],
+  "changed": {
+   "score/ballad_75_feels": [
+    0.6667,
+    0.7843
+   ],
+   "score/odd_bars_100_v2": [
+    0.8706,
+    0.9647
+   ],
+   "score/swing_160": [
+    1.0,
+    0.4124
+   ],
+   "score_changes/cycle_4-4-4-3": [
+    0.7126,
+    0.8506
+   ],
+   "score_changes/cycle_4-4-4-3_v1": [
+    0.6512,
+    0.8966
+   ],
+   "score_changes/cycle_4-4-4-3_v2": [
+    0.6512,
+    0.9302
+   ],
+   "score_changes/pneuma_like": [
+    0.5962,
+    0.6602
+   ],
+   "score_changes/pneuma_like_v1": [
+    0.5577,
+    0.6863
+   ],
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_7-4_4-4": [
+    0.7027,
+    0.8421
+   ],
+   "score_changes/sections_7-4_4-4_v1": [
+    0.6757,
+    0.8
+   ],
+   "score_changes/tempo_sections": [
+    0.8283,
+    0.9474
+   ],
+   "score_changes/tempo_sections_v1": [
+    0.7677,
+    0.9649
+   ],
+   "score_changes/waltz_accelerando": [
+    0.7654,
+    1.0
+   ],
+   "score_changes/waltz_accelerando_v1": [
+    0.8193,
+    0.9897
+   ],
+   "score_changes/waltz_accelerando_v2": [
+    0.7,
+    0.7765
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.9583
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0027_blackened": [
+    0.6612,
+    0.7184
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.9216
+   ],
+   "harmonix_changes/0068_devilsisland": [
+    0.8728,
+    0.948
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.9138
+   ],
+   "harmonix_changes/0142_indestructible": [
+    0.7303,
+    0.8046
+   ],
+   "harmonix_changes/0162_lobotomy": [
+    0.4689,
+    0.5368
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.9138
+   ],
+   "harmonix_changes/0243_saucyjack": [
+    0.6667,
+    0.7912
+   ],
+   "harmonix_changes/0265_straightlines": [
+    0.7729,
+    0.9213
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.9007
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.8829
+   ],
+   "harmonix_changes/0303_wakeupdead": [
+    0.6505,
+    0.7794
+   ],
+   "gtzan/classical.00000": [
+    0.9167,
+    0.8333
+   ],
+   "gtzan/metal.00019": [
+    0.0,
+    0.05
+   ],
+   "gtzan/metal.00081": [
+    0.6111,
+    0.8333
+   ]
+  }
+ },
+ "odd_10_check": {
+  "groups": {
+   "meter": {
+    "beat_F": 0.9436,
+    "bar_F": 0.7559,
+    "loop_1bar": 0.653,
+    "loop_4bar": 0.5231,
+    "songs": 50
+   },
+   "steady": {
+    "beat_F": 0.894,
+    "bar_F": 0.8231,
+    "loop_1bar": 0.7532,
+    "loop_4bar": 0.7437,
+    "songs": 146
+   },
+   "tempo": {
+    "beat_F": 0.9311,
+    "bar_F": 0.9225,
+    "loop_1bar": 0.8532,
+    "loop_4bar": 0.8185,
+    "songs": 27
+   }
+  },
+  "better": 33,
+  "worse": 3,
+  "broke": [
+   "score/folk_6-8_66_v1",
+   "score/swing_160",
+   "gtzan/classical.00000"
+  ],
+  "changed": {
+   "score/ballad_75_feels": [
+    0.6667,
+    0.7843
+   ],
+   "score/folk_6-8_66_v1": [
+    1.0,
+    0.9
+   ],
+   "score/odd_bars_100_v2": [
+    0.8706,
+    0.9647
+   ],
+   "score/swing_160": [
+    1.0,
+    0.625
+   ],
+   "score/swing_160_v2": [
+    0.0,
+    0.4421
+   ],
+   "score_changes/cycle_4-4-4-3": [
+    0.7126,
+    0.9091
+   ],
+   "score_changes/cycle_4-4-4-3_v1": [
+    0.6512,
+    0.7816
+   ],
+   "score_changes/cycle_4-4-4-3_v2": [
+    0.6512,
+    0.7907
+   ],
+   "score_changes/sections_3-4_4-4": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_3-4_4-4_v1": [
+    0.7222,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_6-4_4-4_v1": [
+    0.6667,
+    1.0
+   ],
+   "score_changes/sections_6-4_4-4_v2": [
+    0.6667,
+    0.8
+   ],
+   "score_changes/sections_7-4_4-4": [
+    0.7027,
+    0.8421
+   ],
+   "score_changes/sections_7-4_4-4_v1": [
+    0.6757,
+    0.7895
+   ],
+   "score_changes/sections_7-4_4-4_v2": [
+    0.6757,
+    0.7297
+   ],
+   "score_changes/tempo_sections": [
+    0.8283,
+    0.9474
+   ],
+   "score_changes/tempo_sections_v1": [
+    0.7677,
+    0.9649
+   ],
+   "score_changes/waltz_accelerando": [
+    0.7654,
+    1.0
+   ],
+   "score_changes/waltz_accelerando_v1": [
+    0.8193,
+    0.9897
+   ],
+   "score_changes/waltz_accelerando_v2": [
+    0.7,
+    0.7765
+   ],
+   "score_changes/waltz_verse_rock_chorus": [
+    0.56,
+    0.9895
+   ],
+   "score_changes/waltz_verse_rock_chorus_v1": [
+    0.5455,
+    0.9583
+   ],
+   "score_changes/waltz_verse_rock_chorus_v2": [
+    0.5814,
+    0.9677
+   ],
+   "harmonix_changes/0058_criticalacclaim": [
+    0.8152,
+    0.9216
+   ],
+   "harmonix_changes/0068_devilsisland": [
+    0.8728,
+    0.948
+   ],
+   "harmonix_changes/0096_fivemagics": [
+    0.8068,
+    0.8683
+   ],
+   "harmonix_changes/0117_goodmorningblackfriday": [
+    0.7815,
+    0.8898
+   ],
+   "harmonix_changes/0182_mycurse": [
+    0.8349,
+    0.9138
+   ],
+   "harmonix_changes/0243_saucyjack": [
+    0.6667,
+    0.7912
+   ],
+   "harmonix_changes/0265_straightlines": [
+    0.7729,
+    0.8492
+   ],
+   "harmonix_changes/0280_thedayitriedtolive": [
+    0.5613,
+    0.9109
+   ],
+   "harmonix_changes/0289_thisisexile": [
+    0.8219,
+    0.9009
+   ],
+   "harmonix_changes/0303_wakeupdead": [
+    0.6505,
+    0.7794
+   ],
+   "gtzan/classical.00000": [
+    0.9167,
+    0.8333
+   ],
+   "gtzan/metal.00081": [
+    0.6111,
+    0.8333
+   ]
+  }
+ }
+}

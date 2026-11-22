@@ -155,13 +155,14 @@ class BeatThisTracker:
         return self._models
 
 
-GRID_DECODER = "grid"
-"""Suffix of the analyzer name for grids from beat_decoding.py."""
+GRID_DECODER = "grid2"
+"""Suffix of the analyzer name for grids from beat_decoding.py. The number goes up when the
+decoding changes (2: meter sections, real tempo changes), so stored grids are decoded again."""
 NO_HINTS = BeatGridHints()
 
 
 def is_current_analysis(analysis: BeatAnalysis) -> bool:
-    """False for grids from the first version (peak picking: bars of uneven length)."""
+    """False for grids of an older method (peak picking, or an older decoder): decode again."""
     return analysis.analyzer.endswith(f"+{GRID_DECODER}")
 
 

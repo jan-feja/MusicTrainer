@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { BeatAnalysis } from '../../api/types'
 import {
+  barLengths,
   createBeatGrid,
   shiftedBarStarts,
   describeGridLength,
@@ -24,6 +25,22 @@ const ANALYSIS: BeatAnalysis = {
   analyzer: 'test',
   hints: { beatsPerBar: null, tempoBpm: null, barStarts: [], steadyTempo: false },
 }
+
+describe('barLengths', () => {
+  it('is the one meter of a song in one meter', () => {
+    expect(barLengths(ANALYSIS)).toEqual([4])
+  })
+
+  it('lists the meters of all sections, most bars first', () => {
+    // 3 bars of 4 beats, then 2 bars of 3 beats, then an unfinished bar
+    const downbeats = [1, 3, 5, 7, 8.5, 10]
+    expect(barLengths({ ...ANALYSIS, downbeats })).toEqual([4, 3])
+  })
+
+  it('is empty without bars', () => {
+    expect(barLengths({ ...ANALYSIS, downbeats: [] })).toEqual([])
+  })
+})
 
 describe('nearestIndex', () => {
   it.each([

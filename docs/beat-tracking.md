@@ -28,21 +28,21 @@ The fix is in the step after the network. Beat This! deliberately leaves out mus
 The app keeps the network's output (how likely a beat and a bar start are, 50 times per second) and finds the most likely beat grid under a few assumptions. It is a bar-pointer model (Krebs et al. 2015) written in numpy:
 
 1. **Steady tempo:** the tempo changes only gradually from beat to beat.
-2. **One meter per song:** every bar has the same number of beats, 3 to 7. 2 is available only as a user hint.
-3. **One tempo octave per song:** if the best grid mixes, say, 75 and 150 BPM, the song is decoded once per octave and the likelier one is kept.
+2. **One meter per section:** within a section every bar has the same number of beats, 3 to 8. The meter may change between sections of at least 4 bars (a verse in 3/4, a chorus in 4/4); see [Meter and tempo changes](#meter-and-tempo-changes). 2 is available only as a user hint.
+3. **No jumps to double or half tempo:** if the best grid spans about a factor of 2 (75 and 150 BPM), the song is decoded once per tempo octave and the likelier one is kept. Smaller spreads (76 → 140 BPM) are real tempo changes and are followed.
 4. **Click tracks:** if the network rates bar starts no higher than any other beat (e.g. a click track), there is no meter to find, so the grid gets 4 beats per bar.
 5. **Precise timing:** beat times are refined to well below the network's 20 ms frames (parabolic peak, local straight-line fit).
 
 The network output is stored with the video. The user's fixes (**hints**) therefore only decode again: a few seconds, or instantly for bar starts. The hints are:
 
 - **½× / 2×:** the tempo octave (75 vs 150 BPM).
-- **Beats per bar:** set the meter.
-- **‹ Bar start ›:** move the bar starts one beat from the playhead on. This fixes the bars after a real odd bar and leaves the bars before it alone.
+- **Beats per bar:** set one meter for the whole song (no sections). *Auto* shows what was detected, e.g. *Auto (4, 3)*.
+- **‹ Bar start ›:** move the bar starts one beat from the playhead on, to the end of that section. This fixes the bars after a real odd bar and leaves the bars before it, and the next sections, alone.
 - **Steady:** space all beats exactly evenly, so every bar has the same length (for songs played to a click).
 
 **Tried and dropped** (numbers in the experiment results):
 
-- **Letting the meter change within a song:** at any cost it invented odd bars (15–37 % in some songs) and did not fix the real ones.
+- **Single bars of another length:** the first try (an odd bar allowed anywhere, at a cost) invented odd bars (15–37 % in some songs). With the regression set ([Meter and tempo changes](#meter-and-tempo-changes)) a better version gets the meter songs further than sections alone, but it still breaks songs that were right. Meter changes are now allowed between sections instead.
 - **2 beats per bar as an automatic choice:** turned 13 % of real 4/4 songs into half bars.
 - **A steadier tempo prior (λ = 200–400):** helped some songs, hurt others.
 - **Averaging three network checkpoints:** small gains for three times the computing time.
@@ -56,6 +56,9 @@ The network output is stored with the video. The user's fixes (**hints**) theref
 | **GTZAN** (991 clips of 30 s) | real recordings, 10 genres; **not** in Beat This!'s training data | human annotations ([CPJKU/beat_this_annotations](https://github.com/CPJKU/beat_this_annotations)) |
 | **Harmonix** (8 songs) | real songs, downloaded from YouTube | human annotations; Beat This! was trained on them, so the network side is optimistic |
 | **Library** | songs downloaded in the app (*Cryin'*, *Charlie*) | none; checks that need no answers (bar regularity) |
+| **Score songs with changes** (33) | 11 more score songs at 3 tempi (`make_score_songs.py --set changes`): verses in 3/4, 5/4, 6/4, 7/4 or 7/8 against a 4/4 chorus, a waltz verse with a rock chorus at another tempo, a 4+4+4+3 bar cycle, a verse like Tool's *Pneuma* (6+6+5+6+5+5 eighths), tempo jumps with an accelerando and a ritardando, a rubato ballad, an accelerating waltz | exact, from the score |
+| **Harmonix with changes** (31 songs) | Harmonix songs whose annotations change meter (22: Soundgarden *The Day I Tried to Live*, Killswitch Engage *My Curse*, Metallica *Blackened*, Rush *Tom Sawyer* and *The Camera Eye*, Megadeth *Five Magics*, ...) or tempo (9: *Baba O'Riley*, *Good Mourning / Black Friday*, ...), chosen from the annotations ([get_harmonix_changes.py](../experiments/get_harmonix_changes.py)) | human annotations, moved onto the YouTube audio by DTW against the mel spectrograms the Harmonix authors publish (most YouTube versions are other edits); 11 of the 42 downloaded songs did not line up and were left out |
+| **Regression set** (226) | network outputs and answers of the score songs, both Harmonix sets, 100 GTZAN clips and 3 library songs, stored in the backend ([backend/tests/data/beat_grids](../backend/tests/data/beat_grids/README.md)) | as above |
 
 `score_to_audio.py` also renders Guitar Pro 3/4/5 tabs and any MIDI file. Repeats, alternate endings, tempo changes and time signatures are played out. Any tab becomes a test song with exact beats and bars.
 
@@ -107,6 +110,70 @@ Harmonix: 4-bar loops 0.827 (peak picking), 0.751 (madmom), 0.853 (app); bar con
 
   These are genuine ambiguities. Every decoder tested got them wrong, and the hints fix each in one or two clicks.
 
+## Meter and tempo changes
+
+The first decoder assumed one meter and one tempo octave per song. That holds for most songs, but not for songs like Tool's *Pneuma* (4/4 parts, verses in 6/8 and 5/8 bars) or songs that speed up. To measure this before changing anything, the test sets above got songs whose meter or tempo changes, and the backend got a **regression test** (`pytest -m beat_regression -s`, ~40 s). It decodes 226 songs from their stored network output and compares the bars with the true ones and with a stored baseline:
+
+- every group (steady, tempo changes, meter changes) must keep its mean beat and bar-start F-measure and loop accuracy;
+- every song whose bar starts were right (F ≥ 0.9) must stay right;
+- the library songs must keep their meter and tempo (*Cryin'* also must not get a double-time stretch again).
+
+### What changed
+
+1. **Meter sections.** After the beats are decoded, a second pass labels them with bars again (`_meter_sections`). Within a section every bar has the same number of beats (3-8). A new section with another number costs as much as a few bars of clear evidence and needs at least 4 bars. The evidence for "this beat starts a bar" is the same term the first pass uses, so a song in one meter gets exactly the bars it got before. The pass adds under 0.1 s.
+2. **Real tempo changes.** The tempo octave is now enforced only when the decoded tempo spans about a factor of 2 (spread ≥ 1.95, was 1.6). The old limit cut off real tempo changes, e.g. a chorus at 132 BPM, a bridge at 76 and an accelerando to 140, and forced the whole song into one range.
+3. **Stored grids are decoded again** once (analyzer `...+grid2`), from the stored network output, with the user's hints.
+
+### Results
+
+Regression set, decoder 1 → decoder 2 (mean per group):
+
+| Group | Songs | Beats F | Bar starts F | 1-bar loop | 4-bar loop |
+|---|---|---|---|---|---|
+| Steady (one meter, steady tempo) | 146 | 0.895 → 0.894 | 0.822 → 0.823 | 0.750 → 0.753 | 0.743 → 0.746 |
+| Tempo changes | 27 | 0.899 → 0.931 | 0.883 → 0.921 | 0.752 → 0.851 | 0.706 → 0.816 |
+| Meter changes | 50 | 0.941 → 0.944 | 0.666 → 0.728 | 0.549 → 0.632 | 0.410 → 0.503 |
+
+21 songs better by 0.05 or more in bar-start F-measure, none worse. Examples:
+
+- **Score songs:** waltz verse with a rock chorus 0.55–0.58 → 0.96–0.99, verses in 3/4 0.72 → 1.00 and in 6/4 0.67 → 0.80–1.00, tempo jumps with an accelerando 0.77–0.83 → 0.95–0.96, accelerating waltz 0.70–0.82 → 0.78–1.00 (at all or 2 of the 3 tempi).
+- **Harmonix songs:** *Critical Acclaim* 0.82 → 0.92, *My Curse* 0.83 → 0.91, *Wake Up Dead* 0.65 → 0.77, *Good Mourning / Black Friday* 0.78 → 0.89.
+- **Steady songs:** all 991 GTZAN clips decode as before (bar starts F 0.780 → 0.779, 4-bar loop 0.687 → 0.686), and so do the steady score and Harmonix songs, except the ballad with a double-time section, which improves (0.67 → 0.78).
+
+On the songs with changes ([test_beat_tracking.py](../experiments/test_beat_tracking.py), sets `score_changes`, `harmonix_changes`; bar starts F / 4-bar loop):
+
+| Method | Score: meter sections | Score: bar cycles | Score: tempo changes | Harmonix: meter changes | Harmonix: tempo changes |
+|---|---|---|---|---|---|
+| Peak picking | 0.79 / 0.45 | 0.88 / 0.59 | 0.89 / 0.65 | 0.80 / 0.51 | 0.93 / 0.86 |
+| madmom DBN | 0.62 / 0.29 | 0.62 / 0.33 | 0.90 / 0.73 | 0.70 / 0.53 | 0.93 / 0.88 |
+| Decoder 1 | 0.62 / 0.28 | 0.61 / 0.32 | 0.77 / 0.35 | 0.68 / 0.51 | 0.88 / 0.80 |
+| **Decoder 2** | 0.76 / 0.50 | 0.61 / 0.32 | 0.88 / 0.66 | 0.71 / 0.54 | 0.90 / 0.83 |
+
+Peak picking still finds more bar starts on these songs, since it lets every bar have its own length. That is also why it fails on steady songs (*Cryin'*: 20 % wrong bars).
+
+### Tried and dropped ([test_meter_sections.py](../experiments/test_meter_sections.py), [results](../experiments/results/meter_sections.json))
+
+| Variant | Meter: bar F / 4-bar loop | Tempo: bar F / 4-bar loop | Steady: bar F | Songs broken |
+|---|---|---|---|---|
+| Decoder 1 | 0.666 / 0.410 | 0.883 / 0.706 | 0.822 | – |
+| Sections, change cost 30 | 0.734 / 0.507 | 0.889 / 0.712 | 0.817 | swing score song |
+| Sections, cost 40 / **50** / 60 | 0.728 / 0.725 / 0.717; 4-bar loop 0.503 / 0.499 / 0.487 | 0.889 / 0.712 | 0.822 | none |
+| Sections with 2 beats per bar | 0.728 / 0.498 | 0.899 / 0.753 | 0.818 | 4 (ballad, *Banjo*, 2 classical clips) |
+| Tempo octave only above 2.2 | 0.671 / 0.419 | 0.939 / 0.858 | 0.822 | ballad with a double-time section |
+| **Decoder 2** (sections, cost 50, 3-8 beats; octave above 1.95) | 0.728 / 0.503 | 0.921 / 0.816 | 0.823 | none |
+| + single odd bars (cost 20) | 0.765 / 0.528 | 0.923 / 0.819 | 0.820 | swing score song, a classical clip |
+| + single odd bars, each confirmed by the next bars | 0.756 / 0.523 | 0.922 / 0.819 | 0.823 | swing, 6/8 folk, a classical clip |
+
+Single odd bars help songs like *The Day I Tried to Live* (4/4 with 7-beat bars in between, 0.56 → 0.87) and the 4+4+4+3 cycle (0.65–0.71 → 0.78–0.91). They still break a swing song the decoder gets right. For about 14 s of it the network calls the true bar starts plain beats (evidence −7) and puts bar starts on beat 3 (+7). That looks exactly like a real 2/4 bar, so no test on the network output tells the two apart; only the rest of the song shows it is wrong.
+
+### Still hard
+
+- **Mixed /8 meters like *Pneuma*:** the network switches between counting eighths, quarters and dotted quarters in the verses, and its bar starts there are erratic. Both decoders give *Pneuma* 4/4 throughout. On the *Pneuma*-like score song, where the network does find the bar starts, both decoders stay at 0.54–0.59 (peak picking, which lets every bar have its own length: 0.66–0.95): with the quarter note as the beat, a 5/8 bar has no whole number of beats. A beat grid of uneven beats (3+3, 3+2 eighths) needs a different model, or the user.
+- **Single odd bars and bar cycles** (4+4+4+3, 7+7+7+8): the bars after them can be shifted until the user moves the bar starts (‹ Bar start ›).
+- **Sections shorter than about 8 bars** with a meter close to the main one: two meter changes cost more than the few wrong bar starts the main meter gives there.
+
+**Next step (proposed):** a user-assisted mode for such songs: mark the sections (with a spectrogram and the detected grid to help), give each its meter or bar pattern and maybe a first bar start, and decode every section with that. The decoder already takes a meter and bar starts per song; per section is the extension.
+
 ## Timing
 
 - **Spread:** detected beats are within ~3 ms of the true onsets on score songs (median spread), and ~8 ms against human annotations on real songs (which includes the annotators' own jitter).
@@ -115,17 +182,22 @@ Harmonix: 4-bar loops 0.827 (peak picking), 0.751 (madmom), 0.853 (app); bar con
 ## Speed
 
 - **Network:** about 9 s for a 4-minute song on a laptop CPU.
-- **Decoding:** 1–3 s; a song with two tempo octaves is decoded three times.
+- **Decoding:** 1–4 s; a song with two tempo octaves is decoded three times. The meter-sections pass adds under 0.1 s.
 - **New hints:** decode again in 0.3–2 s.
 - **Long videos:** for audio over ~25 minutes, the decoder tries only 3 and 4 beats per bar, to stay within 150 MB of memory.
 
 ## Reproduce
 
-See [../experiments/README.md](../experiments/README.md), items 5 and 6 for the data. Then:
+See [../experiments/README.md](../experiments/README.md), items 5-8 for the data. Then:
 
 ```
 python make_score_songs.py %MT_DATA%/score_midi 3
 python score_to_audio.py %MT_DATA%/score_songs %MT_DATA%/score_midi
 python test_beat_tracking.py                       # all methods, all test sets found
 python test_beat_tracking.py app --sets gtzan      # one method, one set
+python test_beat_tracking.py beat_this_minimal madmom_dbn app_decoder1 app --sets score_changes,harmonix_changes --out beat_tracking_changes
+python make_beat_regression_set.py                 # the backend's regression set
+python test_meter_sections.py                      # decoder variants on it
 ```
+
+Results: [beat_tracking.json](../experiments/results/beat_tracking.json) (decoder 1, all methods), [beat_tracking_changes.json](../experiments/results/beat_tracking_changes.json) (both decoders, peak picking and madmom on the change sets), [beat_tracking_sections.json](../experiments/results/beat_tracking_sections.json) (decoder 2, all sets), [meter_sections.json](../experiments/results/meter_sections.json).

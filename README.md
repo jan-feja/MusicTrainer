@@ -10,12 +10,12 @@ An app for practising music with songs. The idea and planned features are in [do
   - speed 0.25–2× in steps of 0.05, keeping the pitch
   - an **A–B loop**: set A / B at the playhead, drag the handles on the timeline, nudge each point by 50 ms, turn it on or off. The jump back to A has no gap, at any speed
   - **beat-synced loops**:
-    - beats and bar starts are detected automatically after each download; every bar has the same number of beats
+    - beats and bar starts are detected automatically after each download; the bars of a section have the same number of beats, and the meter may change between sections (a verse in 3/4, a chorus in 4/4), as may the tempo
     - switch *Snap loop* to **Beats** or **Bars**, and A / B snap to the grid when set or dragged; the nudge buttons and ← → on a handle step one beat or bar
     - the loop length shows in beats or bars
     - fix the grid when the music is ambiguous (saved with the video):
       - **½× / 2×**: the tempo was detected an octave off (e.g. 150 instead of 75 BPM)
-      - **beats per bar**: Auto (detected), or 2-9 / 12
+      - **beats per bar**: Auto (detected; e.g. *Auto (4, 3)* when sections differ), or 2-9 / 12 for the whole song
       - **‹ Bar start ›**: the bar starts are on the wrong beat from here on (e.g. after a 2/4 bar)
       - **Steady**: the song is played to a click, so all beats are spaced exactly evenly
     - the song's tempo is shown at the current speed
@@ -110,6 +110,7 @@ Interactive API documentation: http://127.0.0.1:8000/docs
 |---|---|---|
 | Unit tests | `.venv\Scripts\pytest` | `npm test` |
 | Tests against real YouTube and the real beat model | `.venv\Scripts\pytest -m network` | – |
+| Beat grid regression set: 226 songs decoded and compared with their true bars (~40 s; run before changing the decoder) | `.venv\Scripts\pytest -m beat_regression -s` | – |
 | Lint | `.venv\Scripts\ruff check` | `npm run lint` |
 | Format | `.venv\Scripts\ruff format` | `npm run format` |
 | Type check | – | `npm run typecheck` |
@@ -143,10 +144,10 @@ Environment variables, or a `.env` file in the folder you start the backend from
 - **Beat detection** ([docs/beat-tracking.md](docs/beat-tracking.md)):
   1. After a download, a background job decodes the audio with ffmpeg.
   2. The [Beat This!](https://github.com/CPJKU/beat_this) network (ISMIR 2024, MIT) says, 50 times per second, how likely a beat and a bar start are: about 9 s for a 4-minute song on a laptop CPU. This output is stored as `beat_activations.npz`.
-  3. A decoder (`beat_decoding.py`, a bar-pointer HMM in numpy) finds the most likely beat grid: the tempo changes only gradually, every bar has the same number of beats (3-7), and the song stays in one tempo octave. A few seconds.
+  3. A decoder (`beat_decoding.py`, a bar-pointer HMM in numpy) finds the most likely beat grid: the tempo changes only gradually and does not jump to its double or half, and within a section every bar has the same number of beats (3-8). The meter may change between sections of at least 4 bars. A few seconds.
   4. The grid is stored as `analysis.json` (BPM, beats per bar, beat and bar times, the user's hints).
 
-  The player asks for it and polls while detection runs. New hints only decode again (seconds; moving bar starts is instant), the old grid stays on screen meanwhile. Grids from the first version of the app are detected again when the video is opened.
+  The player asks for it and polls while detection runs. New hints only decode again (seconds; moving bar starts is instant), the old grid stays on screen meanwhile. Grids of an older decoder are decoded again from the stored network output (keeping the hints) when the video is opened.
 
   Accuracy: see [docs/beat-tracking.md](docs/beat-tracking.md). Detected beats sit 10-20 ms after sharp attacks, so a loop snapped to the grid jumps 30 ms early and keeps the first note's attack.
 - **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left). Later features (stems) belong in the same folder; see [docs/functionalities.md](docs/functionalities.md).

@@ -60,6 +60,61 @@ def test_double_time_section_does_not_change_the_tempo() -> None:
     assert np.allclose(intervals, 0.8, atol=0.03)
 
 
+def sections(bpm: float, meters: list[tuple[int, int]], start: float = 1.0):
+    """Beats and bar starts of consecutive sections: (beats per bar, bars) each."""
+    beats, downbeats = [], []
+    t = start
+    for per_bar, bars in meters:
+        for _ in range(bars):
+            downbeats.append(t)
+            for _ in range(per_bar):
+                beats.append(t)
+                t += 60 / bpm
+    return beats, downbeats
+
+
+def test_the_meter_can_change_between_sections() -> None:
+    """A verse in 3/4 and a chorus in 4/4: every bar is found.
+
+    (With 8-bar verses the grid would stay in 4/4 here: two meter changes cost more
+    than the few wrong bar starts that 4/4 bars give in a 3/4 verse.)
+    """
+    plan = [(4, 4), (3, 12), (4, 8), (3, 12), (4, 6)]
+    beats, downbeats = sections(120, plan)
+    result = decode_beats(*network_output(beats, downbeats, beats[-1] + 2))
+    assert bar_lengths(result) == [4] * 4 + [3] * 12 + [4] * 8 + [3] * 12 + [4] * 5
+    assert np.max(np.abs(result.downbeats - downbeats)) < 0.005
+    assert result.beats_per_bar == 3  # most bars
+
+
+def test_a_few_odd_bars_do_not_make_a_section() -> None:
+    """Two 3/4 bars in a 4/4 song are shorter than a section: the grid stays in 4/4."""
+    beats, downbeats = sections(120, [(4, 12), (3, 2), (4, 12)])
+    result = decode_beats(*network_output(beats, downbeats, beats[-1] + 2))
+    assert set(bar_lengths(result)) == {4}
+
+
+def test_a_real_tempo_change_is_followed() -> None:
+    """80 BPM, then 140 BPM: not a tempo octave, so the grid follows the change."""
+    slow, slow_bars = grid(80, 4, 8)
+    fast, fast_bars = grid(140, 4, 12, start=slow[-1] + 60 / 80)
+    result = decode_beats(*network_output(slow + fast, slow_bars + fast_bars, fast[-1] + 2))
+    found = result.beats[result.beats > slow[0] + 0.1]  # (the very first beat may be missed)
+    assert len(found) == len(slow) + len(fast) - 1
+    assert np.max(np.abs(found - (slow + fast)[1:])) < 0.01
+    bar_starts = result.downbeats[result.downbeats > slow[0] + 0.1]
+    assert np.max(np.abs(bar_starts - (slow_bars + fast_bars)[1:])) < 0.01
+
+
+def test_a_bar_start_given_in_one_section_leaves_the_next_section_alone() -> None:
+    beats, downbeats = sections(120, [(3, 8), (4, 8)])
+    decoded = decode_beats(*network_output(beats, downbeats, beats[-1] + 2))
+    moved = place_bar_starts(decoded, [beats[7]])  # one beat after the third 3/4 bar start
+    # the 3/4 bars are counted from there to the end of the section, the 4/4 bars stay
+    expected = [beats[i] for i in (0, 3, 7, 10, 13, 16, 19, 22)] + downbeats[8:]
+    assert np.allclose(moved.downbeats, expected, atol=0.005)
+
+
 def test_a_single_short_bar_keeps_the_bars_equal() -> None:
     """A real 2/4 bar in a 4/4 song: the grid keeps 4/4 (known limitation: the bar
     starts are right up to the short bar; the user can move them after it)."""

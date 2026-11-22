@@ -9,19 +9,25 @@ under a few musical assumptions (a bar-pointer model as in Krebs et al. 2015 and
 Böck et al. 2016, the "DBN" of madmom, written here in numpy):
 
 - tempo changes only gradually from beat to beat;
-- a song has a meter: every bar has the same number of beats (3-7; 2 or more
-  only when the user says so), so bar starts can never drift. Allowing an
-  occasional bar of another length made the results worse: the network's
-  hesitations then turn into odd bars;
+- bars have a meter: within a section every bar has the same number of beats,
+  so bar starts cannot drift. The meter may change between sections (a verse
+  in 3/4, a chorus in 4/4), but a section lasts at least 4 bars and every change
+  costs as much as a few bars of clear evidence (_meter_sections). A single bar
+  of another length is not allowed: the network's hesitations then turn into odd
+  bars, and where it is confidently wrong for a few bars no test tells that
+  apart from a real odd bar. 2 beats per bar only when the user says so;
 - if the network rates bar starts no higher than other beats (a click track),
   there is no meter to find: 4 beats per bar;
-- a song stays in one tempo octave: if the best grid jumps between, say, 75 and
-  150 BPM, the song is decoded once per octave and the more likely one is kept.
+- the tempo does not jump to its double or half: if the best grid spans about
+  a factor of 2 (75 and 150 BPM), the song is decoded once per tempo octave and
+  the more likely one is kept. Smaller spreads are real tempo changes and are
+  followed.
 
-A real bar of another length (a 2/4 bar in a 4/4 song) therefore shifts the
-bar starts after it; the user fixes that by saying where a bar starts
-(place_bar_starts). Measured in experiments/test_beat_tracking.py; the user can
-also override the meter and the tempo octave when the music is ambiguous.
+A real single bar of another length (a 2/4 bar in a 4/4 song) therefore shifts
+the bar starts after it; the user fixes that by saying where a bar starts
+(place_bar_starts). Measured in experiments/test_beat_tracking.py and the
+backend's regression set (tests/test_beat_regression.py); the user can also
+override the meter and the tempo octave when the music is ambiguous.
 """
 
 from collections.abc import Sequence
@@ -36,13 +42,17 @@ UNUSUAL_METER_COST = 2.0  # log-probability cost per bar of 5, 6 or 7 beats (GTZ
 # 93 -> 95 %, odd-meter test songs unchanged)
 DEFAULT_METER = 4  # when the bar starts are no different from other beats (a click track)
 MIN_BAR_CONTRAST = 0.15  # bar-start probability at bar starts minus at other beats
+SECTION_METERS = (3, 4, 5, 6, 7, 8)  # beats per bar of a section (8: a 4/4 bar counted in eighths)
+METER_CHANGE_COST = 50.0  # log-probability cost of a new section with another meter ...
+MIN_SECTION_BARS = 4  # ... which lasts at least this many bars (tests/test_beat_regression.py)
 LONG_INPUT_METERS = (3, 4)  # for inputs whose back pointers would exceed MAX_POINTER_BYTES
 MAX_POINTER_BYTES = 150_000_000  # ~25 minutes of audio with all METERS
 MIN_BPM, MAX_BPM = 55.0, 215.0  # tempo grid of the decoder (as in madmom)
 TEMPO_STEPS = 60  # log-spaced tempi between MIN_BPM and MAX_BPM
 TEMPO_CHANGE_COST = 100.0  # lambda: higher = steadier tempo
 BEAT_WINDOW = 16.0  # the first 1/16 of a beat counts as "on the beat"
-OCTAVE_CONFLICT = 1.6  # tempo spread (95th / 5th percentile) that means two tempo octaves
+OCTAVE_CONFLICT = 1.95  # tempo spread (95th / 5th percentile) that means two tempo octaves (below:
+# a real tempo change, e.g. 76 -> 140 BPM, which 1.6 used to cut off)
 OCTAVE_SPAN = 1.4  # tempo range around a chosen octave: tempo / 1.4 .. tempo * 1.4
 ACTIVITY_THRESHOLD = 0.05  # frames before the first / after the last activity this high are skipped
 SMOOTHING_BEATS = 2  # beat times are fitted to a straight line over +-2 beats ...
@@ -125,19 +135,23 @@ def decode_beats(
             ]
             best = int(np.argmax([c.log_prob for c in candidates]))
             path, allowed = candidates[best], ranges[best]
-    if not options.beats_per_bar and _bar_contrast(path, bar_act) < MIN_BAR_CONTRAST:
-        # bar starts look like any other beat (e.g. a click track): no meter to find
-        path = _viterbi(beat_act, bar_act, fps, (DEFAULT_METER,), allowed)
-        info["meter"] = "default"
+    positions = path.beat_in_bar
+    if not options.beats_per_bar:
+        if _bar_contrast(path, bar_act) < MIN_BAR_CONTRAST:
+            # bar starts look like any other beat (e.g. a click track): no meter to find
+            path = _viterbi(beat_act, bar_act, fps, (DEFAULT_METER,), allowed)
+            positions = path.beat_in_bar
+            info["meter"] = "default"
+        elif len(path.frames) > 1:
+            positions = _meter_sections(_bar_evidence(path, beat_act, bar_act, fps))
     info["log_prob"] = path.log_prob
 
     times = _smooth((_refine(path.frames, beat_act + bar_act) + first) / fps)
-    is_bar_start = path.beat_in_bar == 0
     decoded = DecodedBeats(
         beats=times,
-        downbeats=times[is_bar_start],
-        beats_per_bar=_most_common(path.meters[is_bar_start]),
-        beat_in_bar=path.beat_in_bar,
+        downbeats=times[positions == 0],
+        beats_per_bar=_most_common_bar_length(positions),
+        beat_in_bar=positions,
         info=info,
     )
     return place_bar_starts(decoded, options.bar_starts)
@@ -167,18 +181,19 @@ def fit_steady_tempo(decoded: DecodedBeats) -> DecodedBeats:
 def place_bar_starts(decoded: DecodedBeats, bar_starts: Sequence[float]) -> DecodedBeats:
     """Count the bars from each given bar start on (snapped to the nearest beat).
 
-    The number of beats per bar stays; only where the bars begin changes, from
-    each given time up to the next one. The bar before a given start ends early;
+    The number of beats per bar stays (that of the section the start is in);
+    only where the bars begin changes, from each given time to the end of its
+    section (or the next given time). The bar before a given start ends early;
     if that leaves it shorter than half a bar, it joins the bar before it (one
     long bar is likelier than a one-beat bar), or becomes a pickup at the start.
     """
-    per_bar = decoded.beats_per_bar
-    if not bar_starts or len(decoded.beats) == 0 or not per_bar:
+    if not bar_starts or len(decoded.beats) == 0 or not decoded.beats_per_bar:
         return decoded
     positions = decoded.beat_in_bar.copy()
     for start in sorted(bar_starts):
         first = int(np.argmin(np.abs(decoded.beats - start)))
-        positions[first:] = np.arange(len(positions) - first) % per_bar
+        per_bar, end = _section_around(positions, first, decoded.beats_per_bar)
+        positions[first:end] = np.arange(end - first) % per_bar
         earlier = np.flatnonzero(positions[:first] == 0)
         if len(earlier) and first - earlier[-1] < per_bar / 2:
             if len(earlier) > 1:  # merge into the bar before
@@ -186,14 +201,34 @@ def place_bar_starts(decoded: DecodedBeats, bar_starts: Sequence[float]) -> Deco
             else:  # pickup before the first bar
                 short = first - earlier[-1]
                 positions[earlier[-1] : first] = per_bar - short + np.arange(short)
-    return replace(decoded, downbeats=decoded.beats[positions == 0], beat_in_bar=positions)
+    return replace(
+        decoded,
+        downbeats=decoded.beats[positions == 0],
+        beat_in_bar=positions,
+        beats_per_bar=_most_common_bar_length(positions) or decoded.beats_per_bar,
+    )
+
+
+def _section_around(positions: np.ndarray, beat: int, default: int) -> tuple[int, int]:
+    """Beats per bar of the bar around `beat`, and the beat where the next section starts."""
+    starts = np.flatnonzero(positions == 0)
+    lengths = np.diff(starts)
+    if len(lengths) == 0:
+        return default, len(positions)
+    bar = max(0, int(np.searchsorted(starts, beat, side="right")) - 1)
+    bar = min(bar, len(lengths) - 1)  # in the last (open) bar: the meter of the bar before
+    per_bar = int(lengths[bar])
+    following = bar
+    while following < len(lengths) and lengths[following] == per_bar:
+        following += 1
+    end = len(positions) if following >= len(lengths) else int(starts[following])
+    return per_bar, max(end, beat + 1)
 
 
 @dataclass
 class _Path:
     frames: np.ndarray  # frame of every beat
     beat_in_bar: np.ndarray  # 0 = bar start
-    meters: np.ndarray  # beats per bar of the bar each beat is in
     bpm: np.ndarray  # tempo at every beat
     log_prob: float
 
@@ -325,10 +360,80 @@ def _viterbi(
     return _Path(
         frames=frames,
         beat_in_bar=np.array([rows[r][1] for r in beat_rows], dtype=int),
-        meters=np.array([meters[rows[r][0]] for r in beat_rows], dtype=int),
         bpm=60.0 * fps / lengths[tempo_of_state[path[frames]]],
         log_prob=log_prob,
     )
+
+
+def _bar_evidence(path: _Path, beat_act: np.ndarray, bar_act: np.ndarray, fps: float) -> np.ndarray:
+    """For every beat of the path: how much likelier the network finds a bar start than a beat.
+
+    The same term as in _viterbi: log(bar) - log(beat) summed over the frames that
+    count as "on the beat", so with one meter _meter_sections finds the same bars.
+    """
+    lengths = np.round(60.0 * fps / path.bpm).astype(int)
+    ratio = np.log(bar_act) - np.log(beat_act)
+    widths = np.ceil(lengths / BEAT_WINDOW).astype(int)
+    return np.array([ratio[f : f + w].sum() for f, w in zip(path.frames, widths, strict=True)])
+
+
+def _meter_sections(evidence: np.ndarray) -> np.ndarray:
+    """Beat in bar of every beat, for bars that may change length between sections.
+
+    Most likely labeling of the beats (given how likely each is a bar start) under:
+    within a section every bar has the same number of beats (SECTION_METERS); a
+    new section with another number costs METER_CHANGE_COST and is possible only
+    after MIN_SECTION_BARS bars of the current one; bars of 5 beats or more cost
+    UNUSUAL_METER_COST each, as in _viterbi. A state is (beats per bar, bars of
+    the section before this one up to MIN_SECTION_BARS - 1, beat in bar).
+    """
+    full = MIN_SECTION_BARS - 1  # bars before the current one when the section may end with it
+    states = [(m, c, q) for m in SECTION_METERS for c in range(full + 1) for q in range(m)]
+    index = {state: i for i, state in enumerate(states)}
+    meter = np.array([m for m, _, _ in states])
+    count = np.array([c for _, c, _ in states])
+    beat = np.array([q for _, _, q in states])
+    inner = np.flatnonzero(beat > 0)
+    inner_previous = np.array([index[(m, c, q - 1)] for m, c, q in (states[i] for i in inner)])
+    starts, ends = np.flatnonzero(beat == 0), np.flatnonzero(beat == meter - 1)
+    transition = np.full((len(ends), len(starts)), -np.inf)  # bar end -> next bar start
+    for a, e in enumerate(ends):
+        m, c, _ = states[e]
+        for b, s in enumerate(starts):
+            m_next, c_next, _ = states[s]
+            if m_next == m and c_next == min(full, c + 1):
+                cost = 0.0
+            elif m_next != m and c == full and c_next == 0:
+                cost = METER_CHANGE_COST
+            else:
+                continue
+            transition[a, b] = -cost - (UNUSUAL_METER_COST if m_next >= 5 else 0.0)
+
+    # start anywhere in a bar of any meter
+    score = np.where(count == 0, np.where(beat == 0, evidence[0], 0.0), -np.inf)
+    back = np.zeros((len(evidence), len(starts)), dtype=np.int16)
+    columns = np.arange(len(starts))
+    for i in range(1, len(evidence)):
+        new = np.empty_like(score)
+        new[inner] = score[inner_previous]
+        candidates = score[ends][:, None] + transition
+        best = candidates.argmax(axis=0)
+        new[starts] = candidates[best, columns] + evidence[i]
+        back[i] = best
+        score = new
+
+    state = int(score.argmax())
+    labels = np.empty(len(evidence), dtype=int)
+    start_column = {s: k for k, s in enumerate(starts)}
+    for i in range(len(evidence) - 1, -1, -1):
+        labels[i] = beat[state]
+        if i == 0:
+            break
+        if beat[state] > 0:
+            state = int(inner_previous[np.searchsorted(inner, state)])
+        else:
+            state = int(ends[back[i, start_column[state]]])
+    return labels
 
 
 def _bar_contrast(path: _Path, bar_act: np.ndarray) -> float:
@@ -383,8 +488,11 @@ def _smooth(times: np.ndarray) -> np.ndarray:
     return smoothed
 
 
-def _most_common(values: np.ndarray) -> int | None:
-    if len(values) == 0:
+def _most_common_bar_length(beat_in_bar: np.ndarray) -> int | None:
+    """Beats per bar of most bars (a song with a single bar: its length so far)."""
+    starts = np.flatnonzero(beat_in_bar == 0)
+    if len(starts) == 0:
         return None
-    counts = np.bincount(values)
-    return int(counts.argmax())
+    if len(starts) == 1:
+        return int(beat_in_bar.max()) + 1
+    return int(np.bincount(np.diff(starts)).argmax())

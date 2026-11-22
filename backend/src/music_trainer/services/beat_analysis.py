@@ -64,13 +64,14 @@ class BeatAnalysisManager:
             job = self._jobs.get(video_id)
             if job is not None and job.status.is_active:
                 return self._state_of(job)
-            analysis = self._current_analysis(video_id)
+            stored = self._library.read_beat_analysis(video_id)
+            analysis = stored if stored is not None and is_current_analysis(stored) else None
             if not force and hints is None and analysis is not None:
                 return BeatTrackingState(
                     video_id=video_id, status=AnalysisStatus.COMPLETED, analysis=analysis
                 )
-            if hints is None:
-                hints = analysis.hints if analysis is not None else BeatGridHints()
+            if hints is None:  # keep the user's hints, also when an older method made the grid
+                hints = stored.hints if stored is not None else BeatGridHints()
             job = _Job(video_id, hints=hints, rerun_network=force)
             self._jobs[video_id] = job
             self._executor.submit(self._run, job)

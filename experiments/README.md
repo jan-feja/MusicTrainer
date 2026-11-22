@@ -55,6 +55,7 @@ Tools (portable, no install): [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/rele
 | [test_beat_tracking.py](test_beat_tracking.py) | beat grid decoding: the app's decoder vs peak picking vs madmom's DBN on score songs, GTZAN, Harmonix and library songs, and on songs whose meter or tempo changes (sets `score_changes`, `harmonix_changes`) ([../docs/beat-tracking.md](../docs/beat-tracking.md)) |
 | [get_harmonix_changes.py](get_harmonix_changes.py) | Harmonix songs with meter or tempo changes: selection, download, annotations |
 | [make_beat_regression_set.py](make_beat_regression_set.py) | the backend's beat grid regression set (network outputs + true beats and bars of 226 songs) |
+| [test_meter_sections.py](test_meter_sections.py) | decoder variants for meter and tempo changes (meter sections, tempo octave limit, single odd bars) on the regression set |
 | [test_separation.py](test_separation.py) | stem separation quality and speed: Demucs models |
 | [test_stretch.py](test_stretch.py) | offline speed change / pitch shift in Python |
 | [test_harmony.py](test_harmony.py) | key, chords, tuning |
