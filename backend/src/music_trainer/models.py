@@ -97,6 +97,19 @@ class DownloadRequest(ApiModel):
     """Title from the search result, shown while the download runs."""
 
 
+class GridSection(ApiModel):
+    """A part of the song with its own bars: one starts at `start`, the section lasts until the
+    next one. Unset fields are left to the detection."""
+
+    start: float = Field(ge=0)
+    beats_per_bar: int | None = Field(default=None, ge=2, le=16)
+    """Every bar of the section has this many beats."""
+    pattern: list[Annotated[int, Field(ge=1, le=16)]] = Field(default_factory=list, max_length=16)
+    """Bar lengths in beats, repeated from the section start, e.g. [6, 6, 5, 6, 5, 5]."""
+    tempo_bpm: float | None = Field(default=None, ge=30, le=400)
+    """The section's beats are near this tempo (e.g. eighth notes at twice the song's)."""
+
+
 class BeatGridHints(ApiModel):
     """What the user knows about a song's beat grid; None leaves it to the detection."""
 
@@ -108,6 +121,8 @@ class BeatGridHints(ApiModel):
     """Times (s) where a bar starts; from each one on, bars are counted from there."""
     steady_tempo: bool = False
     """The song is played to a click: space all beats exactly evenly."""
+    sections: list[GridSection] = Field(default_factory=list, max_length=200)
+    """Parts of the song with their own meter, bar pattern or tempo."""
 
 
 class BeatAnalysis(ApiModel):

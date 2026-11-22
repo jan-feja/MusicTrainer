@@ -172,7 +172,47 @@ Single odd bars help songs like *The Day I Tried to Live* (4/4 with 7-beat bars 
 - **Single odd bars and bar cycles** (4+4+4+3, 7+7+7+8): the bars after them can be shifted until the user moves the bar starts (‹ Bar start ›).
 - **Sections shorter than about 8 bars** with a meter close to the main one: two meter changes cost more than the few wrong bar starts the main meter gives there.
 
-**Next step (proposed):** a user-assisted mode for such songs: mark the sections (with a spectrogram and the detected grid to help), give each its meter or bar pattern and maybe a first bar start, and decode every section with that. The decoder already takes a meter and bar starts per song; per section is the extension.
+These are what the user's sections and bar starts are for ([Guided grids](#guided-grids)).
+
+## Guided grids
+
+For songs the decoder cannot get right alone, the user describes them (`beat_guidance.py`; hints `sections` and `barStarts`):
+
+- **Sections:** a section starts on a bar and lasts until the next one. It may have:
+  - its **beats per bar**, or a **bar pattern** repeated from its start (e.g. 6+6+5+6+5+5 for the verse of *Pneuma*);
+  - its own **tempo**, e.g. eighth notes at twice the song's tempo, so that 5/8 bars have whole beats.
+- **Bar starts:** "a bar starts here", tapped while listening or set with ‹ Bar start ›.
+
+**Why the beats are decoded again:** counting bars from a given bar start afterwards is not enough. Near a 2/4 bar the automatic search bends or adds beats to keep its 4/4, so a correct bar start then counts from wrong beats. So the hints become constraints of the same Viterbi search, now over bar cycles instead of meters:
+
+- **A section** allows only its cycle and its tempo. Without a meter it keeps the meters the automatic grid found there: a bar start should not change the meter. Without a tempo it keeps near the automatic tempo (±30 %), which also makes the search faster.
+- **A given bar start** must fall on a beat within 60 ms of it, and that beat starts a bar. Before it there may be an odd bar: shorter (if at least half a bar), or up to half a bar longer. An odd bar costs a little, so a regular bar wins where the music allows both.
+- **A section start** begins the section's cycle. The tempo may jump there (from quarter to eighth notes, or a new tempo).
+
+The automatic grid is kept and reused: a new hint costs only the guided search, about 1.3 s for a 6-minute song and 5 s for the 12-minute *Pneuma*.
+
+**Measured with a simulated user** ([test_assisted_grid.py](../experiments/test_assisted_grid.py), [results](../experiments/results/assisted_grid.json); also part of the regression test). From the true bars of every song with answers, the simulated user:
+
+- adds a section wherever the bars change: a run of at least 4 bars of one length gets its meter; a repeating cycle gets its pattern;
+- gives a section its tempo only where the detected beats there are twice or half as fast;
+- for "+ taps", also sets a bar start right after every single odd bar.
+
+| Regression set | Songs | Automatic: bar starts F / 4-bar loop | Sections | Sections + taps | Hints per song |
+|---|---|---|---|---|---|
+| Meter changes | 50 | 0.728 / 0.503 | 0.926 / 0.878 | **0.952 / 0.911** | 5 / 8 |
+| Tempo changes | 27 | 0.921 / 0.816 | 0.941 / 0.864 | 0.947 / 0.871 | 1.4 / 1.7 |
+| Steady | 146 | 0.823 / 0.746 | 0.875 / 0.853 | 0.884 / 0.869 | 1 |
+
+The *Pneuma*-like score songs go from 0.56–0.62 to 1.00 with one pattern section and the eighth-note tempo.
+
+Two songs get worse with hints:
+
+- a classical clip that was already wrong (0.17 → 0.10);
+- a pop clip whose annotators count bars twice as long as the network hears them (0.67 → 0.14). With half the tempo, every second slow beat falls where the network hears a bar start, and the slow beats slide off it. For such a song, 8 beats per bar at the detected tempo is the hint that works.
+
+What's left wrong is mostly wrong beats, not bars: a beat on the off-beat (reggae one-drop), or a beat skipped where the network strongly prefers another bar start (swing). A bar start set there fixes the bars after it.
+
+**Tried and dropped:** letting a network bar start count as a plain beat at a small cost (helps when the user's bars are twice the network's): steady songs 0.88 → 0.86, and some songs broke.
 
 ## Timing
 
@@ -183,7 +223,7 @@ Single odd bars help songs like *The Day I Tried to Live* (4/4 with 7-beat bars 
 
 - **Network:** about 9 s for a 4-minute song on a laptop CPU.
 - **Decoding:** 1–4 s; a song with two tempo octaves is decoded three times. The meter-sections pass adds under 0.1 s.
-- **New hints:** decode again in 0.3–2 s.
+- **New hints:** decode again in 0.3–2 s; with sections or bar starts (guided), 1–5 s.
 - **Long videos:** for audio over ~25 minutes, the decoder tries only 3 and 4 beats per bar, to stay within 150 MB of memory.
 
 ## Reproduce

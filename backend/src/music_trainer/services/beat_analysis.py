@@ -16,9 +16,11 @@ from music_trainer.services.beat_decoding import DecodedBeats
 from music_trainer.services.beats import (
     BeatTracker,
     BeatTrackingError,
+    automatic_hints,
     decode_grid,
     grid_analysis,
     is_current_analysis,
+    is_guided,
 )
 from music_trainer.services.library import Library, VideoNotInLibraryError
 from music_trainer.video_ids import require_valid_video_id
@@ -26,7 +28,7 @@ from music_trainer.video_ids import require_valid_video_id
 logger = logging.getLogger(__name__)
 
 _DECODINGS_KEPT = 16
-_DecodingKey = tuple[str, str, int | None, float | None]  # video, model, beats per bar, tempo
+_DecodingKey = tuple  # video, model, beats per bar, tempo (+ sections, bar starts if guided)
 
 
 @dataclass
@@ -108,21 +110,38 @@ class BeatAnalysisManager:
             if media_path is None:
                 raise VideoNotInLibraryError(job.video_id)
             model = self._tracker.model
-            key = (job.video_id, model, job.hints.beats_per_bar, job.hints.tempo_bpm)
+            hints = job.hints
+            key = (job.video_id, model, hints.beats_per_bar, hints.tempo_bpm)
+            guided_key = (
+                *key,
+                tuple(
+                    (s.start, s.beats_per_bar, tuple(s.pattern), s.tempo_bpm)
+                    for s in hints.sections
+                ),
+                tuple(hints.bar_starts),
+            )
             with self._lock:
                 if job.rerun_network:
                     self._forget_decodings(job.video_id)
-                decoded = self._decodings.get(key)
-            if decoded is None:
-                activations = None
+                automatic = self._decodings.get(key)
+                guided = self._decodings.get(guided_key) if is_guided(hints) else None
+            activations = None
+            if automatic is None or (is_guided(hints) and guided is None):
                 if not job.rerun_network:
                     activations = self._library.read_beat_activations(job.video_id)
                 if activations is None or activations.model != model:
                     activations = self._tracker.activations(media_path)
                     self._library.write_beat_activations(job.video_id, activations)
-                decoded = decode_grid(activations, job.hints)
-                self._remember(key, decoded)
-            analysis = grid_analysis(decoded, model, job.hints)
+            if automatic is None:
+                automatic = decode_grid(activations, automatic_hints(hints))
+                self._remember(key, automatic)
+            decoded = automatic
+            if is_guided(hints):
+                if guided is None:
+                    guided = decode_grid(activations, hints, automatic)
+                    self._remember(guided_key, guided)
+                decoded = guided
+            analysis = grid_analysis(decoded, model, hints)
             self._library.write_beat_analysis(job.video_id, analysis)
         except (BeatTrackingError, AudioDecodeError, VideoNotInLibraryError) as error:
             logger.warning("Beat detection of %s failed: %s", job.video_id, error)

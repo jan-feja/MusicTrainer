@@ -29,6 +29,7 @@ from music_trainer.services.beat_decoding import (
     BeatActivations,
     DecodedBeats,
     DecodingOptions,
+    GridSection,
     decode_beats,
     fit_steady_tempo,
     place_bar_starts,
@@ -155,9 +156,10 @@ class BeatThisTracker:
         return self._models
 
 
-GRID_DECODER = "grid2"
+GRID_DECODER = "grid3"
 """Suffix of the analyzer name for grids from beat_decoding.py. The number goes up when the
-decoding changes (2: meter sections, real tempo changes), so stored grids are decoded again."""
+decoding changes (2: meter sections, real tempo changes; 3: the user's sections and bar starts
+guide the decoding), so stored grids are decoded again."""
 NO_HINTS = BeatGridHints()
 
 
@@ -166,21 +168,48 @@ def is_current_analysis(analysis: BeatAnalysis) -> bool:
     return analysis.analyzer.endswith(f"+{GRID_DECODER}")
 
 
-def decode_grid(activations: BeatActivations, hints: BeatGridHints = NO_HINTS) -> DecodedBeats:
-    """Decode the network output with the tempo and meter hints (not the bar starts)."""
+def decode_grid(
+    activations: BeatActivations,
+    hints: BeatGridHints = NO_HINTS,
+    automatic: DecodedBeats | None = None,
+) -> DecodedBeats:
+    """Decode the network output with the hints (all but the steady tempo).
+
+    `automatic`: the decoding with only the tempo and meter hints; with sections or bar starts,
+    the guided decoding builds on it.
+    """
+    sections = tuple(
+        GridSection(s.start, s.beats_per_bar, tuple(s.pattern), s.tempo_bpm) for s in hints.sections
+    )
     return decode_beats(
         activations.beat,
         activations.downbeat,
-        DecodingOptions(beats_per_bar=hints.beats_per_bar, tempo_bpm=hints.tempo_bpm),
+        DecodingOptions(
+            beats_per_bar=hints.beats_per_bar,
+            tempo_bpm=hints.tempo_bpm,
+            bar_starts=tuple(hints.bar_starts),
+            sections=sections,
+        ),
         fps=activations.fps,
+        automatic=automatic,
     )
+
+
+def automatic_hints(hints: BeatGridHints) -> BeatGridHints:
+    """The hints the automatic part of the decoding depends on (tempo and meter)."""
+    return BeatGridHints(beats_per_bar=hints.beats_per_bar, tempo_bpm=hints.tempo_bpm)
+
+
+def is_guided(hints: BeatGridHints) -> bool:
+    return bool(hints.sections or hints.bar_starts)
 
 
 def grid_analysis(decoded: DecodedBeats, model: str, hints: BeatGridHints) -> BeatAnalysis:
     """The stored beat grid: a decoded grid with the user's steady tempo and bar starts."""
     if hints.steady_tempo:
         decoded = fit_steady_tempo(decoded)
-    placed = place_bar_starts(decoded, hints.bar_starts)
+    # a guided decoding already has the bar starts; place them on older ones
+    placed = decoded if decoded.info.get("guided") else place_bar_starts(decoded, hints.bar_starts)
     return beat_analysis_from_times(
         placed.beats,
         placed.downbeats,
@@ -194,7 +223,9 @@ def analyze_activations(
     activations: BeatActivations, hints: BeatGridHints = NO_HINTS
 ) -> BeatAnalysis:
     """Decode the network output into the stored beat grid."""
-    return grid_analysis(decode_grid(activations, hints), activations.model, hints)
+    automatic = decode_grid(activations, automatic_hints(hints))
+    decoded = decode_grid(activations, hints, automatic) if is_guided(hints) else automatic
+    return grid_analysis(decoded, activations.model, hints)
 
 
 def beat_analysis_from_times(

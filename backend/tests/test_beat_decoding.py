@@ -5,6 +5,7 @@ import pytest
 
 from music_trainer.services.beat_decoding import (
     DecodingOptions,
+    GridSection,
     decode_beats,
     fit_steady_tempo,
     place_bar_starts,
@@ -208,3 +209,80 @@ def test_very_long_input_uses_fewer_meters(monkeypatch: pytest.MonkeyPatch) -> N
         DecodingOptions(beats_per_bar=5),
     )
     assert forced.beats_per_bar == 5
+
+
+# --- the user's sections --------------------------------------------------------------------
+
+
+def pneuma_like() -> tuple[list[float], list[float], float, float]:
+    """4 bars of 4/4 at 120 BPM, a verse of 4 x (6+6+5+6+5+5) eighths, 6 bars of 4/4."""
+    beats, downbeats = sections(120, [(4, 4)])
+    t = beats[-1] + 0.5
+    verse_start = t
+    for _ in range(4):
+        for length in (6, 6, 5, 6, 5, 5):
+            downbeats.append(t)
+            for _ in range(length):
+                beats.append(t)
+                t += 0.25
+    chorus, chorus_bars = sections(120, [(4, 6)], start=t)
+    return beats + chorus, downbeats + chorus_bars, verse_start, chorus_bars[0]
+
+
+def test_a_section_with_a_bar_pattern_and_its_own_tempo() -> None:
+    beats, downbeats, verse, chorus = pneuma_like()
+    output = network_output(beats, downbeats, beats[-1] + 2)
+    options = DecodingOptions(
+        sections=(
+            GridSection(verse, pattern=(6, 6, 5, 6, 5, 5), tempo_bpm=240),
+            GridSection(chorus, tempo_bpm=120),
+        )
+    )
+    result = decode_beats(*output, options)
+    verse_bars = [d for d in downbeats if verse - 0.1 < d]
+    assert bar_lengths(result)[-len(verse_bars) + 1 :] == [6, 6, 5, 6, 5, 5] * 4 + [4] * 5
+    # (the chorus's first bar start can be ~20 ms off: beats are smoothed across the tempo change)
+    assert np.allclose(result.downbeats[-len(verse_bars) :], verse_bars, atol=0.025)
+
+
+def test_a_section_with_a_given_meter_can_be_short() -> None:
+    """Four 3/4 bars are too few for an automatic meter change; a section says so."""
+    beats, downbeats = sections(120, [(4, 8), (3, 4), (4, 8)])
+    output = network_output(beats, downbeats, beats[-1] + 2)
+    assert set(bar_lengths(decode_beats(*output))) == {4}
+    options = DecodingOptions(
+        sections=(GridSection(downbeats[8], beats_per_bar=3), GridSection(downbeats[12]))
+    )
+    result = decode_beats(*output, options)
+    assert bar_lengths(result) == [4] * 8 + [3] * 4 + [4] * 7
+    assert np.allclose(result.downbeats, downbeats, atol=0.005)
+
+
+def test_a_section_start_is_a_bar_start() -> None:
+    """After a 2/4 bar the decoder keeps counting 4/4; a section from the next bar fixes it."""
+    beats, downbeats = sections(100, [(4, 12), (2, 1), (4, 12)])
+    output = network_output(beats, downbeats, beats[-1] + 2)
+    result = decode_beats(*output, DecodingOptions(sections=(GridSection(downbeats[13]),)))
+    # the beats are decoded again under the hint: no beats bent around the 2/4 bar
+    assert np.allclose(result.downbeats, downbeats, atol=0.01)
+    assert np.allclose(result.beats, beats, atol=0.01)
+    assert result.info["guided"]
+
+
+def test_a_bar_start_in_a_pattern_section_continues_the_pattern() -> None:
+    beats, downbeats = sections(120, [(3, 2), (2, 1), (3, 2), (2, 1), (3, 2), (2, 1)])
+    output = network_output(beats, downbeats, beats[-1] + 2)
+    pattern = GridSection(beats[0], pattern=(3, 3, 2))
+    decoded = decode_beats(*output, DecodingOptions(sections=(pattern,)))
+    assert bar_lengths(decoded) == [3, 3, 2, 3, 3, 2, 3, 3]
+    # the user says a bar starts on beat 9: it does, and the pattern goes on after it
+    moved = decode_beats(*output, DecodingOptions(sections=(pattern,), bar_starts=(beats[9],)))
+    assert np.isclose(moved.downbeats, beats[9], atol=0.01).any()
+    after = bar_lengths(moved)[4:]
+    assert after == [2, 3, 3, 2, 3]  # the pattern, in the phase the music has
+
+
+def test_grid_section_bar_lengths() -> None:
+    assert GridSection(0, pattern=(6, 5)).bar_length(3) == 5
+    assert GridSection(0, beats_per_bar=7).bar_length(10) == 7
+    assert GridSection(0).bar_length(0) is None

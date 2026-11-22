@@ -6,6 +6,7 @@ Slow (a few hundred songs), so not part of the default run:
 
 Every song is decoded from its stored network output and compared with its true beats and bar
 starts; the numbers must not fall below the stored baseline (tests/data/beat_grids/baseline.json).
+So must those of the grids guided by a simulated user (sections and bar starts, as in the app).
 """
 
 import json
@@ -50,12 +51,23 @@ def test_every_song_is_in_the_baseline(decoded) -> None:
     assert not missing, f"not in the baseline (run with UPDATE_BEAT_BASELINE=1): {missing}"
 
 
+@pytest.mark.parametrize("assisted", [False, True], ids=["automatic", "guided"])
 @pytest.mark.parametrize("group", ["steady", "tempo", "meter"])
-def test_groups_do_not_get_worse(decoded, group: str) -> None:
+def test_groups_do_not_get_worse(decoded, group: str, assisted: bool) -> None:
     songs, rows, baseline = decoded
-    now, before = group_means(songs, rows)[group], group_means(songs, baseline)[group]
+    now = group_means(songs, rows, assisted)[group]
+    before = group_means(songs, baseline, assisted)[group]
     worse = {m: (before[m], now[m]) for m in METRICS if now[m] < before[m] - GROUP_TOLERANCE}
     assert not worse, f"{group}: worse than the baseline (before, now): {worse}"
+
+
+def test_hints_help(decoded) -> None:
+    """Guided by the simulated user, songs with meter changes get most of their bars right."""
+    songs, rows, _ = decoded
+    automatic = group_means(songs, rows)["meter"]
+    guided = group_means(songs, rows, assisted=True)["meter"]
+    assert guided["bar_F"] > automatic["bar_F"] + 0.15
+    assert guided["loop_4bar"] > 0.85
 
 
 def test_songs_that_worked_still_work(decoded) -> None:

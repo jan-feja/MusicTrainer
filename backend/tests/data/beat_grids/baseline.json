@@ -1,6 +1,16 @@
 {
  "songs": {
   "gtzan/blues.00001": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 67.73,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.042
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -11,6 +21,16 @@
    "tempo_spread": 1.042
   },
   "gtzan/blues.00003": {
+   "assisted": {
+    "bar_F": 0.875,
+    "beat_F": 0.9,
+    "bpm": 62.29,
+    "hints": 1,
+    "loop_1bar": 0.8571,
+    "loop_4bar": 0.75,
+    "odd_bars": 0.0,
+    "tempo_spread": 2.004
+   },
    "bar_F": 0.4103,
    "beat_F": 0.5082,
    "beats_per_bar": 3,
@@ -21,6 +41,16 @@
    "tempo_spread": 1.042
   },
   "gtzan/blues.00007": {
+   "assisted": {
+    "bar_F": 0.0,
+    "beat_F": 0.9574,
+    "bpm": 92.69,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.118
+   },
    "bar_F": 0.0,
    "beat_F": 0.9574,
    "beats_per_bar": 4,
@@ -31,6 +61,16 @@
    "tempo_spread": 1.118
   },
   "gtzan/blues.00017": {
+   "assisted": {
+    "bar_F": 0.0465,
+    "beat_F": 0.9825,
+    "bpm": 170.42,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0476,
+    "tempo_spread": 1.103
+   },
    "bar_F": 0.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -41,6 +81,16 @@
    "tempo_spread": 1.071
   },
   "gtzan/blues.00025": {
+   "assisted": {
+    "bar_F": 0.0,
+    "beat_F": 0.6947,
+    "bpm": 93.91,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.134
+   },
    "bar_F": 0.0,
    "beat_F": 0.6947,
    "beats_per_bar": 4,
@@ -51,6 +101,16 @@
    "tempo_spread": 1.134
   },
   "gtzan/blues.00029": {
+   "assisted": {
+    "bar_F": 0.3125,
+    "beat_F": 0.304,
+    "bpm": 129.18,
+    "hints": 1,
+    "loop_1bar": 0.2,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.13
+   },
    "bar_F": 0.25,
    "beat_F": 0.272,
    "beats_per_bar": 4,
@@ -61,6 +121,16 @@
    "tempo_spread": 1.061
   },
   "gtzan/blues.00047": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 150.5,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.057
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 3,
@@ -71,6 +141,16 @@
    "tempo_spread": 1.057
   },
   "gtzan/blues.00058": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 105.66,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.022
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -81,6 +161,16 @@
    "tempo_spread": 1.022
   },
   "gtzan/blues.00077": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9932,
+    "bpm": 147.37,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.019
+   },
    "bar_F": 1.0,
    "beat_F": 0.9932,
    "beats_per_bar": 4,
@@ -91,6 +181,16 @@
    "tempo_spread": 1.019
   },
   "gtzan/blues.00081": {
+   "assisted": {
+    "bar_F": 0.7692,
+    "beat_F": 0.8235,
+    "bpm": 205.48,
+    "hints": 1,
+    "loop_1bar": 0.76,
+    "loop_4bar": 0.7273,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.089
+   },
    "bar_F": 0.7692,
    "beat_F": 0.8235,
    "beats_per_bar": 4,
@@ -101,6 +201,16 @@
    "tempo_spread": 1.089
   },
   "gtzan/classical.00000": {
+   "assisted": {
+    "bar_F": 0.88,
+    "beat_F": 0.9362,
+    "bpm": 94.31,
+    "hints": 1,
+    "loop_1bar": 0.8182,
+    "loop_4bar": 0.875,
+    "odd_bars": 0.0833,
+    "tempo_spread": 1.07
+   },
    "bar_F": 0.9167,
    "beat_F": 0.9362,
    "beats_per_bar": 4,
@@ -111,6 +221,16 @@
    "tempo_spread": 1.071
   },
   "gtzan/classical.00003": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9062,
+    "bpm": 66.97,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.125,
+    "tempo_spread": 1.167
+   },
    "bar_F": 1.0,
    "beat_F": 0.9062,
    "beats_per_bar": 4,
@@ -121,6 +241,16 @@
    "tempo_spread": 1.175
   },
   "gtzan/classical.00025": {
+   "assisted": {
+    "bar_F": 0.8235,
+    "beat_F": 0.8333,
+    "bpm": 131.99,
+    "hints": 1,
+    "loop_1bar": 0.75,
+    "loop_4bar": 0.6923,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.042
+   },
    "bar_F": 0.8235,
    "beat_F": 0.8333,
    "beats_per_bar": 4,
@@ -131,6 +261,16 @@
    "tempo_spread": 1.042
   },
   "gtzan/classical.00037": {
+   "assisted": {
+    "bar_F": 0.2941,
+    "beat_F": 0.4638,
+    "bpm": 153.34,
+    "hints": 1,
+    "loop_1bar": 0.1333,
+    "loop_4bar": 0.0833,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.356
+   },
    "bar_F": 0.1053,
    "beat_F": 0.3182,
    "beats_per_bar": 3,
@@ -141,6 +281,16 @@
    "tempo_spread": 1.584
   },
   "gtzan/classical.00054": {
+   "assisted": {
+    "bar_F": 0.7619,
+    "beat_F": 0.7111,
+    "bpm": 93.78,
+    "hints": 1,
+    "loop_1bar": 0.6667,
+    "loop_4bar": 0.5,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.312
+   },
    "bar_F": 0.6667,
    "beat_F": 0.7111,
    "beats_per_bar": 4,
@@ -151,6 +301,16 @@
    "tempo_spread": 1.276
   },
   "gtzan/classical.00063": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 95.21,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.259
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -161,6 +321,16 @@
    "tempo_spread": 1.259
   },
   "gtzan/classical.00075": {
+   "assisted": {
+    "bar_F": 0.7143,
+    "beat_F": 0.6852,
+    "bpm": 110.19,
+    "hints": 1,
+    "loop_1bar": 0.5385,
+    "loop_4bar": 0.6,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.175
+   },
    "bar_F": 0.3478,
    "beat_F": 0.3902,
    "beats_per_bar": 3,
@@ -171,6 +341,16 @@
    "tempo_spread": 1.124
   },
   "gtzan/classical.00076": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 171.52,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.026
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -181,6 +361,16 @@
    "tempo_spread": 1.026
   },
   "gtzan/classical.00083": {
+   "assisted": {
+    "bar_F": 0.0952,
+    "beat_F": 0.75,
+    "bpm": 78.49,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.247
+   },
    "bar_F": 0.1739,
    "beat_F": 0.6234,
    "beats_per_bar": 3,
@@ -191,6 +381,16 @@
    "tempo_spread": 1.415
   },
   "gtzan/classical.00085": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9815,
+    "bpm": 108.61,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.04
+   },
    "bar_F": 1.0,
    "beat_F": 0.9815,
    "beats_per_bar": 4,
@@ -201,6 +401,16 @@
    "tempo_spread": 1.04
   },
   "gtzan/country.00000": {
+   "assisted": {
+    "bar_F": 0.8182,
+    "beat_F": 0.8,
+    "bpm": 84.41,
+    "hints": 1,
+    "loop_1bar": 0.8,
+    "loop_4bar": 0.7143,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.008
+   },
    "bar_F": 0.8182,
    "beat_F": 0.8,
    "beats_per_bar": 4,
@@ -211,6 +421,16 @@
    "tempo_spread": 1.008
   },
   "gtzan/country.00002": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 163.84,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.02
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -221,6 +441,16 @@
    "tempo_spread": 1.02
   },
   "gtzan/country.00011": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 113.7,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.032
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -231,6 +461,16 @@
    "tempo_spread": 1.032
   },
   "gtzan/country.00037": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 97.94,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.014
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 3,
@@ -241,6 +481,16 @@
    "tempo_spread": 1.014
   },
   "gtzan/country.00038": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 155.8,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.022
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -251,6 +501,16 @@
    "tempo_spread": 1.022
   },
   "gtzan/country.00043": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 138.32,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.013
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -261,6 +521,16 @@
    "tempo_spread": 1.013
   },
   "gtzan/country.00052": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9167,
+    "bpm": 71.16,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.038
+   },
    "bar_F": 1.0,
    "beat_F": 0.9167,
    "beats_per_bar": 3,
@@ -271,6 +541,16 @@
    "tempo_spread": 1.038
   },
   "gtzan/country.00064": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 66.17,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.009
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -281,6 +561,16 @@
    "tempo_spread": 1.009
   },
   "gtzan/country.00065": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9661,
+    "bpm": 119.42,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.065
+   },
    "bar_F": 0.6364,
    "beat_F": 0.6222,
    "beats_per_bar": 4,
@@ -291,6 +581,16 @@
    "tempo_spread": 1.078
   },
   "gtzan/country.00096": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 115.35,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.011
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -301,6 +601,16 @@
    "tempo_spread": 1.011
   },
   "gtzan/disco.00013": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9535,
+    "bpm": 89.58,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.03
+   },
    "bar_F": 1.0,
    "beat_F": 0.9535,
    "beats_per_bar": 4,
@@ -311,6 +621,16 @@
    "tempo_spread": 1.03
   },
   "gtzan/disco.00037": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 130.43,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.015
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -321,6 +641,16 @@
    "tempo_spread": 1.015
   },
   "gtzan/disco.00057": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 118.23,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -331,6 +661,16 @@
    "tempo_spread": 1.006
   },
   "gtzan/disco.00060": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 129.62,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.026
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -341,6 +681,16 @@
    "tempo_spread": 1.026
   },
   "gtzan/disco.00062": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 109.13,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -351,6 +701,16 @@
    "tempo_spread": 1.006
   },
   "gtzan/disco.00065": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 131.75,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.021
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -361,6 +721,16 @@
    "tempo_spread": 1.021
   },
   "gtzan/disco.00067": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 100.33,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.014
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -371,6 +741,16 @@
    "tempo_spread": 1.014
   },
   "gtzan/disco.00078": {
+   "assisted": {
+    "bar_F": 0.8125,
+    "beat_F": 0.8594,
+    "bpm": 128.36,
+    "hints": 1,
+    "loop_1bar": 0.8,
+    "loop_4bar": 0.75,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.036
+   },
    "bar_F": 0.8125,
    "beat_F": 0.8594,
    "beats_per_bar": 4,
@@ -381,6 +761,16 @@
    "tempo_spread": 1.036
   },
   "gtzan/disco.00085": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 123.75,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -391,6 +781,16 @@
    "tempo_spread": 1.006
   },
   "gtzan/disco.00087": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 105.82,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.03
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -401,6 +801,16 @@
    "tempo_spread": 1.03
   },
   "gtzan/hiphop.00006": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 99.86,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.007
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -411,6 +821,16 @@
    "tempo_spread": 1.007
   },
   "gtzan/hiphop.00024": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 101.82,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.011
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -421,6 +841,16 @@
    "tempo_spread": 1.011
   },
   "gtzan/hiphop.00031": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.96,
+    "bpm": 100.66,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.007
+   },
    "bar_F": 1.0,
    "beat_F": 0.96,
    "beats_per_bar": 4,
@@ -431,6 +861,16 @@
    "tempo_spread": 1.007
   },
   "gtzan/hiphop.00033": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 97.18,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.009
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -441,6 +881,16 @@
    "tempo_spread": 1.009
   },
   "gtzan/hiphop.00049": {
+   "assisted": {
+    "bar_F": 0.9231,
+    "beat_F": 0.9608,
+    "bpm": 101.72,
+    "hints": 1,
+    "loop_1bar": 0.8333,
+    "loop_4bar": 0.8889,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.007
+   },
    "bar_F": 0.9231,
    "beat_F": 0.9608,
    "beats_per_bar": 4,
@@ -451,6 +901,16 @@
    "tempo_spread": 1.007
   },
   "gtzan/hiphop.00054": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 112.28,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.004
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -461,6 +921,16 @@
    "tempo_spread": 1.004
   },
   "gtzan/hiphop.00059": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 92.13,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.008
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -471,6 +941,16 @@
    "tempo_spread": 1.008
   },
   "gtzan/hiphop.00063": {
+   "assisted": {
+    "bar_F": 0.0,
+    "beat_F": 1.0,
+    "bpm": 94.02,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.013
+   },
    "bar_F": 0.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -481,6 +961,16 @@
    "tempo_spread": 1.006
   },
   "gtzan/hiphop.00071": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9787,
+    "bpm": 95.69,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.014
+   },
    "bar_F": 1.0,
    "beat_F": 0.9787,
    "beats_per_bar": 4,
@@ -491,6 +981,16 @@
    "tempo_spread": 1.014
   },
   "gtzan/hiphop.00085": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 110.67,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.013
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -501,6 +1001,16 @@
    "tempo_spread": 1.013
   },
   "gtzan/jazz.00005": {
+   "assisted": {
+    "bar_F": 0.3243,
+    "beat_F": 0.3486,
+    "bpm": 110.15,
+    "hints": 1,
+    "loop_1bar": 0.2941,
+    "loop_4bar": 0.1429,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.094
+   },
    "bar_F": 0.3704,
    "beat_F": 0.3516,
    "beats_per_bar": 4,
@@ -511,6 +1021,16 @@
    "tempo_spread": 1.09
   },
   "gtzan/jazz.00008": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 109.48,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.024
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -521,6 +1041,16 @@
    "tempo_spread": 1.024
   },
   "gtzan/jazz.00028": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 200.5,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.029
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -531,6 +1061,16 @@
    "tempo_spread": 1.029
   },
   "gtzan/jazz.00034": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 194.8,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.021
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -541,6 +1081,16 @@
    "tempo_spread": 1.021
   },
   "gtzan/jazz.00038": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.96,
+    "bpm": 149.78,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.05
+   },
    "bar_F": 1.0,
    "beat_F": 0.96,
    "beats_per_bar": 4,
@@ -551,6 +1101,16 @@
    "tempo_spread": 1.05
   },
   "gtzan/jazz.00041": {
+   "assisted": {
+    "bar_F": 0.0426,
+    "beat_F": 0.984,
+    "bpm": 188.36,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.027
+   },
    "bar_F": 0.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -561,6 +1121,16 @@
    "tempo_spread": 1.023
   },
   "gtzan/jazz.00059": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 106.5,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.044
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -571,6 +1141,16 @@
    "tempo_spread": 1.044
   },
   "gtzan/jazz.00077": {
+   "assisted": {
+    "bar_F": 0.3404,
+    "beat_F": 0.9514,
+    "bpm": 186.12,
+    "hints": 1,
+    "loop_1bar": 0.3182,
+    "loop_4bar": 0.2105,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.049
+   },
    "bar_F": 0.3043,
    "beat_F": 0.9348,
    "beats_per_bar": 4,
@@ -581,6 +1161,16 @@
    "tempo_spread": 1.054
   },
   "gtzan/jazz.00080": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9848,
+    "bpm": 200.08,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.046
+   },
    "bar_F": 0.6842,
    "beat_F": 0.6711,
    "beats_per_bar": 4,
@@ -591,6 +1181,16 @@
    "tempo_spread": 1.016
   },
   "gtzan/jazz.00099": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 136.49,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.034
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 3,
@@ -601,6 +1201,16 @@
    "tempo_spread": 1.034
   },
   "gtzan/metal.00004": {
+   "assisted": {
+    "bar_F": 0.0588,
+    "beat_F": 0.0292,
+    "bpm": 138.62,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.059
+   },
    "bar_F": 0.0588,
    "beat_F": 0.0292,
    "beats_per_bar": 4,
@@ -611,6 +1221,16 @@
    "tempo_spread": 1.062
   },
   "gtzan/metal.00019": {
+   "assisted": {
+    "bar_F": 0.0741,
+    "beat_F": 0.1226,
+    "bpm": 217.39,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0385,
+    "tempo_spread": 1.33
+   },
    "bar_F": 0.0,
    "beat_F": 0.0745,
    "beats_per_bar": 4,
@@ -621,6 +1241,16 @@
    "tempo_spread": 1.28
   },
   "gtzan/metal.00021": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9908,
+    "bpm": 108.99,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.024
+   },
    "bar_F": 1.0,
    "beat_F": 0.9908,
    "beats_per_bar": 4,
@@ -631,6 +1261,16 @@
    "tempo_spread": 1.024
   },
   "gtzan/metal.00039": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9508,
+    "bpm": 60.01,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.994
+   },
    "bar_F": 0.6667,
    "beat_F": 0.6591,
    "beats_per_bar": 4,
@@ -641,6 +1281,16 @@
    "tempo_spread": 1.011
   },
   "gtzan/metal.00055": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 169.35,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.083
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -651,6 +1301,16 @@
    "tempo_spread": 1.083
   },
   "gtzan/metal.00065": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 117.16,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.038
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -661,6 +1321,16 @@
    "tempo_spread": 1.038
   },
   "gtzan/metal.00072": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 119.69,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.017
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -671,6 +1341,16 @@
    "tempo_spread": 1.017
   },
   "gtzan/metal.00073": {
+   "assisted": {
+    "bar_F": 0.9474,
+    "beat_F": 0.9737,
+    "bpm": 72.58,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 2.002
+   },
    "bar_F": 0.6429,
    "beat_F": 0.6727,
    "beats_per_bar": 4,
@@ -681,6 +1361,16 @@
    "tempo_spread": 1.02
   },
   "gtzan/metal.00081": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 151.29,
+    "hints": 2,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0588,
+    "tempo_spread": 1.17
+   },
    "bar_F": 0.6111,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -691,6 +1381,16 @@
    "tempo_spread": 1.17
   },
   "gtzan/metal.00098": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.987,
+    "bpm": 77.32,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.022
+   },
    "bar_F": 1.0,
    "beat_F": 0.987,
    "beats_per_bar": 4,
@@ -701,6 +1401,16 @@
    "tempo_spread": 1.022
   },
   "gtzan/pop.00004": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 80.22,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.009
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -711,6 +1421,16 @@
    "tempo_spread": 1.009
   },
   "gtzan/pop.00010": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9907,
+    "bpm": 107.06,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.011
+   },
    "bar_F": 1.0,
    "beat_F": 0.9907,
    "beats_per_bar": 4,
@@ -721,6 +1441,16 @@
    "tempo_spread": 1.011
   },
   "gtzan/pop.00018": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 121.95,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.007
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -731,6 +1461,16 @@
    "tempo_spread": 1.007
   },
   "gtzan/pop.00034": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 96.01,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.01
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -741,6 +1481,16 @@
    "tempo_spread": 1.01
   },
   "gtzan/pop.00049": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 58.98,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 0.9333,
    "beat_F": 0.9831,
    "beats_per_bar": 4,
@@ -751,6 +1501,16 @@
    "tempo_spread": 1.005
   },
   "gtzan/pop.00061": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 95.93,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.008
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -761,6 +1521,16 @@
    "tempo_spread": 1.008
   },
   "gtzan/pop.00062": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 80.61,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.013
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -771,6 +1541,16 @@
    "tempo_spread": 1.013
   },
   "gtzan/pop.00069": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 105.54,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -781,6 +1561,16 @@
    "tempo_spread": 1.006
   },
   "gtzan/pop.00076": {
+   "assisted": {
+    "bar_F": 0.9333,
+    "beat_F": 0.9492,
+    "bpm": 54.94,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 2.004
+   },
    "bar_F": 0.6667,
    "beat_F": 0.6747,
    "beats_per_bar": 4,
@@ -791,6 +1581,16 @@
    "tempo_spread": 1.011
   },
   "gtzan/pop.00087": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 102.03,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.01
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -801,6 +1601,16 @@
    "tempo_spread": 1.01
   },
   "gtzan/reggae.00001": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.987,
+    "bpm": 77.94,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.024
+   },
    "bar_F": 1.0,
    "beat_F": 0.987,
    "beats_per_bar": 4,
@@ -811,6 +1621,16 @@
    "tempo_spread": 1.024
   },
   "gtzan/reggae.00032": {
+   "assisted": {
+    "bar_F": 0.973,
+    "beat_F": 0.973,
+    "bpm": 149.98,
+    "hints": 1,
+    "loop_1bar": 0.9444,
+    "loop_4bar": 0.9333,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.018
+   },
    "bar_F": 0.4828,
    "beat_F": 0.6491,
    "beats_per_bar": 4,
@@ -821,6 +1641,16 @@
    "tempo_spread": 1.062
   },
   "gtzan/reggae.00044": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9942,
+    "bpm": 175.04,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.02
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -831,6 +1661,16 @@
    "tempo_spread": 1.02
   },
   "gtzan/reggae.00056": {
+   "assisted": {
+    "bar_F": 0.0,
+    "beat_F": 1.0,
+    "bpm": 156.1,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.02
+   },
    "bar_F": 0.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -841,6 +1681,16 @@
    "tempo_spread": 1.02
   },
   "gtzan/reggae.00075": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 145.01,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.029
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -851,6 +1701,16 @@
    "tempo_spread": 1.029
   },
   "gtzan/reggae.00081": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 100.33,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.008
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -861,6 +1721,16 @@
    "tempo_spread": 1.008
   },
   "gtzan/reggae.00085": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 174.25,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.027
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -871,6 +1741,16 @@
    "tempo_spread": 1.027
   },
   "gtzan/reggae.00091": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 144.94,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.028
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -881,6 +1761,16 @@
    "tempo_spread": 1.028
   },
   "gtzan/reggae.00093": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9944,
+    "bpm": 180.83,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.025
+   },
    "bar_F": 0.6471,
    "beat_F": 0.6667,
    "beats_per_bar": 4,
@@ -891,6 +1781,16 @@
    "tempo_spread": 1.017
   },
   "gtzan/reggae.00094": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 126.98,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.012
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -901,6 +1801,16 @@
    "tempo_spread": 1.012
   },
   "gtzan/rock.00011": {
+   "assisted": {
+    "bar_F": 0.9286,
+    "beat_F": 0.9217,
+    "bpm": 116.05,
+    "hints": 1,
+    "loop_1bar": 0.9231,
+    "loop_4bar": 0.9,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.049
+   },
    "bar_F": 0.9286,
    "beat_F": 0.9217,
    "beats_per_bar": 4,
@@ -911,6 +1821,16 @@
    "tempo_spread": 1.049
   },
   "gtzan/rock.00012": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 113.0,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.017
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -921,6 +1841,16 @@
    "tempo_spread": 1.017
   },
   "gtzan/rock.00017": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 121.19,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.024
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -931,6 +1861,16 @@
    "tempo_spread": 1.024
   },
   "gtzan/rock.00066": {
+   "assisted": {
+    "bar_F": 0.0,
+    "beat_F": 1.0,
+    "bpm": 75.64,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.041
+   },
    "bar_F": 0.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -941,6 +1881,16 @@
    "tempo_spread": 1.041
   },
   "gtzan/rock.00068": {
+   "assisted": {
+    "bar_F": 0.8333,
+    "beat_F": 1.0,
+    "bpm": 124.2,
+    "hints": 16,
+    "loop_1bar": 0.7143,
+    "loop_4bar": 0.3889,
+    "odd_bars": 0.44,
+    "tempo_spread": 1.088
+   },
    "bar_F": 0.4324,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -951,6 +1901,16 @@
    "tempo_spread": 1.088
   },
   "gtzan/rock.00072": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 103.68,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -961,6 +1921,16 @@
    "tempo_spread": 1.006
   },
   "gtzan/rock.00086": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 131.7,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.03
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -971,6 +1941,16 @@
    "tempo_spread": 1.03
   },
   "gtzan/rock.00088": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 91.65,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.016
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -981,6 +1961,16 @@
    "tempo_spread": 1.016
   },
   "gtzan/rock.00092": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 131.09,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.023
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -991,6 +1981,16 @@
    "tempo_spread": 1.023
   },
   "gtzan/rock.00097": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 127.98,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.04
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1001,6 +2001,16 @@
    "tempo_spread": 1.04
   },
   "harmonix/0038_bringmetolife": {
+   "assisted": {
+    "bar_F": 0.631,
+    "beat_F": 0.6353,
+    "bpm": 94.95,
+    "hints": 3,
+    "loop_1bar": 0.6129,
+    "loop_4bar": 0.6,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.019
+   },
    "bar_F": 0.6203,
    "beat_F": 0.6343,
    "beats_per_bar": 4,
@@ -1011,6 +2021,16 @@
    "tempo_spread": 1.018
   },
   "harmonix/0110_girlsandboys": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 120.02,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.009
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1021,6 +2041,16 @@
    "tempo_spread": 1.009
   },
   "harmonix/0343_banjo": {
+   "assisted": {
+    "bar_F": 0.9255,
+    "beat_F": 0.9464,
+    "bpm": 102.03,
+    "hints": 1,
+    "loop_1bar": 0.9247,
+    "loop_4bar": 0.9222,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.028
+   },
    "bar_F": 0.9255,
    "beat_F": 0.9464,
    "beats_per_bar": 4,
@@ -1031,6 +2061,16 @@
    "tempo_spread": 1.028
   },
   "harmonix/0362_crazygirl": {
+   "assisted": {
+    "bar_F": 0.8931,
+    "beat_F": 0.9403,
+    "bpm": 150.95,
+    "hints": 2,
+    "loop_1bar": 0.8974,
+    "loop_4bar": 0.8933,
+    "odd_bars": 0.0104,
+    "tempo_spread": 1.283
+   },
    "bar_F": 0.7811,
    "beat_F": 0.933,
    "beats_per_bar": 6,
@@ -1041,6 +2081,16 @@
    "tempo_spread": 1.34
   },
   "harmonix/0380_everybodytalks": {
+   "assisted": {
+    "bar_F": 0.6339,
+    "beat_F": 0.8501,
+    "bpm": 154.64,
+    "hints": 2,
+    "loop_1bar": 0.6018,
+    "loop_4bar": 0.5364,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.321
+   },
    "bar_F": 0.6339,
    "beat_F": 0.8501,
    "beats_per_bar": 4,
@@ -1051,6 +2101,16 @@
    "tempo_spread": 1.32
   },
   "harmonix/0566_americanwoman": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 84.01,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.007
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1061,6 +2121,16 @@
    "tempo_spread": 1.007
   },
   "harmonix/0625_complicated": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 77.99,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.01
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1071,6 +2141,16 @@
    "tempo_spread": 1.01
   },
   "harmonix/0734_iftodaywasyourlastday": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 89.99,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.007
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1081,6 +2161,16 @@
    "tempo_spread": 1.007
   },
   "harmonix_changes/0009_americanmusic": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 133.77,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.274
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1091,6 +2181,16 @@
    "tempo_spread": 1.274
   },
   "harmonix_changes/0014_babaoriley": {
+   "assisted": {
+    "bar_F": 0.8382,
+    "beat_F": 0.8384,
+    "bpm": 116.54,
+    "hints": 3,
+    "loop_1bar": 0.8209,
+    "loop_4bar": 0.8168,
+    "odd_bars": 0.0144,
+    "tempo_spread": 1.39
+   },
    "bar_F": 0.5484,
    "beat_F": 0.6331,
    "beats_per_bar": 4,
@@ -1101,6 +2201,16 @@
    "tempo_spread": 1.617
   },
   "harmonix_changes/0027_blackened": {
+   "assisted": {
+    "bar_F": 0.9356,
+    "beat_F": 0.9625,
+    "bpm": 181.85,
+    "hints": 34,
+    "loop_1bar": 0.9009,
+    "loop_4bar": 0.8384,
+    "odd_bars": 0.2593,
+    "tempo_spread": 1.52
+   },
    "bar_F": 0.6612,
    "beat_F": 0.9581,
    "beats_per_bar": 4,
@@ -1111,6 +2221,16 @@
    "tempo_spread": 1.522
   },
   "harmonix_changes/0028_blackmagic": {
+   "assisted": {
+    "bar_F": 0.9557,
+    "beat_F": 0.9641,
+    "bpm": 185.18,
+    "hints": 10,
+    "loop_1bar": 0.9487,
+    "loop_4bar": 0.9477,
+    "odd_bars": 0.0655,
+    "tempo_spread": 1.224
+   },
    "bar_F": 0.8491,
    "beat_F": 0.9664,
    "beats_per_bar": 4,
@@ -1121,6 +2241,16 @@
    "tempo_spread": 1.224
   },
   "harmonix_changes/0044_cameraeye": {
+   "assisted": {
+    "bar_F": 0.8949,
+    "beat_F": 0.9149,
+    "bpm": 164.62,
+    "hints": 14,
+    "loop_1bar": 0.8629,
+    "loop_4bar": 0.8242,
+    "odd_bars": 0.1048,
+    "tempo_spread": 1.559
+   },
    "bar_F": 0.8137,
    "beat_F": 0.9197,
    "beats_per_bar": 4,
@@ -1131,6 +2261,16 @@
    "tempo_spread": 1.547
   },
   "harmonix_changes/0058_criticalacclaim": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 137.92,
+    "hints": 7,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.2156,
+    "tempo_spread": 1.633
+   },
    "bar_F": 0.9216,
    "beat_F": 0.997,
    "beats_per_bar": 4,
@@ -1141,6 +2281,16 @@
    "tempo_spread": 1.633
   },
   "harmonix_changes/0065_deadandbloated": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9967,
+    "bpm": 61.55,
+    "hints": 7,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.3088,
+    "tempo_spread": 1.043
+   },
    "bar_F": 0.7778,
    "beat_F": 0.9935,
    "beats_per_bar": 4,
@@ -1151,6 +2301,16 @@
    "tempo_spread": 1.044
   },
   "harmonix_changes/0066_decentdaysandnights": {
+   "assisted": {
+    "bar_F": 0.9951,
+    "beat_F": 1.0,
+    "bpm": 172.03,
+    "hints": 43,
+    "loop_1bar": 0.9802,
+    "loop_4bar": 0.949,
+    "odd_bars": 0.2991,
+    "tempo_spread": 1.021
+   },
    "bar_F": 0.7677,
    "beat_F": 0.9776,
    "beats_per_bar": 4,
@@ -1161,6 +2321,16 @@
    "tempo_spread": 1.034
   },
   "harmonix_changes/0068_devilsisland": {
+   "assisted": {
+    "bar_F": 0.9855,
+    "beat_F": 0.9957,
+    "bpm": 170.04,
+    "hints": 4,
+    "loop_1bar": 0.9538,
+    "loop_4bar": 0.9,
+    "odd_bars": 0.0142,
+    "tempo_spread": 1.195
+   },
    "bar_F": 0.9006,
    "beat_F": 0.9913,
    "beats_per_bar": 4,
@@ -1171,6 +2341,16 @@
    "tempo_spread": 1.196
   },
   "harmonix_changes/0096_fivemagics": {
+   "assisted": {
+    "bar_F": 0.9704,
+    "beat_F": 0.9816,
+    "bpm": 164.6,
+    "hints": 7,
+    "loop_1bar": 0.9458,
+    "loop_4bar": 0.92,
+    "odd_bars": 0.1498,
+    "tempo_spread": 1.378
+   },
    "bar_F": 0.8683,
    "beat_F": 0.981,
    "beats_per_bar": 4,
@@ -1181,6 +2361,16 @@
    "tempo_spread": 1.377
   },
   "harmonix_changes/0100_futureperfecttense": {
+   "assisted": {
+    "bar_F": 0.9442,
+    "beat_F": 0.9593,
+    "bpm": 239.52,
+    "hints": 8,
+    "loop_1bar": 0.9145,
+    "loop_4bar": 0.886,
+    "odd_bars": 0.4793,
+    "tempo_spread": 1.407
+   },
    "bar_F": 0.1505,
    "beat_F": 0.6451,
    "beats_per_bar": 7,
@@ -1191,6 +2381,16 @@
    "tempo_spread": 1.547
   },
   "harmonix_changes/0117_goodmorningblackfriday": {
+   "assisted": {
+    "bar_F": 0.9621,
+    "beat_F": 0.9649,
+    "bpm": 175.59,
+    "hints": 5,
+    "loop_1bar": 0.9317,
+    "loop_4bar": 0.9228,
+    "odd_bars": 0.0654,
+    "tempo_spread": 1.641
+   },
    "bar_F": 0.8898,
    "beat_F": 0.9618,
    "beats_per_bar": 4,
@@ -1201,6 +2401,16 @@
    "tempo_spread": 1.645
   },
   "harmonix_changes/0142_indestructible": {
+   "assisted": {
+    "bar_F": 0.8506,
+    "beat_F": 0.9176,
+    "bpm": 90.01,
+    "hints": 9,
+    "loop_1bar": 0.8313,
+    "loop_4bar": 0.7875,
+    "odd_bars": 0.1413,
+    "tempo_spread": 1.107
+   },
    "bar_F": 0.7727,
    "beat_F": 0.9122,
    "beats_per_bar": 4,
@@ -1211,6 +2421,16 @@
    "tempo_spread": 1.104
   },
   "harmonix_changes/0162_lobotomy": {
+   "assisted": {
+    "bar_F": 0.6564,
+    "beat_F": 0.9852,
+    "bpm": 125.34,
+    "hints": 11,
+    "loop_1bar": 0.6172,
+    "loop_4bar": 0.576,
+    "odd_bars": 0.1504,
+    "tempo_spread": 1.128
+   },
    "bar_F": 0.5054,
    "beat_F": 0.9904,
    "beats_per_bar": 4,
@@ -1221,6 +2441,16 @@
    "tempo_spread": 1.129
   },
   "harmonix_changes/0182_mycurse": {
+   "assisted": {
+    "bar_F": 0.9953,
+    "beat_F": 0.9993,
+    "bpm": 174.53,
+    "hints": 7,
+    "loop_1bar": 0.981,
+    "loop_4bar": 0.9519,
+    "odd_bars": 0.1719,
+    "tempo_spread": 1.046
+   },
    "bar_F": 0.9138,
    "beat_F": 0.9859,
    "beats_per_bar": 3,
@@ -1231,6 +2461,16 @@
    "tempo_spread": 1.048
   },
   "harmonix_changes/0191_newslang": {
+   "assisted": {
+    "bar_F": 0.4318,
+    "beat_F": 0.9641,
+    "bpm": 130.04,
+    "hints": 19,
+    "loop_1bar": 0.3798,
+    "loop_4bar": 0.1984,
+    "odd_bars": 0.2374,
+    "tempo_spread": 1.051
+   },
    "bar_F": 0.249,
    "beat_F": 0.9937,
    "beats_per_bar": 4,
@@ -1241,6 +2481,16 @@
    "tempo_spread": 1.014
   },
   "harmonix_changes/0199_numberofthebeast2": {
+   "assisted": {
+    "bar_F": 0.7775,
+    "beat_F": 0.9306,
+    "bpm": 201.01,
+    "hints": 6,
+    "loop_1bar": 0.7647,
+    "loop_4bar": 0.7612,
+    "odd_bars": 0.1505,
+    "tempo_spread": 1.127
+   },
    "bar_F": 0.6981,
    "beat_F": 0.929,
    "beats_per_bar": 4,
@@ -1251,6 +2501,16 @@
    "tempo_spread": 1.114
   },
   "harmonix_changes/0243_saucyjack": {
+   "assisted": {
+    "bar_F": 0.9583,
+    "beat_F": 0.9882,
+    "bpm": 120.0,
+    "hints": 12,
+    "loop_1bar": 0.9348,
+    "loop_4bar": 0.7907,
+    "odd_bars": 0.2407,
+    "tempo_spread": 1.031
+   },
    "bar_F": 0.6667,
    "beat_F": 0.9708,
    "beats_per_bar": 4,
@@ -1261,6 +2521,16 @@
    "tempo_spread": 1.037
   },
   "harmonix_changes/0255_sleepwalker": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9961,
+    "bpm": 174.94,
+    "hints": 2,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0794,
+    "tempo_spread": 1.555
+   },
    "bar_F": 1.0,
    "beat_F": 0.9701,
    "beats_per_bar": 4,
@@ -1271,6 +2541,16 @@
    "tempo_spread": 1.464
   },
   "harmonix_changes/0265_straightlines": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 127.83,
+    "hints": 7,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.1032,
+    "tempo_spread": 1.019
+   },
    "bar_F": 0.7729,
    "beat_F": 0.9941,
    "beats_per_bar": 4,
@@ -1281,6 +2561,16 @@
    "tempo_spread": 1.02
   },
   "harmonix_changes/0280_thedayitriedtolive": {
+   "assisted": {
+    "bar_F": 0.9792,
+    "beat_F": 0.9895,
+    "bpm": 133.62,
+    "hints": 9,
+    "loop_1bar": 0.9648,
+    "loop_4bar": 0.9281,
+    "odd_bars": 0.2109,
+    "tempo_spread": 1.56
+   },
    "bar_F": 0.6364,
    "beat_F": 0.9774,
    "beats_per_bar": 4,
@@ -1291,6 +2581,16 @@
    "tempo_spread": 1.587
   },
   "harmonix_changes/0289_thisisexile": {
+   "assisted": {
+    "bar_F": 0.9864,
+    "beat_F": 0.9896,
+    "bpm": 124.95,
+    "hints": 10,
+    "loop_1bar": 0.9727,
+    "loop_4bar": 0.972,
+    "odd_bars": 0.2087,
+    "tempo_spread": 1.24
+   },
    "bar_F": 0.8829,
    "beat_F": 0.9793,
    "beats_per_bar": 4,
@@ -1301,6 +2601,16 @@
    "tempo_spread": 1.251
   },
   "harmonix_changes/0293_tomsawyer2": {
+   "assisted": {
+    "bar_F": 0.7795,
+    "beat_F": 0.8538,
+    "bpm": 87.46,
+    "hints": 15,
+    "loop_1bar": 0.6701,
+    "loop_4bar": 0.617,
+    "odd_bars": 0.1553,
+    "tempo_spread": 1.188
+   },
    "bar_F": 0.6073,
    "beat_F": 0.8386,
    "beats_per_bar": 4,
@@ -1311,6 +2621,16 @@
    "tempo_spread": 1.111
   },
   "harmonix_changes/0301_unclejohnsband": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 136.52,
+    "hints": 11,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0926,
+    "tempo_spread": 1.079
+   },
    "bar_F": 0.8175,
    "beat_F": 0.9769,
    "beats_per_bar": 4,
@@ -1321,6 +2641,16 @@
    "tempo_spread": 1.094
   },
   "harmonix_changes/0303_wakeupdead": {
+   "assisted": {
+    "bar_F": 0.9366,
+    "beat_F": 0.9441,
+    "bpm": 164.14,
+    "hints": 4,
+    "loop_1bar": 0.922,
+    "loop_4bar": 0.8768,
+    "odd_bars": 0.2455,
+    "tempo_spread": 1.682
+   },
    "bar_F": 0.7749,
    "beat_F": 0.9441,
    "beats_per_bar": 4,
@@ -1331,6 +2661,16 @@
    "tempo_spread": 1.485
   },
   "harmonix_changes/0312_whitefalconfuzz": {
+   "assisted": {
+    "bar_F": 0.9867,
+    "beat_F": 0.9935,
+    "bpm": 80.03,
+    "hints": 5,
+    "loop_1bar": 0.973,
+    "loop_4bar": 0.9718,
+    "odd_bars": 0.1039,
+    "tempo_spread": 1.019
+   },
    "bar_F": 0.8684,
    "beat_F": 0.9935,
    "beats_per_bar": 4,
@@ -1341,6 +2681,16 @@
    "tempo_spread": 1.019
   },
   "harmonix_changes/0400_heatofthemoment": {
+   "assisted": {
+    "bar_F": 0.8258,
+    "beat_F": 0.8915,
+    "bpm": 137.83,
+    "hints": 7,
+    "loop_1bar": 0.6711,
+    "loop_4bar": 0.6849,
+    "odd_bars": 0.3048,
+    "tempo_spread": 1.191
+   },
    "bar_F": 0.622,
    "beat_F": 0.8688,
    "beats_per_bar": 4,
@@ -1351,6 +2701,16 @@
    "tempo_spread": 1.187
   },
   "harmonix_changes/0426_justcantgetenough": {
+   "assisted": {
+    "bar_F": 0.9714,
+    "beat_F": 0.9772,
+    "bpm": 94.21,
+    "hints": 1,
+    "loop_1bar": 0.954,
+    "loop_4bar": 0.9167,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.375
+   },
    "bar_F": 0.9714,
    "beat_F": 0.9772,
    "beats_per_bar": 4,
@@ -1361,6 +2721,16 @@
    "tempo_spread": 1.375
   },
   "harmonix_changes/0462_oldalabama": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 115.73,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.348
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1371,6 +2741,16 @@
    "tempo_spread": 1.348
   },
   "harmonix_changes/0744_immabe": {
+   "assisted": {
+    "bar_F": 0.9703,
+    "beat_F": 0.9751,
+    "bpm": 113.71,
+    "hints": 1,
+    "loop_1bar": 0.95,
+    "loop_4bar": 0.9485,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.337
+   },
    "bar_F": 0.9703,
    "beat_F": 0.9751,
    "beats_per_bar": 4,
@@ -1381,6 +2761,16 @@
    "tempo_spread": 1.337
   },
   "harmonix_changes/0838_nowimallmessedup": {
+   "assisted": {
+    "bar_F": 0.9859,
+    "beat_F": 1.0,
+    "bpm": 76.97,
+    "hints": 5,
+    "loop_1bar": 0.9855,
+    "loop_4bar": 0.9394,
+    "odd_bars": 0.1486,
+    "tempo_spread": 1.008
+   },
    "bar_F": 0.8219,
    "beat_F": 0.9834,
    "beats_per_bar": 4,
@@ -1409,6 +2799,16 @@
    "tempo_spread": 1.503
   },
   "score/acoustic_nodrums_85": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 85.84,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.064
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1419,6 +2819,16 @@
    "tempo_spread": 1.064
   },
   "score/acoustic_nodrums_85_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 74.65,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.061
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1429,6 +2839,16 @@
    "tempo_spread": 1.061
   },
   "score/acoustic_nodrums_85_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 98.41,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.062
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1439,6 +2859,16 @@
    "tempo_spread": 1.062
   },
   "score/ballad_75_feels": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 75.0,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.018
+   },
    "bar_F": 0.7843,
    "beat_F": 0.6681,
    "beats_per_bar": 4,
@@ -1449,6 +2879,16 @@
    "tempo_spread": 1.037
   },
   "score/ballad_75_feels_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 65.24,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 0.6667,
    "beat_F": 0.6681,
    "beats_per_bar": 4,
@@ -1459,6 +2899,16 @@
    "tempo_spread": 1.011
   },
   "score/ballad_75_feels_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 86.23,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.013
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1469,6 +2919,16 @@
    "tempo_spread": 1.013
   },
   "score/folk_6-8_66": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 66.07,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.009
+   },
    "bar_F": 1.0,
    "beat_F": 0.5031,
    "beats_per_bar": 6,
@@ -1479,6 +2939,16 @@
    "tempo_spread": 1.023
   },
   "score/folk_6-8_66_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 57.44,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 0.5031,
    "beats_per_bar": 6,
@@ -1489,6 +2959,16 @@
    "tempo_spread": 1.014
   },
   "score/folk_6-8_66_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 75.85,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.012
+   },
    "bar_F": 1.0,
    "beat_F": 0.402,
    "beats_per_bar": 3,
@@ -1499,6 +2979,16 @@
    "tempo_spread": 1.02
   },
   "score/funk_100": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 100.0,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.004
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1509,6 +2999,16 @@
    "tempo_spread": 1.009
   },
   "score/funk_100_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 87.05,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1519,6 +3019,16 @@
    "tempo_spread": 1.006
   },
   "score/funk_100_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 114.98,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.007
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1529,6 +3039,16 @@
    "tempo_spread": 1.007
   },
   "score/live_drift_110": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 110.01,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.101
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1539,6 +3059,16 @@
    "tempo_spread": 1.101
   },
   "score/live_drift_110_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 95.74,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.097
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1549,6 +3079,16 @@
    "tempo_spread": 1.097
   },
   "score/live_drift_110_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 126.3,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.103
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1559,6 +3099,16 @@
    "tempo_spread": 1.103
   },
   "score/metal_180": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 179.97,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.019
+   },
    "bar_F": 0.6667,
    "beat_F": 0.6667,
    "beats_per_bar": 4,
@@ -1569,6 +3119,16 @@
    "tempo_spread": 1.011
   },
   "score/metal_180_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 156.42,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.016
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1579,6 +3139,16 @@
    "tempo_spread": 1.016
   },
   "score/metal_180_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9881,
+    "bpm": 207.0,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.046
+   },
    "bar_F": 0.6667,
    "beat_F": 0.6667,
    "beats_per_bar": 4,
@@ -1589,6 +3159,16 @@
    "tempo_spread": 1.011
   },
   "score/odd_5-4_110": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 109.95,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 5,
@@ -1599,6 +3179,16 @@
    "tempo_spread": 1.006
   },
   "score/odd_5-4_110_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 95.72,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 5,
@@ -1609,6 +3199,16 @@
    "tempo_spread": 1.006
   },
   "score/odd_5-4_110_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 126.45,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.008
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 5,
@@ -1619,6 +3219,16 @@
    "tempo_spread": 1.008
   },
   "score/odd_7-4_130": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 129.96,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.008
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 7,
@@ -1629,6 +3239,16 @@
    "tempo_spread": 1.008
   },
   "score/odd_7-4_130_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 113.11,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.008
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 7,
@@ -1639,6 +3259,16 @@
    "tempo_spread": 1.008
   },
   "score/odd_7-4_130_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 149.58,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.014
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 7,
@@ -1649,6 +3279,16 @@
    "tempo_spread": 1.014
   },
   "score/odd_bars_100": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 100.0,
+    "hints": 6,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0698,
+    "tempo_spread": 1.005
+   },
    "bar_F": 0.9412,
    "beat_F": 0.9794,
    "beats_per_bar": 4,
@@ -1659,6 +3299,16 @@
    "tempo_spread": 1.498
   },
   "score/odd_bars_100_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 86.99,
+    "hints": 6,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0698,
+    "tempo_spread": 1.007
+   },
    "bar_F": 0.9412,
    "beat_F": 0.9676,
    "beats_per_bar": 4,
@@ -1669,6 +3319,16 @@
    "tempo_spread": 1.413
   },
   "score/odd_bars_100_v2": {
+   "assisted": {
+    "bar_F": 0.9882,
+    "beat_F": 1.0,
+    "bpm": 115.01,
+    "hints": 6,
+    "loop_1bar": 0.9756,
+    "loop_4bar": 0.8947,
+    "odd_bars": 0.0682,
+    "tempo_spread": 1.008
+   },
    "bar_F": 0.9157,
    "beat_F": 0.9792,
    "beats_per_bar": 4,
@@ -1679,6 +3339,16 @@
    "tempo_spread": 1.095
   },
   "score/reggae_onedrop_75": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 75.0,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.011
+   },
    "bar_F": 0.0,
    "beat_F": 0.6684,
    "beats_per_bar": 4,
@@ -1689,6 +3359,16 @@
    "tempo_spread": 1.017
   },
   "score/reggae_onedrop_75_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 65.23,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.005
+   },
    "bar_F": 0.0,
    "beat_F": 0.6684,
    "beats_per_bar": 4,
@@ -1699,6 +3379,16 @@
    "tempo_spread": 1.01
   },
   "score/reggae_onedrop_75_v2": {
+   "assisted": {
+    "bar_F": 0.0308,
+    "beat_F": 0.0233,
+    "bpm": 86.24,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0294,
+    "tempo_spread": 1.26
+   },
    "bar_F": 0.0,
    "beat_F": 0.6684,
    "beats_per_bar": 4,
@@ -1709,6 +3399,16 @@
    "tempo_spread": 1.012
   },
   "score/rock_120": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 120.0,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.007
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1719,6 +3419,16 @@
    "tempo_spread": 1.007
   },
   "score/rock_120_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 104.37,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.009
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1729,6 +3439,16 @@
    "tempo_spread": 1.009
   },
   "score/rock_120_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 137.9,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.011
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1739,6 +3459,16 @@
    "tempo_spread": 1.011
   },
   "score/rubato_intro": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9792,
+    "bpm": 95.83,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.441
+   },
    "bar_F": 1.0,
    "beat_F": 0.9792,
    "beats_per_bar": 4,
@@ -1749,6 +3479,16 @@
    "tempo_spread": 1.441
   },
   "score/rubato_intro_v1": {
+   "assisted": {
+    "bar_F": 0.9589,
+    "beat_F": 0.9452,
+    "bpm": 83.41,
+    "hints": 1,
+    "loop_1bar": 0.9429,
+    "loop_4bar": 0.8438,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.543
+   },
    "bar_F": 0.9315,
    "beat_F": 0.9178,
    "beats_per_bar": 4,
@@ -1759,6 +3499,16 @@
    "tempo_spread": 1.546
   },
   "score/rubato_intro_v2": {
+   "assisted": {
+    "bar_F": 0.9189,
+    "beat_F": 0.9283,
+    "bpm": 110.29,
+    "hints": 1,
+    "loop_1bar": 0.9143,
+    "loop_4bar": 0.8125,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.604
+   },
    "bar_F": 0.9189,
    "beat_F": 0.9283,
    "beats_per_bar": 4,
@@ -1769,6 +3519,16 @@
    "tempo_spread": 1.604
   },
   "score/shuffle_12-8_70": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 70.08,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.013
+   },
    "bar_F": 0.6667,
    "beat_F": 0.4015,
    "beats_per_bar": 3,
@@ -1779,6 +3539,16 @@
    "tempo_spread": 1.018
   },
   "score/shuffle_12-8_70_v1": {
+   "assisted": {
+    "bar_F": 0.9231,
+    "beat_F": 0.9515,
+    "bpm": 60.9,
+    "hints": 1,
+    "loop_1bar": 0.92,
+    "loop_4bar": 0.9091,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.317
+   },
    "bar_F": 0.6667,
    "beat_F": 0.5024,
    "beats_per_bar": 6,
@@ -1789,6 +3559,16 @@
    "tempo_spread": 1.024
   },
   "score/shuffle_12-8_70_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 80.57,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.012
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1799,6 +3579,16 @@
    "tempo_spread": 1.012
   },
   "score/stops_100": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 100.0,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.017
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1809,6 +3599,16 @@
    "tempo_spread": 1.017
   },
   "score/stops_100_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 87.01,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.01
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1819,6 +3619,16 @@
    "tempo_spread": 1.01
   },
   "score/stops_100_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 115.03,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.011
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1829,6 +3639,16 @@
    "tempo_spread": 1.011
   },
   "score/swing_160": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 159.84,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.01
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1839,6 +3659,16 @@
    "tempo_spread": 1.01
   },
   "score/swing_160_v1": {
+   "assisted": {
+    "bar_F": 0.3505,
+    "beat_F": 0.9691,
+    "bpm": 139.26,
+    "hints": 1,
+    "loop_1bar": 0.3191,
+    "loop_4bar": 0.2045,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.268
+   },
    "bar_F": 0.3505,
    "beat_F": 0.9691,
    "beats_per_bar": 4,
@@ -1849,6 +3679,16 @@
    "tempo_spread": 1.268
   },
   "score/swing_160_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 184.04,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.014
+   },
    "bar_F": 0.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1859,6 +3699,16 @@
    "tempo_spread": 1.015
   },
   "score/tempo_jump": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 96.51,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.452
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1869,6 +3719,16 @@
    "tempo_spread": 1.452
   },
   "score/tempo_jump_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 86.51,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.456
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1879,6 +3739,16 @@
    "tempo_spread": 1.456
   },
   "score/tempo_jump_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 114.72,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.481
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -1889,6 +3759,16 @@
    "tempo_spread": 1.488
   },
   "score/waltz_3-4_150": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 150.02,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.016
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 3,
@@ -1899,6 +3779,16 @@
    "tempo_spread": 1.016
   },
   "score/waltz_3-4_150_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 130.47,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.015
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 3,
@@ -1909,6 +3799,16 @@
    "tempo_spread": 1.015
   },
   "score/waltz_3-4_150_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 172.45,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.012
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 3,
@@ -1919,6 +3819,16 @@
    "tempo_spread": 1.012
   },
   "score_changes/cycle_4-4-4-3": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 130.01,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.1333,
+    "tempo_spread": 1.009
+   },
    "bar_F": 0.7126,
    "beat_F": 0.9591,
    "beats_per_bar": 4,
@@ -1929,6 +3839,16 @@
    "tempo_spread": 1.075
   },
   "score_changes/cycle_4-4-4-3_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 113.03,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.1333,
+    "tempo_spread": 1.009
+   },
    "bar_F": 0.6512,
    "beat_F": 0.9822,
    "beats_per_bar": 4,
@@ -1939,6 +3859,16 @@
    "tempo_spread": 1.011
   },
   "score_changes/cycle_4-4-4-3_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 149.74,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.1333,
+    "tempo_spread": 1.02
+   },
    "bar_F": 0.6512,
    "beat_F": 0.9822,
    "beats_per_bar": 4,
@@ -1949,6 +3879,16 @@
    "tempo_spread": 1.022
   },
   "score_changes/pneuma_like": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 229.07,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.6102,
+    "tempo_spread": 2.027
+   },
    "bar_F": 0.5962,
    "beat_F": 0.7787,
    "beats_per_bar": 4,
@@ -1959,6 +3899,16 @@
    "tempo_spread": 1.016
   },
   "score_changes/pneuma_like_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 199.69,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.6102,
+    "tempo_spread": 2.021
+   },
    "bar_F": 0.5577,
    "beat_F": 0.7787,
    "beats_per_bar": 4,
@@ -1969,6 +3919,16 @@
    "tempo_spread": 1.038
   },
   "score_changes/pneuma_like_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9965,
+    "bpm": 262.76,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.6102,
+    "tempo_spread": 2.042
+   },
    "bar_F": 0.6154,
    "beat_F": 0.766,
    "beats_per_bar": 4,
@@ -1979,6 +3939,16 @@
    "tempo_spread": 1.138
   },
   "score_changes/rubato_ballad": {
+   "assisted": {
+    "bar_F": 0.9796,
+    "beat_F": 0.9694,
+    "bpm": 67.64,
+    "hints": 1,
+    "loop_1bar": 0.9565,
+    "loop_4bar": 0.8,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.483
+   },
    "bar_F": 0.96,
    "beat_F": 0.92,
    "beats_per_bar": 4,
@@ -1989,6 +3959,16 @@
    "tempo_spread": 1.473
   },
   "score_changes/rubato_ballad_v1": {
+   "assisted": {
+    "bar_F": 0.6486,
+    "beat_F": 0.6237,
+    "bpm": 116.8,
+    "hints": 1,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.448
+   },
    "bar_F": 0.6301,
    "beat_F": 0.6054,
    "beats_per_bar": 4,
@@ -1999,6 +3979,16 @@
    "tempo_spread": 1.444
   },
   "score_changes/rubato_ballad_v2": {
+   "assisted": {
+    "bar_F": 0.898,
+    "beat_F": 0.898,
+    "bpm": 77.1,
+    "hints": 1,
+    "loop_1bar": 0.7826,
+    "loop_4bar": 0.65,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.403
+   },
    "bar_F": 0.898,
    "beat_F": 0.898,
    "beats_per_bar": 4,
@@ -2009,6 +3999,16 @@
    "tempo_spread": 1.403
   },
   "score_changes/sections_3-4_4-4": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 111.97,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4103,
+    "tempo_spread": 1.008
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -2019,6 +4019,16 @@
    "tempo_spread": 1.008
   },
   "score_changes/sections_3-4_4-4_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 97.42,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4103,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -2029,6 +4039,16 @@
    "tempo_spread": 1.006
   },
   "score_changes/sections_3-4_4-4_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 128.78,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4103,
+    "tempo_spread": 1.009
+   },
    "bar_F": 0.7222,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -2039,6 +4059,16 @@
    "tempo_spread": 1.009
   },
   "score_changes/sections_5-4_4-4": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 120.0,
+    "hints": 4,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4848,
+    "tempo_spread": 1.008
+   },
    "bar_F": 0.5882,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -2049,6 +4079,16 @@
    "tempo_spread": 1.008
   },
   "score_changes/sections_5-4_4-4_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 104.41,
+    "hints": 4,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4848,
+    "tempo_spread": 1.006
+   },
    "bar_F": 0.5882,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -2059,6 +4099,16 @@
    "tempo_spread": 1.007
   },
   "score_changes/sections_5-4_4-4_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 137.99,
+    "hints": 4,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4848,
+    "tempo_spread": 1.011
+   },
    "bar_F": 0.5882,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -2069,6 +4119,16 @@
    "tempo_spread": 1.011
   },
   "score_changes/sections_6-4_4-4": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 100.0,
+    "hints": 4,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4848,
+    "tempo_spread": 1.006
+   },
    "bar_F": 0.8,
    "beat_F": 1.0,
    "beats_per_bar": 3,
@@ -2079,6 +4139,16 @@
    "tempo_spread": 1.006
   },
   "score_changes/sections_6-4_4-4_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 87.0,
+    "hints": 4,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4848,
+    "tempo_spread": 1.006
+   },
    "bar_F": 1.0,
    "beat_F": 1.0,
    "beats_per_bar": 4,
@@ -2089,6 +4159,16 @@
    "tempo_spread": 1.006
   },
   "score_changes/sections_6-4_4-4_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 114.99,
+    "hints": 4,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.4848,
+    "tempo_spread": 1.008
+   },
    "bar_F": 0.8,
    "beat_F": 1.0,
    "beats_per_bar": 3,
@@ -2099,6 +4179,16 @@
    "tempo_spread": 1.008
   },
   "score_changes/sections_7-4_4-4": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 140.05,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.3529,
+    "tempo_spread": 1.013
+   },
    "bar_F": 0.7027,
    "beat_F": 0.9759,
    "beats_per_bar": 4,
@@ -2109,6 +4199,16 @@
    "tempo_spread": 1.325
   },
   "score_changes/sections_7-4_4-4_v1": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 121.8,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.3636,
+    "tempo_spread": 1.009
+   },
    "bar_F": 0.6757,
    "beat_F": 0.9639,
    "beats_per_bar": 4,
@@ -2119,6 +4219,16 @@
    "tempo_spread": 1.339
   },
   "score_changes/sections_7-4_4-4_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 161.09,
+    "hints": 5,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.3636,
+    "tempo_spread": 1.017
+   },
    "bar_F": 0.6757,
    "beat_F": 0.9759,
    "beats_per_bar": 4,
@@ -2129,6 +4239,16 @@
    "tempo_spread": 1.315
   },
   "score_changes/sections_7-8_4-4": {
+   "assisted": {
+    "bar_F": 0.9538,
+    "beat_F": 0.9591,
+    "bpm": 250.81,
+    "hints": 6,
+    "loop_1bar": 0.9677,
+    "loop_4bar": 0.9643,
+    "odd_bars": 0.4242,
+    "tempo_spread": 2.083
+   },
    "bar_F": 0.5806,
    "beat_F": 0.8108,
    "beats_per_bar": 4,
@@ -2139,6 +4259,16 @@
    "tempo_spread": 1.008
   },
   "score_changes/sections_7-8_4-4_v1": {
+   "assisted": {
+    "bar_F": 0.9538,
+    "beat_F": 0.9591,
+    "bpm": 218.69,
+    "hints": 6,
+    "loop_1bar": 0.9677,
+    "loop_4bar": 0.9643,
+    "odd_bars": 0.4242,
+    "tempo_spread": 2.047
+   },
    "bar_F": 0.5806,
    "beat_F": 0.8108,
    "beats_per_bar": 4,
@@ -2149,6 +4279,16 @@
    "tempo_spread": 1.011
   },
   "score_changes/sections_7-8_4-4_v2": {
+   "assisted": {
+    "bar_F": 0.9688,
+    "beat_F": 0.9563,
+    "bpm": 278.72,
+    "hints": 6,
+    "loop_1bar": 0.9677,
+    "loop_4bar": 0.9643,
+    "odd_bars": 0.4242,
+    "tempo_spread": 2.591
+   },
    "bar_F": 0.5806,
    "beat_F": 0.8108,
    "beats_per_bar": 4,
@@ -2159,6 +4299,16 @@
    "tempo_spread": 1.013
   },
   "score_changes/tempo_sections": {
+   "assisted": {
+    "bar_F": 0.9474,
+    "beat_F": 0.9669,
+    "bpm": 113.63,
+    "hints": 1,
+    "loop_1bar": 0.9636,
+    "loop_4bar": 0.9615,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.852
+   },
    "bar_F": 0.9474,
    "beat_F": 0.9669,
    "beats_per_bar": 4,
@@ -2169,6 +4319,16 @@
    "tempo_spread": 1.852
   },
   "score_changes/tempo_sections_v1": {
+   "assisted": {
+    "bar_F": 0.9649,
+    "beat_F": 0.9757,
+    "bpm": 91.46,
+    "hints": 1,
+    "loop_1bar": 0.9636,
+    "loop_4bar": 0.9038,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.846
+   },
    "bar_F": 0.9649,
    "beat_F": 0.9757,
    "beats_per_bar": 4,
@@ -2179,6 +4339,16 @@
    "tempo_spread": 1.846
   },
   "score_changes/tempo_sections_v2": {
+   "assisted": {
+    "bar_F": 0.6882,
+    "beat_F": 0.6828,
+    "bpm": 78.69,
+    "hints": 1,
+    "loop_1bar": 0.2364,
+    "loop_4bar": 0.1923,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.58
+   },
    "bar_F": 0.7191,
    "beat_F": 0.6828,
    "beats_per_bar": 4,
@@ -2189,6 +4359,16 @@
    "tempo_spread": 1.563
   },
   "score_changes/waltz_accelerando": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 0.9931,
+    "bpm": 161.13,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.786
+   },
    "bar_F": 1.0,
    "beat_F": 0.9931,
    "beats_per_bar": 3,
@@ -2199,6 +4379,16 @@
    "tempo_spread": 1.786
   },
   "score_changes/waltz_accelerando_v1": {
+   "assisted": {
+    "bar_F": 0.9897,
+    "beat_F": 0.9965,
+    "bpm": 148.78,
+    "hints": 1,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.733
+   },
    "bar_F": 0.9897,
    "beat_F": 0.9965,
    "beats_per_bar": 3,
@@ -2209,6 +4399,16 @@
    "tempo_spread": 1.733
   },
   "score_changes/waltz_accelerando_v2": {
+   "assisted": {
+    "bar_F": 0.88,
+    "beat_F": 0.9329,
+    "bpm": 209.95,
+    "hints": 1,
+    "loop_1bar": 0.8936,
+    "loop_4bar": 0.8864,
+    "odd_bars": 0.0,
+    "tempo_spread": 1.868
+   },
    "bar_F": 0.7765,
    "beat_F": 0.8,
    "beats_per_bar": 3,
@@ -2219,6 +4419,16 @@
    "tempo_spread": 1.884
   },
   "score_changes/waltz_verse_rock_chorus": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 148.52,
+    "hints": 4,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.3469,
+    "tempo_spread": 1.528
+   },
    "bar_F": 0.9895,
    "beat_F": 0.9811,
    "beats_per_bar": 3,
@@ -2229,6 +4439,16 @@
    "tempo_spread": 1.526
   },
   "score_changes/waltz_verse_rock_chorus_v1": {
+   "assisted": {
+    "bar_F": 0.9895,
+    "beat_F": 0.9811,
+    "bpm": 129.71,
+    "hints": 4,
+    "loop_1bar": 0.9574,
+    "loop_4bar": 0.8864,
+    "odd_bars": 0.3617,
+    "tempo_spread": 1.515
+   },
    "bar_F": 0.9583,
    "beat_F": 0.925,
    "beats_per_bar": 3,
@@ -2239,6 +4459,16 @@
    "tempo_spread": 1.515
   },
   "score_changes/waltz_verse_rock_chorus_v2": {
+   "assisted": {
+    "bar_F": 1.0,
+    "beat_F": 1.0,
+    "bpm": 171.49,
+    "hints": 4,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "odd_bars": 0.3469,
+    "tempo_spread": 1.515
+   },
    "bar_F": 0.9677,
    "beat_F": 0.9427,
    "beats_per_bar": 3,

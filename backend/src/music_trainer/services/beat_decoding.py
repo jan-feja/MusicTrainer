@@ -58,6 +58,7 @@ ACTIVITY_THRESHOLD = 0.05  # frames before the first / after the last activity t
 SMOOTHING_BEATS = 2  # beat times are fitted to a straight line over +-2 beats ...
 SMOOTHING_LIMIT = 0.025  # ... where that moves them less than 25 ms (frames are 20 ms apart)
 STEADY_OUTLIER = 0.04  # beats this far off the constant-tempo line do not pull it
+FORCED_BAR_START = 1e4  # evidence that makes a beat a bar start (one the user gave)
 _EPSILON = 1e-5
 
 
@@ -75,6 +76,26 @@ class BeatActivations:
 
 
 @dataclass(frozen=True)
+class GridSection:
+    """A part of the song the user described: a bar starts at `start`, and the section lasts
+    until the next one. What is left unset there is up to the decoder."""
+
+    start: float
+    beats_per_bar: int | None = None
+    """Every bar of the section has this many beats."""
+    pattern: tuple[int, ...] = ()
+    """Bar lengths in beats, repeated from the section start, e.g. (6, 6, 5, 6, 5, 5)."""
+    tempo_bpm: float | None = None
+    """The section's beats are near this tempo (e.g. eighth notes, at twice the song's tempo)."""
+
+    def bar_length(self, bar: int) -> int | None:
+        """Beats of the section's bar number `bar` (0 = the first), None if not given."""
+        if self.pattern:
+            return self.pattern[bar % len(self.pattern)]
+        return self.beats_per_bar
+
+
+@dataclass(frozen=True)
 class DecodingOptions:
     """What the user knows about the song; None leaves it to the decoder."""
 
@@ -84,6 +105,8 @@ class DecodingOptions:
     """The tempo is near this (within a factor of 1.4): picks the tempo octave."""
     bar_starts: tuple[float, ...] = ()
     """Times where a bar starts; from each one on, bars are counted from there."""
+    sections: tuple[GridSection, ...] = ()
+    """Parts of the song with their own meter, bar pattern or tempo."""
 
 
 @dataclass(frozen=True)
@@ -97,7 +120,7 @@ class DecodedBeats:
     beat_in_bar: np.ndarray = field(default_factory=lambda: np.array([], dtype=int))
     """Position of every beat in its bar, 0 = bar start."""
     info: dict = field(default_factory=dict, compare=False)
-    """Diagnostics (log-probability, octave candidates)."""
+    """Diagnostics (log-probability, octave candidates; guided: decoded with the user's hints)."""
 
 
 def decode_beats(
@@ -105,14 +128,22 @@ def decode_beats(
     downbeat_logits: np.ndarray,
     options: DecodingOptions = DecodingOptions(),
     fps: float = FRAMES_PER_SECOND,
+    automatic: "DecodedBeats | None" = None,
 ) -> DecodedBeats:
-    """Most likely beats and bar starts for the network's frame logits."""
+    """Most likely beats and bar starts for the network's frame logits.
+
+    With sections or bar starts in `options`, the grid is decoded again under them
+    (beat_guidance.py); `automatic`, the same decoding without those two, saves its first part.
+    """
     beat_act, bar_act = _activations(beat_logits, downbeat_logits)
     active = np.flatnonzero(np.maximum(beat_act, bar_act) >= ACTIVITY_THRESHOLD)
     if len(active) < 2:
         return DecodedBeats(np.array([]), np.array([]), None)
     first, last = int(active[0]), int(active[-1]) + 1
     beat_act, bar_act = beat_act[first:last], bar_act[first:last]
+    guided = bool(options.sections or options.bar_starts)
+    if guided and automatic is not None and "path" in automatic.info:
+        return _guide(beat_act, bar_act, fps, first, options, automatic.info)
 
     meters = (options.beats_per_bar,) if options.beats_per_bar else METERS
     if len(beat_act) * sum(meters) * TEMPO_STEPS > MAX_POINTER_BYTES:
@@ -135,6 +166,7 @@ def decode_beats(
             ]
             best = int(np.argmax([c.log_prob for c in candidates]))
             path, allowed = candidates[best], ranges[best]
+    info["allowed"] = allowed
     positions = path.beat_in_bar
     if not options.beats_per_bar:
         if _bar_contrast(path, bar_act) < MIN_BAR_CONTRAST:
@@ -145,16 +177,53 @@ def decode_beats(
         elif len(path.frames) > 1:
             positions = _meter_sections(_bar_evidence(path, beat_act, bar_act, fps))
     info["log_prob"] = path.log_prob
+    info["path"], info["positions"] = path, positions  # for a guided decoding of the same output
 
-    times = _smooth((_refine(path.frames, beat_act + bar_act) + first) / fps)
-    decoded = DecodedBeats(
+    if guided:  # the user's sections and bar starts: decode again under them
+        return _guide(beat_act, bar_act, fps, first, options, info)
+    return _grid(path.frames, positions, beat_act, bar_act, fps, first, info)
+
+
+def _guide(
+    beat_act: np.ndarray,
+    bar_act: np.ndarray,
+    fps: float,
+    first: int,
+    options: DecodingOptions,
+    automatic: dict,
+) -> DecodedBeats:
+    from music_trainer.services.beat_guidance import decode_guided
+
+    frames, positions, info = decode_guided(
+        beat_act,
+        bar_act,
+        fps,
+        first,
+        options,
+        automatic["path"],
+        automatic["positions"],
+        automatic.get("allowed"),
+    )
+    return _grid(frames, positions, beat_act, bar_act, fps, first, info)
+
+
+def _grid(
+    frames: np.ndarray,
+    positions: np.ndarray,
+    beat_act: np.ndarray,
+    bar_act: np.ndarray,
+    fps: float,
+    first: int,
+    info: dict,
+) -> DecodedBeats:
+    times = _smooth((_refine(frames, beat_act + bar_act) + first) / fps)
+    return DecodedBeats(
         beats=times,
         downbeats=times[positions == 0],
         beats_per_bar=_most_common_bar_length(positions),
         beat_in_bar=positions,
         info=info,
     )
-    return place_bar_starts(decoded, options.bar_starts)
 
 
 def fit_steady_tempo(decoded: DecodedBeats) -> DecodedBeats:
@@ -207,6 +276,14 @@ def place_bar_starts(decoded: DecodedBeats, bar_starts: Sequence[float]) -> Deco
         beat_in_bar=positions,
         beats_per_bar=_most_common_bar_length(positions) or decoded.beats_per_bar,
     )
+
+
+def _evidence_at(frames: np.ndarray, beat_act: np.ndarray, bar_act: np.ndarray) -> np.ndarray:
+    """_bar_evidence for any beat frames (beat lengths from the gaps between them)."""
+    gaps = np.diff(frames, append=frames[-1] + (frames[-1] - frames[-2] if len(frames) > 1 else 25))
+    widths = np.ceil(np.maximum(gaps, 2) / BEAT_WINDOW).astype(int)
+    ratio = np.log(bar_act) - np.log(beat_act)
+    return np.array([ratio[f : f + w].sum() for f, w in zip(frames, widths, strict=True)])
 
 
 def _section_around(positions: np.ndarray, beat: int, default: int) -> tuple[int, int]:

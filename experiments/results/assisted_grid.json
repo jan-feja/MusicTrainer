@@ -1,0 +1,6995 @@
+{
+ "summary": {
+  "steady": {
+   "auto": {
+    "beat_F": 0.894,
+    "bar_F": 0.822,
+    "loop_1bar": 0.753,
+    "loop_4bar": 0.746
+   },
+   "sections": {
+    "beat_F": 0.936,
+    "bar_F": 0.875,
+    "loop_1bar": 0.863,
+    "loop_4bar": 0.853,
+    "hints per song": 1.0
+   },
+   "sections_taps": {
+    "beat_F": 0.937,
+    "bar_F": 0.878,
+    "loop_1bar": 0.866,
+    "loop_4bar": 0.858,
+    "hints per song": 1.0
+   }
+  },
+  "tempo": {
+   "auto": {
+    "beat_F": 0.931,
+    "bar_F": 0.921,
+    "loop_1bar": 0.851,
+    "loop_4bar": 0.816
+   },
+   "sections": {
+    "beat_F": 0.948,
+    "bar_F": 0.941,
+    "loop_1bar": 0.891,
+    "loop_4bar": 0.864,
+    "hints per song": 1.4
+   },
+   "sections_taps": {
+    "beat_F": 0.948,
+    "bar_F": 0.947,
+    "loop_1bar": 0.897,
+    "loop_4bar": 0.87,
+    "hints per song": 1.7
+   }
+  },
+  "meter": {
+   "auto": {
+    "beat_F": 0.944,
+    "bar_F": 0.728,
+    "loop_1bar": 0.632,
+    "loop_4bar": 0.503
+   },
+   "sections": {
+    "beat_F": 0.98,
+    "bar_F": 0.926,
+    "loop_1bar": 0.906,
+    "loop_4bar": 0.878,
+    "hints per song": 5.2
+   },
+   "sections_taps": {
+    "beat_F": 0.982,
+    "bar_F": 0.952,
+    "loop_1bar": 0.936,
+    "loop_4bar": 0.911,
+    "hints per song": 8.1
+   }
+  }
+ },
+ "worse_with_hints": {
+  "gtzan/classical.00083": [
+   0.1739,
+   0.0952
+  ],
+  "gtzan/pop.00076": [
+   0.6667,
+   0.1429
+  ]
+ },
+ "per_song": {
+  "score/acoustic_nodrums_85": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 85.84,
+    "tempo_spread": 1.064,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 85.84,
+    "tempo_spread": 1.064,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 85.84,
+    "tempo_spread": 1.064,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/acoustic_nodrums_85_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 74.65,
+    "tempo_spread": 1.061,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 74.65,
+    "tempo_spread": 1.061,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 74.65,
+    "tempo_spread": 1.061,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/acoustic_nodrums_85_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 98.41,
+    "tempo_spread": 1.062,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 98.41,
+    "tempo_spread": 1.062,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 98.41,
+    "tempo_spread": 1.062,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/ballad_75_feels": {
+   "auto": {
+    "odd_bars": 0.2769,
+    "bpm": 150.1,
+    "tempo_spread": 1.037,
+    "beat_F": 0.6681,
+    "bar_F": 0.7843,
+    "loop_1bar": 0.4615,
+    "loop_4bar": 0.4167
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 75.0,
+    "tempo_spread": 1.018,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 75.0,
+    "tempo_spread": 1.018,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/ballad_75_feels_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 130.46,
+    "tempo_spread": 1.011,
+    "beat_F": 0.6681,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 65.24,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 65.24,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/ballad_75_feels_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 86.23,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 86.23,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 86.23,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/folk_6-8_66": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 197.71,
+    "tempo_spread": 1.023,
+    "beat_F": 0.5031,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 66.07,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 66.07,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/folk_6-8_66_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 172.33,
+    "tempo_spread": 1.014,
+    "beat_F": 0.5031,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 57.44,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 57.44,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/folk_6-8_66_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 113.81,
+    "tempo_spread": 1.02,
+    "beat_F": 0.402,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 75.85,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 75.85,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/funk_100": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 100.0,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 100.0,
+    "tempo_spread": 1.004,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 100.0,
+    "tempo_spread": 1.004,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/funk_100_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 87.05,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 87.05,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 87.05,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/funk_100_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 114.98,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 114.98,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 114.98,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/live_drift_110": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 110.01,
+    "tempo_spread": 1.101,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 110.01,
+    "tempo_spread": 1.101,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 110.01,
+    "tempo_spread": 1.101,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/live_drift_110_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 95.74,
+    "tempo_spread": 1.097,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 95.74,
+    "tempo_spread": 1.097,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 95.74,
+    "tempo_spread": 1.097,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/live_drift_110_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 126.3,
+    "tempo_spread": 1.103,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 126.3,
+    "tempo_spread": 1.103,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 126.3,
+    "tempo_spread": 1.103,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/metal_180": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 89.96,
+    "tempo_spread": 1.011,
+    "beat_F": 0.6667,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 179.97,
+    "tempo_spread": 1.019,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 179.97,
+    "tempo_spread": 1.019,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/metal_180_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 156.42,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 156.42,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 156.42,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/metal_180_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 103.45,
+    "tempo_spread": 1.011,
+    "beat_F": 0.6667,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 207.0,
+    "tempo_spread": 1.046,
+    "beat_F": 0.9881,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 207.0,
+    "tempo_spread": 1.046,
+    "beat_F": 0.9881,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/odd_5-4_110": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 109.95,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 109.96,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 109.96,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/odd_5-4_110_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 95.72,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 95.72,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 95.72,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/odd_5-4_110_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 126.45,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 126.45,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 126.45,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/odd_7-4_130": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 129.96,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 129.96,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 129.96,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/odd_7-4_130_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 113.11,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 113.11,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 113.11,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/odd_7-4_130_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 149.58,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 149.58,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 149.58,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/odd_bars_100": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 100.0,
+    "tempo_spread": 1.498,
+    "beat_F": 0.9794,
+    "bar_F": 0.9412,
+    "loop_1bar": 0.878,
+    "loop_4bar": 0.7895
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 100.0,
+    "tempo_spread": 1.498,
+    "beat_F": 0.9794,
+    "bar_F": 0.9412,
+    "loop_1bar": 0.878,
+    "loop_4bar": 0.7895,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0698,
+    "bpm": 100.0,
+    "tempo_spread": 1.005,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 6
+   }
+  },
+  "score/odd_bars_100_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 87.04,
+    "tempo_spread": 1.413,
+    "beat_F": 0.9676,
+    "bar_F": 0.9412,
+    "loop_1bar": 0.9024,
+    "loop_4bar": 0.7895
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 87.04,
+    "tempo_spread": 1.413,
+    "beat_F": 0.9676,
+    "bar_F": 0.9412,
+    "loop_1bar": 0.9024,
+    "loop_4bar": 0.7895,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0698,
+    "bpm": 86.99,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 6
+   }
+  },
+  "score/odd_bars_100_v2": {
+   "auto": {
+    "odd_bars": 0.0732,
+    "bpm": 115.06,
+    "tempo_spread": 1.095,
+    "beat_F": 0.9792,
+    "bar_F": 0.9157,
+    "loop_1bar": 0.8537,
+    "loop_4bar": 0.8684
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 115.06,
+    "tempo_spread": 1.095,
+    "beat_F": 0.9792,
+    "bar_F": 0.8706,
+    "loop_1bar": 0.8537,
+    "loop_4bar": 0.8421,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0682,
+    "bpm": 115.01,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 0.9882,
+    "loop_1bar": 0.9756,
+    "loop_4bar": 0.8947,
+    "hints": 6
+   }
+  },
+  "score/reggae_onedrop_75": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 150.0,
+    "tempo_spread": 1.017,
+    "beat_F": 0.6684,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 75.0,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 75.0,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/reggae_onedrop_75_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 130.46,
+    "tempo_spread": 1.01,
+    "beat_F": 0.6684,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 65.23,
+    "tempo_spread": 1.005,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 65.23,
+    "tempo_spread": 1.005,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/reggae_onedrop_75_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 172.46,
+    "tempo_spread": 1.012,
+    "beat_F": 0.6684,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0294,
+    "bpm": 86.24,
+    "tempo_spread": 1.26,
+    "beat_F": 0.0233,
+    "bar_F": 0.0308,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0294,
+    "bpm": 86.24,
+    "tempo_spread": 1.26,
+    "beat_F": 0.0233,
+    "bar_F": 0.0308,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "score/rock_120": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 120.0,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 120.0,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 120.0,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/rock_120_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 104.37,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 104.37,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 104.37,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/rock_120_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 137.9,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 137.9,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 137.9,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/rubato_intro": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 95.83,
+    "tempo_spread": 1.441,
+    "beat_F": 0.9792,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 95.83,
+    "tempo_spread": 1.441,
+    "beat_F": 0.9792,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 95.83,
+    "tempo_spread": 1.441,
+    "beat_F": 0.9792,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/rubato_intro_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 83.41,
+    "tempo_spread": 1.546,
+    "beat_F": 0.9178,
+    "bar_F": 0.9315,
+    "loop_1bar": 0.8857,
+    "loop_4bar": 0.8125
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 83.41,
+    "tempo_spread": 1.543,
+    "beat_F": 0.9452,
+    "bar_F": 0.9589,
+    "loop_1bar": 0.9429,
+    "loop_4bar": 0.8438,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 83.41,
+    "tempo_spread": 1.543,
+    "beat_F": 0.9452,
+    "bar_F": 0.9589,
+    "loop_1bar": 0.9429,
+    "loop_4bar": 0.8438,
+    "hints": 1
+   }
+  },
+  "score/rubato_intro_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 110.29,
+    "tempo_spread": 1.604,
+    "beat_F": 0.9283,
+    "bar_F": 0.9189,
+    "loop_1bar": 0.9143,
+    "loop_4bar": 0.8125
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 110.29,
+    "tempo_spread": 1.604,
+    "beat_F": 0.9283,
+    "bar_F": 0.9189,
+    "loop_1bar": 0.9143,
+    "loop_4bar": 0.8125,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 110.29,
+    "tempo_spread": 1.604,
+    "beat_F": 0.9283,
+    "bar_F": 0.9189,
+    "loop_1bar": 0.9143,
+    "loop_4bar": 0.8125,
+    "hints": 1
+   }
+  },
+  "score/shuffle_12-8_70": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 104.94,
+    "tempo_spread": 1.018,
+    "beat_F": 0.4015,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 70.08,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 70.08,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/shuffle_12-8_70_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 182.9,
+    "tempo_spread": 1.024,
+    "beat_F": 0.5024,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 60.92,
+    "tempo_spread": 1.017,
+    "beat_F": 0.8835,
+    "bar_F": 0.8846,
+    "loop_1bar": 0.88,
+    "loop_4bar": 0.8636,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 60.92,
+    "tempo_spread": 1.017,
+    "beat_F": 0.8835,
+    "bar_F": 0.8846,
+    "loop_1bar": 0.88,
+    "loop_4bar": 0.8636,
+    "hints": 1
+   }
+  },
+  "score/shuffle_12-8_70_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 80.57,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 80.57,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 80.57,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/stops_100": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 100.0,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 100.0,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 100.0,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/stops_100_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 87.01,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 87.01,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 87.01,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/stops_100_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 115.03,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 115.03,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 115.03,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/swing_160": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 159.84,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 159.84,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 159.84,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/swing_160_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 139.26,
+    "tempo_spread": 1.268,
+    "beat_F": 0.9691,
+    "bar_F": 0.3505,
+    "loop_1bar": 0.3191,
+    "loop_4bar": 0.2045
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 139.26,
+    "tempo_spread": 1.268,
+    "beat_F": 0.9691,
+    "bar_F": 0.3505,
+    "loop_1bar": 0.3191,
+    "loop_4bar": 0.2045,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 139.26,
+    "tempo_spread": 1.268,
+    "beat_F": 0.9691,
+    "bar_F": 0.3505,
+    "loop_1bar": 0.3191,
+    "loop_4bar": 0.2045,
+    "hints": 1
+   }
+  },
+  "score/swing_160_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 184.03,
+    "tempo_spread": 1.015,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 184.04,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 184.04,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/tempo_jump": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 96.51,
+    "tempo_spread": 1.452,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 96.51,
+    "tempo_spread": 1.452,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 96.51,
+    "tempo_spread": 1.452,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/tempo_jump_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 86.51,
+    "tempo_spread": 1.456,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 86.51,
+    "tempo_spread": 1.456,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 86.51,
+    "tempo_spread": 1.456,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/tempo_jump_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 112.72,
+    "tempo_spread": 1.488,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 114.72,
+    "tempo_spread": 1.481,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 114.72,
+    "tempo_spread": 1.481,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/waltz_3-4_150": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 150.02,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 150.02,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 150.02,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/waltz_3-4_150_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 130.47,
+    "tempo_spread": 1.015,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 130.47,
+    "tempo_spread": 1.015,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 130.47,
+    "tempo_spread": 1.015,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score/waltz_3-4_150_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 172.45,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 172.45,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 172.45,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score_changes/cycle_4-4-4-3": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 130.02,
+    "tempo_spread": 1.075,
+    "beat_F": 0.9591,
+    "bar_F": 0.7126,
+    "loop_1bar": 0.6279,
+    "loop_4bar": 0.45
+   },
+   "sections": {
+    "odd_bars": 0.1333,
+    "bpm": 130.01,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.1333,
+    "bpm": 130.01,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/cycle_4-4-4-3_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 113.03,
+    "tempo_spread": 1.011,
+    "beat_F": 0.9822,
+    "bar_F": 0.6512,
+    "loop_1bar": 0.5814,
+    "loop_4bar": 0.4
+   },
+   "sections": {
+    "odd_bars": 0.1333,
+    "bpm": 113.03,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.1333,
+    "bpm": 113.03,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/cycle_4-4-4-3_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 149.81,
+    "tempo_spread": 1.022,
+    "beat_F": 0.9822,
+    "bar_F": 0.6512,
+    "loop_1bar": 0.5814,
+    "loop_4bar": 0.4
+   },
+   "sections": {
+    "odd_bars": 0.1333,
+    "bpm": 149.74,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.1333,
+    "bpm": 149.74,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/pneuma_like": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 114.99,
+    "tempo_spread": 1.016,
+    "beat_F": 0.7787,
+    "bar_F": 0.5962,
+    "loop_1bar": 0.3684,
+    "loop_4bar": 0.2222
+   },
+   "sections": {
+    "odd_bars": 0.6102,
+    "bpm": 229.07,
+    "tempo_spread": 2.027,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.6102,
+    "bpm": 229.07,
+    "tempo_spread": 2.027,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/pneuma_like_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 100.02,
+    "tempo_spread": 1.038,
+    "beat_F": 0.7787,
+    "bar_F": 0.5577,
+    "loop_1bar": 0.3684,
+    "loop_4bar": 0.2222
+   },
+   "sections": {
+    "odd_bars": 0.6102,
+    "bpm": 199.69,
+    "tempo_spread": 2.021,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.6102,
+    "bpm": 199.69,
+    "tempo_spread": 2.021,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/pneuma_like_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 132.17,
+    "tempo_spread": 1.138,
+    "beat_F": 0.766,
+    "bar_F": 0.6154,
+    "loop_1bar": 0.3684,
+    "loop_4bar": 0.2222
+   },
+   "sections": {
+    "odd_bars": 0.6102,
+    "bpm": 262.76,
+    "tempo_spread": 2.042,
+    "beat_F": 0.9965,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.6102,
+    "bpm": 262.76,
+    "tempo_spread": 2.042,
+    "beat_F": 0.9965,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/rubato_ballad": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 68.34,
+    "tempo_spread": 1.473,
+    "beat_F": 0.92,
+    "bar_F": 0.96,
+    "loop_1bar": 0.9565,
+    "loop_4bar": 0.8
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 67.75,
+    "tempo_spread": 1.482,
+    "beat_F": 0.9694,
+    "bar_F": 0.9796,
+    "loop_1bar": 0.9565,
+    "loop_4bar": 0.8,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 67.75,
+    "tempo_spread": 1.482,
+    "beat_F": 0.9694,
+    "bar_F": 0.9796,
+    "loop_1bar": 0.9565,
+    "loop_4bar": 0.8,
+    "hints": 1
+   }
+  },
+  "score_changes/rubato_ballad_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 116.77,
+    "tempo_spread": 1.444,
+    "beat_F": 0.6054,
+    "bar_F": 0.6301,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 116.8,
+    "tempo_spread": 1.448,
+    "beat_F": 0.6237,
+    "bar_F": 0.6486,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 116.8,
+    "tempo_spread": 1.448,
+    "beat_F": 0.6237,
+    "bar_F": 0.6486,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "score_changes/rubato_ballad_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 77.1,
+    "tempo_spread": 1.403,
+    "beat_F": 0.898,
+    "bar_F": 0.898,
+    "loop_1bar": 0.7826,
+    "loop_4bar": 0.65
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 77.1,
+    "tempo_spread": 1.403,
+    "beat_F": 0.898,
+    "bar_F": 0.898,
+    "loop_1bar": 0.7826,
+    "loop_4bar": 0.65,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 77.1,
+    "tempo_spread": 1.403,
+    "beat_F": 0.898,
+    "bar_F": 0.898,
+    "loop_1bar": 0.7826,
+    "loop_4bar": 0.65,
+    "hints": 1
+   }
+  },
+  "score_changes/sections_3-4_4-4": {
+   "auto": {
+    "odd_bars": 0.4103,
+    "bpm": 111.97,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.4103,
+    "bpm": 111.97,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.4103,
+    "bpm": 111.97,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/sections_3-4_4-4_v1": {
+   "auto": {
+    "odd_bars": 0.4103,
+    "bpm": 97.42,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.4103,
+    "bpm": 97.42,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.4103,
+    "bpm": 97.42,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/sections_3-4_4-4_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 128.78,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 0.7222,
+    "loop_1bar": 0.5676,
+    "loop_4bar": 0.3529
+   },
+   "sections": {
+    "odd_bars": 0.4103,
+    "bpm": 128.78,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.4103,
+    "bpm": 128.78,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/sections_5-4_4-4": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 120.0,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 0.5882,
+    "loop_1bar": 0.4839,
+    "loop_4bar": 0.3214
+   },
+   "sections": {
+    "odd_bars": 0.4848,
+    "bpm": 120.0,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.4848,
+    "bpm": 120.0,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   }
+  },
+  "score_changes/sections_5-4_4-4_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 104.4,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 0.5882,
+    "loop_1bar": 0.4839,
+    "loop_4bar": 0.3214
+   },
+   "sections": {
+    "odd_bars": 0.4848,
+    "bpm": 104.41,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.4848,
+    "bpm": 104.41,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   }
+  },
+  "score_changes/sections_5-4_4-4_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 137.99,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 0.5882,
+    "loop_1bar": 0.4839,
+    "loop_4bar": 0.3214
+   },
+   "sections": {
+    "odd_bars": 0.4848,
+    "bpm": 137.99,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.4848,
+    "bpm": 137.99,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   }
+  },
+  "score_changes/sections_6-4_4-4": {
+   "auto": {
+    "odd_bars": 0.3469,
+    "bpm": 100.0,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 0.8,
+    "loop_1bar": 0.4839,
+    "loop_4bar": 0.3214
+   },
+   "sections": {
+    "odd_bars": 0.4848,
+    "bpm": 100.0,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.4848,
+    "bpm": 100.0,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   }
+  },
+  "score_changes/sections_6-4_4-4_v1": {
+   "auto": {
+    "odd_bars": 0.4848,
+    "bpm": 87.0,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.5,
+    "bpm": 87.0,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.5,
+    "bpm": 87.0,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   }
+  },
+  "score_changes/sections_6-4_4-4_v2": {
+   "auto": {
+    "odd_bars": 0.3469,
+    "bpm": 114.99,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 0.8,
+    "loop_1bar": 0.4839,
+    "loop_4bar": 0.3214
+   },
+   "sections": {
+    "odd_bars": 0.4848,
+    "bpm": 114.99,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.4848,
+    "bpm": 114.99,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   }
+  },
+  "score_changes/sections_7-4_4-4": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 140.1,
+    "tempo_spread": 1.325,
+    "beat_F": 0.9759,
+    "bar_F": 0.7027,
+    "loop_1bar": 0.6129,
+    "loop_4bar": 0.3571
+   },
+   "sections": {
+    "odd_bars": 0.3529,
+    "bpm": 140.05,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.3529,
+    "bpm": 140.05,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/sections_7-4_4-4_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 121.84,
+    "tempo_spread": 1.339,
+    "beat_F": 0.9639,
+    "bar_F": 0.6757,
+    "loop_1bar": 0.6129,
+    "loop_4bar": 0.3571
+   },
+   "sections": {
+    "odd_bars": 0.3636,
+    "bpm": 121.8,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.3636,
+    "bpm": 121.8,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/sections_7-4_4-4_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 161.14,
+    "tempo_spread": 1.315,
+    "beat_F": 0.9759,
+    "bar_F": 0.6757,
+    "loop_1bar": 0.6129,
+    "loop_4bar": 0.3571
+   },
+   "sections": {
+    "odd_bars": 0.3636,
+    "bpm": 161.09,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.3636,
+    "bpm": 161.09,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 5
+   }
+  },
+  "score_changes/sections_7-8_4-4": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 126.0,
+    "tempo_spread": 1.008,
+    "beat_F": 0.8108,
+    "bar_F": 0.5806,
+    "loop_1bar": 0.4839,
+    "loop_4bar": 0.2143
+   },
+   "sections": {
+    "odd_bars": 0.3636,
+    "bpm": 250.81,
+    "tempo_spread": 2.083,
+    "beat_F": 0.9591,
+    "bar_F": 0.8923,
+    "loop_1bar": 0.9032,
+    "loop_4bar": 0.8929,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.4375,
+    "bpm": 250.81,
+    "tempo_spread": 2.083,
+    "beat_F": 0.9591,
+    "bar_F": 0.9538,
+    "loop_1bar": 0.9677,
+    "loop_4bar": 0.9643,
+    "hints": 6
+   }
+  },
+  "score_changes/sections_7-8_4-4_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 109.57,
+    "tempo_spread": 1.011,
+    "beat_F": 0.8108,
+    "bar_F": 0.5806,
+    "loop_1bar": 0.4839,
+    "loop_4bar": 0.2143
+   },
+   "sections": {
+    "odd_bars": 0.3636,
+    "bpm": 218.69,
+    "tempo_spread": 2.047,
+    "beat_F": 0.9591,
+    "bar_F": 0.8923,
+    "loop_1bar": 0.9032,
+    "loop_4bar": 0.8929,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.4375,
+    "bpm": 218.69,
+    "tempo_spread": 2.047,
+    "beat_F": 0.9591,
+    "bar_F": 0.9538,
+    "loop_1bar": 0.9677,
+    "loop_4bar": 0.9643,
+    "hints": 6
+   }
+  },
+  "score_changes/sections_7-8_4-4_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 144.85,
+    "tempo_spread": 1.013,
+    "beat_F": 0.8108,
+    "bar_F": 0.5806,
+    "loop_1bar": 0.4839,
+    "loop_4bar": 0.2143
+   },
+   "sections": {
+    "odd_bars": 0.375,
+    "bpm": 275.73,
+    "tempo_spread": 2.57,
+    "beat_F": 0.9418,
+    "bar_F": 0.9375,
+    "loop_1bar": 0.9355,
+    "loop_4bar": 0.9286,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.4242,
+    "bpm": 278.72,
+    "tempo_spread": 2.591,
+    "beat_F": 0.9563,
+    "bar_F": 0.9688,
+    "loop_1bar": 0.9677,
+    "loop_4bar": 0.9643,
+    "hints": 6
+   }
+  },
+  "score_changes/tempo_sections": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 113.63,
+    "tempo_spread": 1.852,
+    "beat_F": 0.9669,
+    "bar_F": 0.9474,
+    "loop_1bar": 0.9636,
+    "loop_4bar": 0.9615
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 113.63,
+    "tempo_spread": 1.852,
+    "beat_F": 0.9669,
+    "bar_F": 0.9474,
+    "loop_1bar": 0.9636,
+    "loop_4bar": 0.9615,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 113.63,
+    "tempo_spread": 1.852,
+    "beat_F": 0.9669,
+    "bar_F": 0.9474,
+    "loop_1bar": 0.9636,
+    "loop_4bar": 0.9615,
+    "hints": 1
+   }
+  },
+  "score_changes/tempo_sections_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 91.46,
+    "tempo_spread": 1.846,
+    "beat_F": 0.9757,
+    "bar_F": 0.9649,
+    "loop_1bar": 0.9636,
+    "loop_4bar": 0.9038
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 91.46,
+    "tempo_spread": 1.846,
+    "beat_F": 0.9757,
+    "bar_F": 0.9649,
+    "loop_1bar": 0.9636,
+    "loop_4bar": 0.9038,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 91.46,
+    "tempo_spread": 1.846,
+    "beat_F": 0.9757,
+    "bar_F": 0.9649,
+    "loop_1bar": 0.9636,
+    "loop_4bar": 0.9038,
+    "hints": 1
+   }
+  },
+  "score_changes/tempo_sections_v2": {
+   "auto": {
+    "odd_bars": 0.1176,
+    "bpm": 78.4,
+    "tempo_spread": 1.563,
+    "beat_F": 0.6828,
+    "bar_F": 0.7191,
+    "loop_1bar": 0.2364,
+    "loop_4bar": 0.1923
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 78.69,
+    "tempo_spread": 1.58,
+    "beat_F": 0.6828,
+    "bar_F": 0.6882,
+    "loop_1bar": 0.2364,
+    "loop_4bar": 0.1923,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 78.69,
+    "tempo_spread": 1.58,
+    "beat_F": 0.6828,
+    "bar_F": 0.6882,
+    "loop_1bar": 0.2364,
+    "loop_4bar": 0.1923,
+    "hints": 1
+   }
+  },
+  "score_changes/waltz_accelerando": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 161.13,
+    "tempo_spread": 1.786,
+    "beat_F": 0.9931,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 161.13,
+    "tempo_spread": 1.786,
+    "beat_F": 0.9931,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 161.13,
+    "tempo_spread": 1.786,
+    "beat_F": 0.9931,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score_changes/waltz_accelerando_v1": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 148.78,
+    "tempo_spread": 1.733,
+    "beat_F": 0.9965,
+    "bar_F": 0.9897,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 148.78,
+    "tempo_spread": 1.733,
+    "beat_F": 0.9965,
+    "bar_F": 0.9897,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 148.78,
+    "tempo_spread": 1.733,
+    "beat_F": 0.9965,
+    "bar_F": 0.9897,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "score_changes/waltz_accelerando_v2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 126.68,
+    "tempo_spread": 1.884,
+    "beat_F": 0.8,
+    "bar_F": 0.7765,
+    "loop_1bar": 0.4894,
+    "loop_4bar": 0.4545
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 209.95,
+    "tempo_spread": 1.868,
+    "beat_F": 0.9329,
+    "bar_F": 0.88,
+    "loop_1bar": 0.8936,
+    "loop_4bar": 0.8864,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 209.95,
+    "tempo_spread": 1.868,
+    "beat_F": 0.9329,
+    "bar_F": 0.88,
+    "loop_1bar": 0.8936,
+    "loop_4bar": 0.8864,
+    "hints": 1
+   }
+  },
+  "score_changes/waltz_verse_rock_chorus": {
+   "auto": {
+    "odd_bars": 0.375,
+    "bpm": 148.52,
+    "tempo_spread": 1.526,
+    "beat_F": 0.9811,
+    "bar_F": 0.9895,
+    "loop_1bar": 0.9574,
+    "loop_4bar": 0.8864
+   },
+   "sections": {
+    "odd_bars": 0.3469,
+    "bpm": 148.52,
+    "tempo_spread": 1.528,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.3469,
+    "bpm": 148.52,
+    "tempo_spread": 1.528,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   }
+  },
+  "score_changes/waltz_verse_rock_chorus_v1": {
+   "auto": {
+    "odd_bars": 0.3333,
+    "bpm": 129.89,
+    "tempo_spread": 1.515,
+    "beat_F": 0.925,
+    "bar_F": 0.9583,
+    "loop_1bar": 0.8723,
+    "loop_4bar": 0.7273
+   },
+   "sections": {
+    "odd_bars": 0.3617,
+    "bpm": 129.71,
+    "tempo_spread": 1.515,
+    "beat_F": 0.9811,
+    "bar_F": 0.9895,
+    "loop_1bar": 0.9574,
+    "loop_4bar": 0.8864,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.3617,
+    "bpm": 129.71,
+    "tempo_spread": 1.515,
+    "beat_F": 0.9811,
+    "bar_F": 0.9895,
+    "loop_1bar": 0.9574,
+    "loop_4bar": 0.8864,
+    "hints": 4
+   }
+  },
+  "score_changes/waltz_verse_rock_chorus_v2": {
+   "auto": {
+    "odd_bars": 0.4348,
+    "bpm": 124.18,
+    "tempo_spread": 1.515,
+    "beat_F": 0.9427,
+    "bar_F": 0.9677,
+    "loop_1bar": 0.8723,
+    "loop_4bar": 0.6591
+   },
+   "sections": {
+    "odd_bars": 0.3469,
+    "bpm": 171.49,
+    "tempo_spread": 1.515,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.3469,
+    "bpm": 171.49,
+    "tempo_spread": 1.515,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 4
+   }
+  },
+  "harmonix_changes/0009_americanmusic": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 133.77,
+    "tempo_spread": 1.274,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 133.77,
+    "tempo_spread": 1.274,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 133.77,
+    "tempo_spread": 1.274,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "harmonix_changes/0014_babaoriley": {
+   "auto": {
+    "odd_bars": 0.0614,
+    "bpm": 108.8,
+    "tempo_spread": 1.617,
+    "beat_F": 0.6331,
+    "bar_F": 0.5484,
+    "loop_1bar": 0.3582,
+    "loop_4bar": 0.1832
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 116.45,
+    "tempo_spread": 1.39,
+    "beat_F": 0.8366,
+    "bar_F": 0.7941,
+    "loop_1bar": 0.7687,
+    "loop_4bar": 0.7405,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0144,
+    "bpm": 116.54,
+    "tempo_spread": 1.39,
+    "beat_F": 0.8384,
+    "bar_F": 0.8382,
+    "loop_1bar": 0.8209,
+    "loop_4bar": 0.8168,
+    "hints": 3
+   }
+  },
+  "harmonix_changes/0027_blackened": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 181.39,
+    "tempo_spread": 1.522,
+    "beat_F": 0.9581,
+    "bar_F": 0.6612,
+    "loop_1bar": 0.5603,
+    "loop_4bar": 0.4585
+   },
+   "sections": {
+    "odd_bars": 0.2708,
+    "bpm": 181.84,
+    "tempo_spread": 1.52,
+    "beat_F": 0.9658,
+    "bar_F": 0.8639,
+    "loop_1bar": 0.8103,
+    "loop_4bar": 0.7074,
+    "hints": 14
+   },
+   "sections_taps": {
+    "odd_bars": 0.2593,
+    "bpm": 181.85,
+    "tempo_spread": 1.52,
+    "beat_F": 0.9625,
+    "bar_F": 0.9356,
+    "loop_1bar": 0.9009,
+    "loop_4bar": 0.8384,
+    "hints": 34
+   }
+  },
+  "harmonix_changes/0028_blackmagic": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 185.17,
+    "tempo_spread": 1.224,
+    "beat_F": 0.9664,
+    "bar_F": 0.8491,
+    "loop_1bar": 0.8397,
+    "loop_4bar": 0.7778
+   },
+   "sections": {
+    "odd_bars": 0.0655,
+    "bpm": 185.19,
+    "tempo_spread": 1.222,
+    "beat_F": 0.9611,
+    "bar_F": 0.9557,
+    "loop_1bar": 0.9551,
+    "loop_4bar": 0.9477,
+    "hints": 7
+   },
+   "sections_taps": {
+    "odd_bars": 0.0655,
+    "bpm": 185.18,
+    "tempo_spread": 1.224,
+    "beat_F": 0.9641,
+    "bar_F": 0.9557,
+    "loop_1bar": 0.9487,
+    "loop_4bar": 0.9477,
+    "hints": 10
+   }
+  },
+  "harmonix_changes/0044_cameraeye": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 164.62,
+    "tempo_spread": 1.547,
+    "beat_F": 0.9197,
+    "bar_F": 0.8137,
+    "loop_1bar": 0.7914,
+    "loop_4bar": 0.7579
+   },
+   "sections": {
+    "odd_bars": 0.0878,
+    "bpm": 164.67,
+    "tempo_spread": 1.555,
+    "beat_F": 0.9233,
+    "bar_F": 0.8983,
+    "loop_1bar": 0.8829,
+    "loop_4bar": 0.8501,
+    "hints": 7
+   },
+   "sections_taps": {
+    "odd_bars": 0.1048,
+    "bpm": 164.62,
+    "tempo_spread": 1.559,
+    "beat_F": 0.9149,
+    "bar_F": 0.8949,
+    "loop_1bar": 0.8629,
+    "loop_4bar": 0.8242,
+    "hints": 14
+   }
+  },
+  "harmonix_changes/0058_criticalacclaim": {
+   "auto": {
+    "odd_bars": 0.0988,
+    "bpm": 137.92,
+    "tempo_spread": 1.633,
+    "beat_F": 0.997,
+    "bar_F": 0.9216,
+    "loop_1bar": 0.8758,
+    "loop_4bar": 0.8354
+   },
+   "sections": {
+    "odd_bars": 0.2156,
+    "bpm": 137.92,
+    "tempo_spread": 1.633,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 7
+   },
+   "sections_taps": {
+    "odd_bars": 0.2156,
+    "bpm": 137.92,
+    "tempo_spread": 1.633,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 7
+   }
+  },
+  "harmonix_changes/0065_deadandbloated": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 61.55,
+    "tempo_spread": 1.044,
+    "beat_F": 0.9935,
+    "bar_F": 0.7778,
+    "loop_1bar": 0.6667,
+    "loop_4bar": 0.5714
+   },
+   "sections": {
+    "odd_bars": 0.3088,
+    "bpm": 61.55,
+    "tempo_spread": 1.043,
+    "beat_F": 0.9967,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 7
+   },
+   "sections_taps": {
+    "odd_bars": 0.3088,
+    "bpm": 61.55,
+    "tempo_spread": 1.043,
+    "beat_F": 0.9967,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 7
+   }
+  },
+  "harmonix_changes/0066_decentdaysandnights": {
+   "auto": {
+    "odd_bars": 0.0714,
+    "bpm": 172.1,
+    "tempo_spread": 1.034,
+    "beat_F": 0.9776,
+    "bar_F": 0.7677,
+    "loop_1bar": 0.6238,
+    "loop_4bar": 0.5
+   },
+   "sections": {
+    "odd_bars": 0.2719,
+    "bpm": 172.08,
+    "tempo_spread": 1.027,
+    "beat_F": 0.9938,
+    "bar_F": 0.8,
+    "loop_1bar": 0.6733,
+    "loop_4bar": 0.4796,
+    "hints": 8
+   },
+   "sections_taps": {
+    "odd_bars": 0.2991,
+    "bpm": 172.03,
+    "tempo_spread": 1.021,
+    "beat_F": 1.0,
+    "bar_F": 0.9951,
+    "loop_1bar": 0.9802,
+    "loop_4bar": 0.949,
+    "hints": 43
+   }
+  },
+  "harmonix_changes/0068_devilsisland": {
+   "auto": {
+    "odd_bars": 0.0383,
+    "bpm": 169.93,
+    "tempo_spread": 1.196,
+    "beat_F": 0.9913,
+    "bar_F": 0.9006,
+    "loop_1bar": 0.8439,
+    "loop_4bar": 0.8059
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 169.93,
+    "tempo_spread": 1.196,
+    "beat_F": 0.9913,
+    "bar_F": 0.8728,
+    "loop_1bar": 0.8497,
+    "loop_4bar": 0.8118,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0142,
+    "bpm": 170.04,
+    "tempo_spread": 1.195,
+    "beat_F": 0.9957,
+    "bar_F": 0.9855,
+    "loop_1bar": 0.9538,
+    "loop_4bar": 0.9,
+    "hints": 4
+   }
+  },
+  "harmonix_changes/0096_fivemagics": {
+   "auto": {
+    "odd_bars": 0.0758,
+    "bpm": 164.51,
+    "tempo_spread": 1.377,
+    "beat_F": 0.981,
+    "bar_F": 0.8683,
+    "loop_1bar": 0.8374,
+    "loop_4bar": 0.815
+   },
+   "sections": {
+    "odd_bars": 0.1498,
+    "bpm": 164.6,
+    "tempo_spread": 1.378,
+    "beat_F": 0.9816,
+    "bar_F": 0.9704,
+    "loop_1bar": 0.9458,
+    "loop_4bar": 0.92,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.1498,
+    "bpm": 164.6,
+    "tempo_spread": 1.378,
+    "beat_F": 0.9816,
+    "bar_F": 0.9704,
+    "loop_1bar": 0.9458,
+    "loop_4bar": 0.92,
+    "hints": 7
+   }
+  },
+  "harmonix_changes/0100_futureperfecttense": {
+   "auto": {
+    "odd_bars": 0.3733,
+    "bpm": 120.0,
+    "tempo_spread": 1.547,
+    "beat_F": 0.6451,
+    "bar_F": 0.1505,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.4793,
+    "bpm": 239.52,
+    "tempo_spread": 1.407,
+    "beat_F": 0.9593,
+    "bar_F": 0.9442,
+    "loop_1bar": 0.9145,
+    "loop_4bar": 0.886,
+    "hints": 7
+   },
+   "sections_taps": {
+    "odd_bars": 0.4793,
+    "bpm": 239.52,
+    "tempo_spread": 1.407,
+    "beat_F": 0.9593,
+    "bar_F": 0.9442,
+    "loop_1bar": 0.9145,
+    "loop_4bar": 0.886,
+    "hints": 8
+   }
+  },
+  "harmonix_changes/0117_goodmorningblackfriday": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 175.59,
+    "tempo_spread": 1.645,
+    "beat_F": 0.9618,
+    "bar_F": 0.8898,
+    "loop_1bar": 0.8434,
+    "loop_4bar": 0.8211
+   },
+   "sections": {
+    "odd_bars": 0.0618,
+    "bpm": 175.6,
+    "tempo_spread": 1.644,
+    "beat_F": 0.9618,
+    "bar_F": 0.956,
+    "loop_1bar": 0.9237,
+    "loop_4bar": 0.9228,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.0654,
+    "bpm": 175.59,
+    "tempo_spread": 1.641,
+    "beat_F": 0.9649,
+    "bar_F": 0.9621,
+    "loop_1bar": 0.9317,
+    "loop_4bar": 0.9228,
+    "hints": 5
+   }
+  },
+  "harmonix_changes/0142_indestructible": {
+   "auto": {
+    "odd_bars": 0.0426,
+    "bpm": 90.0,
+    "tempo_spread": 1.104,
+    "beat_F": 0.9122,
+    "bar_F": 0.7727,
+    "loop_1bar": 0.7711,
+    "loop_4bar": 0.675
+   },
+   "sections": {
+    "odd_bars": 0.0978,
+    "bpm": 90.02,
+    "tempo_spread": 1.151,
+    "beat_F": 0.9098,
+    "bar_F": 0.8208,
+    "loop_1bar": 0.8313,
+    "loop_4bar": 0.7875,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.1413,
+    "bpm": 90.01,
+    "tempo_spread": 1.107,
+    "beat_F": 0.9176,
+    "bar_F": 0.8506,
+    "loop_1bar": 0.8313,
+    "loop_4bar": 0.7875,
+    "hints": 9
+   }
+  },
+  "harmonix_changes/0162_lobotomy": {
+   "auto": {
+    "odd_bars": 0.106,
+    "bpm": 124.82,
+    "tempo_spread": 1.129,
+    "beat_F": 0.9904,
+    "bar_F": 0.5054,
+    "loop_1bar": 0.4688,
+    "loop_4bar": 0.344
+   },
+   "sections": {
+    "odd_bars": 0.1654,
+    "bpm": 125.34,
+    "tempo_spread": 1.128,
+    "beat_F": 0.9852,
+    "bar_F": 0.6486,
+    "loop_1bar": 0.6016,
+    "loop_4bar": 0.56,
+    "hints": 6
+   },
+   "sections_taps": {
+    "odd_bars": 0.1504,
+    "bpm": 125.34,
+    "tempo_spread": 1.128,
+    "beat_F": 0.9852,
+    "bar_F": 0.6564,
+    "loop_1bar": 0.6172,
+    "loop_4bar": 0.576,
+    "hints": 11
+   }
+  },
+  "harmonix_changes/0182_mycurse": {
+   "auto": {
+    "odd_bars": 0.0921,
+    "bpm": 174.51,
+    "tempo_spread": 1.048,
+    "beat_F": 0.9859,
+    "bar_F": 0.9138,
+    "loop_1bar": 0.891,
+    "loop_4bar": 0.851
+   },
+   "sections": {
+    "odd_bars": 0.1614,
+    "bpm": 174.51,
+    "tempo_spread": 1.049,
+    "beat_F": 0.9963,
+    "bar_F": 0.9858,
+    "loop_1bar": 0.9763,
+    "loop_4bar": 0.9712,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.1719,
+    "bpm": 174.53,
+    "tempo_spread": 1.046,
+    "beat_F": 0.9993,
+    "bar_F": 0.9953,
+    "loop_1bar": 0.981,
+    "loop_4bar": 0.9519,
+    "hints": 7
+   }
+  },
+  "harmonix_changes/0191_newslang": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 130.07,
+    "tempo_spread": 1.014,
+    "beat_F": 0.9937,
+    "bar_F": 0.249,
+    "loop_1bar": 0.155,
+    "loop_4bar": 0.0159
+   },
+   "sections": {
+    "odd_bars": 0.2117,
+    "bpm": 130.04,
+    "tempo_spread": 1.051,
+    "beat_F": 0.9641,
+    "bar_F": 0.4198,
+    "loop_1bar": 0.3643,
+    "loop_4bar": 0.2381,
+    "hints": 13
+   },
+   "sections_taps": {
+    "odd_bars": 0.2374,
+    "bpm": 130.04,
+    "tempo_spread": 1.051,
+    "beat_F": 0.9641,
+    "bar_F": 0.4318,
+    "loop_1bar": 0.3798,
+    "loop_4bar": 0.1984,
+    "hints": 19
+   }
+  },
+  "harmonix_changes/0199_numberofthebeast2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 201.01,
+    "tempo_spread": 1.114,
+    "beat_F": 0.929,
+    "bar_F": 0.6981,
+    "loop_1bar": 0.701,
+    "loop_4bar": 0.6766
+   },
+   "sections": {
+    "odd_bars": 0.1505,
+    "bpm": 201.01,
+    "tempo_spread": 1.127,
+    "beat_F": 0.9306,
+    "bar_F": 0.7775,
+    "loop_1bar": 0.7647,
+    "loop_4bar": 0.7612,
+    "hints": 6
+   },
+   "sections_taps": {
+    "odd_bars": 0.1505,
+    "bpm": 201.01,
+    "tempo_spread": 1.127,
+    "beat_F": 0.9306,
+    "bar_F": 0.7775,
+    "loop_1bar": 0.7647,
+    "loop_4bar": 0.7612,
+    "hints": 6
+   }
+  },
+  "harmonix_changes/0243_saucyjack": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 120.01,
+    "tempo_spread": 1.037,
+    "beat_F": 0.9708,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.5217,
+    "loop_4bar": 0.3256
+   },
+   "sections": {
+    "odd_bars": 0.2407,
+    "bpm": 120.0,
+    "tempo_spread": 1.031,
+    "beat_F": 0.9882,
+    "bar_F": 0.9167,
+    "loop_1bar": 0.8913,
+    "loop_4bar": 0.7442,
+    "hints": 6
+   },
+   "sections_taps": {
+    "odd_bars": 0.2407,
+    "bpm": 120.0,
+    "tempo_spread": 1.031,
+    "beat_F": 0.9882,
+    "bar_F": 0.9583,
+    "loop_1bar": 0.9348,
+    "loop_4bar": 0.7907,
+    "hints": 12
+   }
+  },
+  "harmonix_changes/0255_sleepwalker": {
+   "auto": {
+    "odd_bars": 0.0794,
+    "bpm": 174.76,
+    "tempo_spread": 1.464,
+    "beat_F": 0.9701,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0794,
+    "bpm": 174.94,
+    "tempo_spread": 1.555,
+    "beat_F": 0.9961,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 2
+   },
+   "sections_taps": {
+    "odd_bars": 0.0794,
+    "bpm": 174.94,
+    "tempo_spread": 1.555,
+    "beat_F": 0.9961,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 2
+   }
+  },
+  "harmonix_changes/0265_straightlines": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 127.82,
+    "tempo_spread": 1.02,
+    "beat_F": 0.9941,
+    "bar_F": 0.7729,
+    "loop_1bar": 0.7355,
+    "loop_4bar": 0.5593
+   },
+   "sections": {
+    "odd_bars": 0.1032,
+    "bpm": 127.83,
+    "tempo_spread": 1.019,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 7
+   },
+   "sections_taps": {
+    "odd_bars": 0.1032,
+    "bpm": 127.83,
+    "tempo_spread": 1.019,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 7
+   }
+  },
+  "harmonix_changes/0280_thedayitriedtolive": {
+   "auto": {
+    "odd_bars": 0.1986,
+    "bpm": 133.66,
+    "tempo_spread": 1.587,
+    "beat_F": 0.9774,
+    "bar_F": 0.6364,
+    "loop_1bar": 0.507,
+    "loop_4bar": 0.3597
+   },
+   "sections": {
+    "odd_bars": 0.2041,
+    "bpm": 133.64,
+    "tempo_spread": 1.562,
+    "beat_F": 0.9872,
+    "bar_F": 0.9792,
+    "loop_1bar": 0.9648,
+    "loop_4bar": 0.9281,
+    "hints": 8
+   },
+   "sections_taps": {
+    "odd_bars": 0.2109,
+    "bpm": 133.62,
+    "tempo_spread": 1.56,
+    "beat_F": 0.9895,
+    "bar_F": 0.9792,
+    "loop_1bar": 0.9648,
+    "loop_4bar": 0.9281,
+    "hints": 9
+   }
+  },
+  "harmonix_changes/0289_thisisexile": {
+   "auto": {
+    "odd_bars": 0.1034,
+    "bpm": 124.7,
+    "tempo_spread": 1.251,
+    "beat_F": 0.9793,
+    "bar_F": 0.8829,
+    "loop_1bar": 0.8364,
+    "loop_4bar": 0.757
+   },
+   "sections": {
+    "odd_bars": 0.2,
+    "bpm": 124.95,
+    "tempo_spread": 1.25,
+    "beat_F": 0.9851,
+    "bar_F": 0.9459,
+    "loop_1bar": 0.9091,
+    "loop_4bar": 0.8785,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.2105,
+    "bpm": 124.95,
+    "tempo_spread": 1.24,
+    "beat_F": 0.9896,
+    "bar_F": 0.9864,
+    "loop_1bar": 0.9727,
+    "loop_4bar": 0.972,
+    "hints": 10
+   }
+  },
+  "harmonix_changes/0293_tomsawyer2": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 87.46,
+    "tempo_spread": 1.111,
+    "beat_F": 0.8386,
+    "bar_F": 0.6073,
+    "loop_1bar": 0.5155,
+    "loop_4bar": 0.3936
+   },
+   "sections": {
+    "odd_bars": 0.0686,
+    "bpm": 87.42,
+    "tempo_spread": 1.071,
+    "beat_F": 0.8402,
+    "bar_F": 0.701,
+    "loop_1bar": 0.6082,
+    "loop_4bar": 0.5213,
+    "hints": 3
+   },
+   "sections_taps": {
+    "odd_bars": 0.1553,
+    "bpm": 87.46,
+    "tempo_spread": 1.188,
+    "beat_F": 0.8538,
+    "bar_F": 0.7795,
+    "loop_1bar": 0.6701,
+    "loop_4bar": 0.617,
+    "hints": 15
+   }
+  },
+  "harmonix_changes/0301_unclejohnsband": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 136.63,
+    "tempo_spread": 1.094,
+    "beat_F": 0.9769,
+    "bar_F": 0.8175,
+    "loop_1bar": 0.7664,
+    "loop_4bar": 0.6418
+   },
+   "sections": {
+    "odd_bars": 0.0926,
+    "bpm": 136.52,
+    "tempo_spread": 1.079,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 11
+   },
+   "sections_taps": {
+    "odd_bars": 0.0926,
+    "bpm": 136.52,
+    "tempo_spread": 1.079,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 11
+   }
+  },
+  "harmonix_changes/0303_wakeupdead": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 163.65,
+    "tempo_spread": 1.485,
+    "beat_F": 0.9441,
+    "bar_F": 0.7749,
+    "loop_1bar": 0.6383,
+    "loop_4bar": 0.5652
+   },
+   "sections": {
+    "odd_bars": 0.2455,
+    "bpm": 164.14,
+    "tempo_spread": 1.682,
+    "beat_F": 0.9441,
+    "bar_F": 0.9366,
+    "loop_1bar": 0.922,
+    "loop_4bar": 0.8768,
+    "hints": 3
+   },
+   "sections_taps": {
+    "odd_bars": 0.2455,
+    "bpm": 164.14,
+    "tempo_spread": 1.682,
+    "beat_F": 0.9441,
+    "bar_F": 0.9366,
+    "loop_1bar": 0.922,
+    "loop_4bar": 0.8768,
+    "hints": 4
+   }
+  },
+  "harmonix_changes/0312_whitefalconfuzz": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 80.03,
+    "tempo_spread": 1.019,
+    "beat_F": 0.9935,
+    "bar_F": 0.8684,
+    "loop_1bar": 0.8378,
+    "loop_4bar": 0.7606
+   },
+   "sections": {
+    "odd_bars": 0.1039,
+    "bpm": 80.03,
+    "tempo_spread": 1.019,
+    "beat_F": 0.9935,
+    "bar_F": 0.9867,
+    "loop_1bar": 0.973,
+    "loop_4bar": 0.9718,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.1039,
+    "bpm": 80.03,
+    "tempo_spread": 1.019,
+    "beat_F": 0.9935,
+    "bar_F": 0.9867,
+    "loop_1bar": 0.973,
+    "loop_4bar": 0.9718,
+    "hints": 5
+   }
+  },
+  "harmonix_changes/0400_heatofthemoment": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 138.15,
+    "tempo_spread": 1.187,
+    "beat_F": 0.8688,
+    "bar_F": 0.622,
+    "loop_1bar": 0.4737,
+    "loop_4bar": 0.3014
+   },
+   "sections": {
+    "odd_bars": 0.3173,
+    "bpm": 137.83,
+    "tempo_spread": 1.191,
+    "beat_F": 0.8915,
+    "bar_F": 0.8052,
+    "loop_1bar": 0.6447,
+    "loop_4bar": 0.6575,
+    "hints": 5
+   },
+   "sections_taps": {
+    "odd_bars": 0.3048,
+    "bpm": 137.83,
+    "tempo_spread": 1.191,
+    "beat_F": 0.8915,
+    "bar_F": 0.8258,
+    "loop_1bar": 0.6711,
+    "loop_4bar": 0.6849,
+    "hints": 7
+   }
+  },
+  "harmonix_changes/0426_justcantgetenough": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 94.21,
+    "tempo_spread": 1.375,
+    "beat_F": 0.9772,
+    "bar_F": 0.9714,
+    "loop_1bar": 0.954,
+    "loop_4bar": 0.9167
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 94.21,
+    "tempo_spread": 1.375,
+    "beat_F": 0.9772,
+    "bar_F": 0.9714,
+    "loop_1bar": 0.954,
+    "loop_4bar": 0.9167,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 94.21,
+    "tempo_spread": 1.375,
+    "beat_F": 0.9772,
+    "bar_F": 0.9714,
+    "loop_1bar": 0.954,
+    "loop_4bar": 0.9167,
+    "hints": 1
+   }
+  },
+  "harmonix_changes/0462_oldalabama": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 115.73,
+    "tempo_spread": 1.348,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 115.73,
+    "tempo_spread": 1.348,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 115.73,
+    "tempo_spread": 1.348,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "harmonix_changes/0744_immabe": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 113.71,
+    "tempo_spread": 1.337,
+    "beat_F": 0.9751,
+    "bar_F": 0.9703,
+    "loop_1bar": 0.95,
+    "loop_4bar": 0.9485
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 113.71,
+    "tempo_spread": 1.337,
+    "beat_F": 0.9751,
+    "bar_F": 0.9703,
+    "loop_1bar": 0.95,
+    "loop_4bar": 0.9485,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 113.71,
+    "tempo_spread": 1.337,
+    "beat_F": 0.9751,
+    "bar_F": 0.9703,
+    "loop_1bar": 0.95,
+    "loop_4bar": 0.9485,
+    "hints": 1
+   }
+  },
+  "harmonix_changes/0838_nowimallmessedup": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 76.97,
+    "tempo_spread": 1.01,
+    "beat_F": 0.9834,
+    "bar_F": 0.8219,
+    "loop_1bar": 0.7971,
+    "loop_4bar": 0.697
+   },
+   "sections": {
+    "odd_bars": 0.1486,
+    "bpm": 76.97,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 0.9859,
+    "loop_1bar": 0.9855,
+    "loop_4bar": 0.9394,
+    "hints": 4
+   },
+   "sections_taps": {
+    "odd_bars": 0.1486,
+    "bpm": 76.97,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 0.9859,
+    "loop_1bar": 0.9855,
+    "loop_4bar": 0.9394,
+    "hints": 5
+   }
+  },
+  "harmonix/0038_bringmetolife": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 94.94,
+    "tempo_spread": 1.018,
+    "beat_F": 0.6343,
+    "bar_F": 0.6203,
+    "loop_1bar": 0.6129,
+    "loop_4bar": 0.6
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 94.95,
+    "tempo_spread": 1.019,
+    "beat_F": 0.6353,
+    "bar_F": 0.631,
+    "loop_1bar": 0.6129,
+    "loop_4bar": 0.6,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 94.95,
+    "tempo_spread": 1.019,
+    "beat_F": 0.6353,
+    "bar_F": 0.631,
+    "loop_1bar": 0.6129,
+    "loop_4bar": 0.6,
+    "hints": 3
+   }
+  },
+  "harmonix/0566_americanwoman": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 84.01,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 84.01,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 84.01,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "harmonix/0625_complicated": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 77.99,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 77.99,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 77.99,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "harmonix/0734_iftodaywasyourlastday": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 89.99,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 89.99,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 89.99,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "harmonix/0343_banjo": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 102.03,
+    "tempo_spread": 1.028,
+    "beat_F": 0.9464,
+    "bar_F": 0.9255,
+    "loop_1bar": 0.9247,
+    "loop_4bar": 0.9222
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 102.03,
+    "tempo_spread": 1.028,
+    "beat_F": 0.9464,
+    "bar_F": 0.9255,
+    "loop_1bar": 0.9247,
+    "loop_4bar": 0.9222,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 102.03,
+    "tempo_spread": 1.028,
+    "beat_F": 0.9464,
+    "bar_F": 0.9255,
+    "loop_1bar": 0.9247,
+    "loop_4bar": 0.9222,
+    "hints": 1
+   }
+  },
+  "harmonix/0110_girlsandboys": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 120.02,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 120.02,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 120.02,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "harmonix/0362_crazygirl": {
+   "auto": {
+    "odd_bars": 0.1887,
+    "bpm": 151.01,
+    "tempo_spread": 1.34,
+    "beat_F": 0.933,
+    "bar_F": 0.7811,
+    "loop_1bar": 0.7692,
+    "loop_4bar": 0.72
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 151.33,
+    "tempo_spread": 1.518,
+    "beat_F": 0.9352,
+    "bar_F": 0.7925,
+    "loop_1bar": 0.7821,
+    "loop_4bar": 0.7333,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.01,
+    "bpm": 151.27,
+    "tempo_spread": 1.497,
+    "beat_F": 0.9403,
+    "bar_F": 0.8931,
+    "loop_1bar": 0.8974,
+    "loop_4bar": 0.8933,
+    "hints": 2
+   }
+  },
+  "harmonix/0380_everybodytalks": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 154.64,
+    "tempo_spread": 1.32,
+    "beat_F": 0.8501,
+    "bar_F": 0.6339,
+    "loop_1bar": 0.6018,
+    "loop_4bar": 0.5364
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 154.64,
+    "tempo_spread": 1.32,
+    "beat_F": 0.8501,
+    "bar_F": 0.6339,
+    "loop_1bar": 0.6018,
+    "loop_4bar": 0.5364,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 154.64,
+    "tempo_spread": 1.321,
+    "beat_F": 0.8501,
+    "bar_F": 0.6339,
+    "loop_1bar": 0.6018,
+    "loop_4bar": 0.5364,
+    "hints": 2
+   }
+  },
+  "gtzan/blues.00001": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 67.73,
+    "tempo_spread": 1.042,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 67.73,
+    "tempo_spread": 1.042,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 67.73,
+    "tempo_spread": 1.042,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00003": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 187.32,
+    "tempo_spread": 1.042,
+    "beat_F": 0.5082,
+    "bar_F": 0.4103,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 62.19,
+    "tempo_spread": 2.116,
+    "beat_F": 0.8136,
+    "bar_F": 0.8,
+    "loop_1bar": 0.7143,
+    "loop_4bar": 0.5,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 62.19,
+    "tempo_spread": 2.116,
+    "beat_F": 0.8136,
+    "bar_F": 0.8,
+    "loop_1bar": 0.7143,
+    "loop_4bar": 0.5,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00007": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 92.69,
+    "tempo_spread": 1.118,
+    "beat_F": 0.9574,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 92.69,
+    "tempo_spread": 1.118,
+    "beat_F": 0.9574,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 92.69,
+    "tempo_spread": 1.118,
+    "beat_F": 0.9574,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00017": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 169.83,
+    "tempo_spread": 1.071,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0476,
+    "bpm": 170.42,
+    "tempo_spread": 1.103,
+    "beat_F": 0.9825,
+    "bar_F": 0.0465,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0476,
+    "bpm": 170.42,
+    "tempo_spread": 1.103,
+    "beat_F": 0.9825,
+    "bar_F": 0.0465,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00025": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 93.91,
+    "tempo_spread": 1.134,
+    "beat_F": 0.6947,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 93.91,
+    "tempo_spread": 1.134,
+    "beat_F": 0.6947,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 93.91,
+    "tempo_spread": 1.134,
+    "beat_F": 0.6947,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00029": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 129.05,
+    "tempo_spread": 1.061,
+    "beat_F": 0.272,
+    "bar_F": 0.25,
+    "loop_1bar": 0.2,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 129.18,
+    "tempo_spread": 1.13,
+    "beat_F": 0.304,
+    "bar_F": 0.3125,
+    "loop_1bar": 0.2,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 129.18,
+    "tempo_spread": 1.13,
+    "beat_F": 0.304,
+    "bar_F": 0.3125,
+    "loop_1bar": 0.2,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00047": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 150.5,
+    "tempo_spread": 1.057,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 150.5,
+    "tempo_spread": 1.057,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 150.5,
+    "tempo_spread": 1.057,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00058": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 105.66,
+    "tempo_spread": 1.022,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 105.66,
+    "tempo_spread": 1.022,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 105.66,
+    "tempo_spread": 1.022,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00077": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 147.37,
+    "tempo_spread": 1.019,
+    "beat_F": 0.9932,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 147.37,
+    "tempo_spread": 1.019,
+    "beat_F": 0.9932,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 147.37,
+    "tempo_spread": 1.019,
+    "beat_F": 0.9932,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/blues.00081": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 205.48,
+    "tempo_spread": 1.089,
+    "beat_F": 0.8235,
+    "bar_F": 0.7692,
+    "loop_1bar": 0.76,
+    "loop_4bar": 0.7273
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 205.48,
+    "tempo_spread": 1.089,
+    "beat_F": 0.8235,
+    "bar_F": 0.7692,
+    "loop_1bar": 0.76,
+    "loop_4bar": 0.7273,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 205.48,
+    "tempo_spread": 1.089,
+    "beat_F": 0.8235,
+    "bar_F": 0.7692,
+    "loop_1bar": 0.76,
+    "loop_4bar": 0.7273,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00000": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 94.37,
+    "tempo_spread": 1.071,
+    "beat_F": 0.9362,
+    "bar_F": 0.9167,
+    "loop_1bar": 0.8182,
+    "loop_4bar": 0.875
+   },
+   "sections": {
+    "odd_bars": 0.0833,
+    "bpm": 94.31,
+    "tempo_spread": 1.07,
+    "beat_F": 0.9362,
+    "bar_F": 0.88,
+    "loop_1bar": 0.8182,
+    "loop_4bar": 0.875,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0833,
+    "bpm": 94.31,
+    "tempo_spread": 1.07,
+    "beat_F": 0.9362,
+    "bar_F": 0.88,
+    "loop_1bar": 0.8182,
+    "loop_4bar": 0.875,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00003": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 66.87,
+    "tempo_spread": 1.175,
+    "beat_F": 0.9062,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.125,
+    "bpm": 66.97,
+    "tempo_spread": 1.167,
+    "beat_F": 0.9062,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.125,
+    "bpm": 66.97,
+    "tempo_spread": 1.167,
+    "beat_F": 0.9062,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00025": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 131.99,
+    "tempo_spread": 1.042,
+    "beat_F": 0.8333,
+    "bar_F": 0.8235,
+    "loop_1bar": 0.75,
+    "loop_4bar": 0.6923
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 131.99,
+    "tempo_spread": 1.042,
+    "beat_F": 0.8333,
+    "bar_F": 0.8235,
+    "loop_1bar": 0.75,
+    "loop_4bar": 0.6923,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 131.99,
+    "tempo_spread": 1.042,
+    "beat_F": 0.8333,
+    "bar_F": 0.8235,
+    "loop_1bar": 0.75,
+    "loop_4bar": 0.6923,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00037": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 153.06,
+    "tempo_spread": 1.584,
+    "beat_F": 0.3182,
+    "bar_F": 0.1053,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 153.34,
+    "tempo_spread": 1.356,
+    "beat_F": 0.4638,
+    "bar_F": 0.2941,
+    "loop_1bar": 0.1333,
+    "loop_4bar": 0.0833,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 153.34,
+    "tempo_spread": 1.356,
+    "beat_F": 0.4638,
+    "bar_F": 0.2941,
+    "loop_1bar": 0.1333,
+    "loop_4bar": 0.0833,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00054": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 93.81,
+    "tempo_spread": 1.276,
+    "beat_F": 0.7111,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.6667,
+    "loop_4bar": 0.5
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 93.78,
+    "tempo_spread": 1.312,
+    "beat_F": 0.7111,
+    "bar_F": 0.7619,
+    "loop_1bar": 0.6667,
+    "loop_4bar": 0.5,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 93.78,
+    "tempo_spread": 1.312,
+    "beat_F": 0.7111,
+    "bar_F": 0.7619,
+    "loop_1bar": 0.6667,
+    "loop_4bar": 0.5,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00063": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 95.21,
+    "tempo_spread": 1.259,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 95.21,
+    "tempo_spread": 1.259,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 95.21,
+    "tempo_spread": 1.259,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00075": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 55.02,
+    "tempo_spread": 1.124,
+    "beat_F": 0.3902,
+    "bar_F": 0.3478,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 110.19,
+    "tempo_spread": 1.175,
+    "beat_F": 0.6852,
+    "bar_F": 0.7143,
+    "loop_1bar": 0.5385,
+    "loop_4bar": 0.6,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 110.19,
+    "tempo_spread": 1.175,
+    "beat_F": 0.6852,
+    "bar_F": 0.7143,
+    "loop_1bar": 0.5385,
+    "loop_4bar": 0.6,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00076": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 171.52,
+    "tempo_spread": 1.026,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 171.52,
+    "tempo_spread": 1.026,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 171.52,
+    "tempo_spread": 1.026,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00083": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 76.25,
+    "tempo_spread": 1.415,
+    "beat_F": 0.6234,
+    "bar_F": 0.1739,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 78.49,
+    "tempo_spread": 1.247,
+    "beat_F": 0.75,
+    "bar_F": 0.0952,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 78.49,
+    "tempo_spread": 1.247,
+    "beat_F": 0.75,
+    "bar_F": 0.0952,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/classical.00085": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 108.61,
+    "tempo_spread": 1.04,
+    "beat_F": 0.9815,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 108.61,
+    "tempo_spread": 1.04,
+    "beat_F": 0.9815,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 108.61,
+    "tempo_spread": 1.04,
+    "beat_F": 0.9815,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00000": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 84.41,
+    "tempo_spread": 1.008,
+    "beat_F": 0.8,
+    "bar_F": 0.8182,
+    "loop_1bar": 0.8,
+    "loop_4bar": 0.7143
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 84.41,
+    "tempo_spread": 1.008,
+    "beat_F": 0.8,
+    "bar_F": 0.8182,
+    "loop_1bar": 0.8,
+    "loop_4bar": 0.7143,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 84.41,
+    "tempo_spread": 1.008,
+    "beat_F": 0.8,
+    "bar_F": 0.8182,
+    "loop_1bar": 0.8,
+    "loop_4bar": 0.7143,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00002": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 163.84,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 163.84,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 163.84,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00011": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 113.7,
+    "tempo_spread": 1.032,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 113.7,
+    "tempo_spread": 1.032,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 113.7,
+    "tempo_spread": 1.032,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00037": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 97.94,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 97.94,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 97.94,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00038": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 155.8,
+    "tempo_spread": 1.022,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 155.8,
+    "tempo_spread": 1.022,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 155.8,
+    "tempo_spread": 1.022,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00043": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 138.32,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 138.32,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 138.32,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00052": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 71.16,
+    "tempo_spread": 1.038,
+    "beat_F": 0.9167,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 71.16,
+    "tempo_spread": 1.038,
+    "beat_F": 0.9167,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 71.16,
+    "tempo_spread": 1.038,
+    "beat_F": 0.9167,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00064": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 66.17,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 66.17,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 66.17,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00065": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 59.76,
+    "tempo_spread": 1.078,
+    "beat_F": 0.6222,
+    "bar_F": 0.6364,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 119.42,
+    "tempo_spread": 1.065,
+    "beat_F": 0.9661,
+    "bar_F": 0.9655,
+    "loop_1bar": 0.9286,
+    "loop_4bar": 0.9091,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 119.42,
+    "tempo_spread": 1.065,
+    "beat_F": 0.9661,
+    "bar_F": 0.9655,
+    "loop_1bar": 0.9286,
+    "loop_4bar": 0.9091,
+    "hints": 1
+   }
+  },
+  "gtzan/country.00096": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 115.35,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 115.35,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 115.35,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00013": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 89.58,
+    "tempo_spread": 1.03,
+    "beat_F": 0.9535,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 89.58,
+    "tempo_spread": 1.03,
+    "beat_F": 0.9535,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 89.58,
+    "tempo_spread": 1.03,
+    "beat_F": 0.9535,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00037": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 130.43,
+    "tempo_spread": 1.015,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 130.43,
+    "tempo_spread": 1.015,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 130.43,
+    "tempo_spread": 1.015,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00057": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 118.23,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 118.23,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 118.23,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00060": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 129.62,
+    "tempo_spread": 1.026,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 129.62,
+    "tempo_spread": 1.026,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 129.62,
+    "tempo_spread": 1.026,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00062": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 109.13,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 109.13,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 109.13,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00065": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 131.75,
+    "tempo_spread": 1.021,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 131.75,
+    "tempo_spread": 1.021,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 131.75,
+    "tempo_spread": 1.021,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00067": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 100.33,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 100.33,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 100.33,
+    "tempo_spread": 1.014,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00078": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 128.36,
+    "tempo_spread": 1.036,
+    "beat_F": 0.8594,
+    "bar_F": 0.8125,
+    "loop_1bar": 0.8,
+    "loop_4bar": 0.75
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 128.36,
+    "tempo_spread": 1.036,
+    "beat_F": 0.8594,
+    "bar_F": 0.8125,
+    "loop_1bar": 0.8,
+    "loop_4bar": 0.75,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 128.36,
+    "tempo_spread": 1.036,
+    "beat_F": 0.8594,
+    "bar_F": 0.8125,
+    "loop_1bar": 0.8,
+    "loop_4bar": 0.75,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00085": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 123.75,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 123.75,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 123.75,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/disco.00087": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 105.82,
+    "tempo_spread": 1.03,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 105.82,
+    "tempo_spread": 1.03,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 105.82,
+    "tempo_spread": 1.03,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00006": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 99.86,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 99.86,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 99.86,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00024": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 101.82,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 101.82,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 101.82,
+    "tempo_spread": 1.011,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00031": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 100.66,
+    "tempo_spread": 1.007,
+    "beat_F": 0.96,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 100.66,
+    "tempo_spread": 1.007,
+    "beat_F": 0.96,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 100.66,
+    "tempo_spread": 1.007,
+    "beat_F": 0.96,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00033": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 97.18,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 97.18,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 97.18,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00049": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 101.72,
+    "tempo_spread": 1.007,
+    "beat_F": 0.9608,
+    "bar_F": 0.9231,
+    "loop_1bar": 0.8333,
+    "loop_4bar": 0.8889
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 101.72,
+    "tempo_spread": 1.007,
+    "beat_F": 0.9608,
+    "bar_F": 0.9231,
+    "loop_1bar": 0.8333,
+    "loop_4bar": 0.8889,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 101.72,
+    "tempo_spread": 1.007,
+    "beat_F": 0.9608,
+    "bar_F": 0.9231,
+    "loop_1bar": 0.8333,
+    "loop_4bar": 0.8889,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00054": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 112.28,
+    "tempo_spread": 1.004,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 112.28,
+    "tempo_spread": 1.004,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 112.28,
+    "tempo_spread": 1.004,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00059": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 92.13,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 92.13,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 92.13,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00063": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 94.02,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 94.02,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 94.02,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00071": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 95.69,
+    "tempo_spread": 1.014,
+    "beat_F": 0.9787,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 95.69,
+    "tempo_spread": 1.014,
+    "beat_F": 0.9787,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 95.69,
+    "tempo_spread": 1.014,
+    "beat_F": 0.9787,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/hiphop.00085": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 110.67,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 110.67,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 110.67,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00005": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 72.95,
+    "tempo_spread": 1.09,
+    "beat_F": 0.3516,
+    "bar_F": 0.3704,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 110.15,
+    "tempo_spread": 1.094,
+    "beat_F": 0.3486,
+    "bar_F": 0.3333,
+    "loop_1bar": 0.2941,
+    "loop_4bar": 0.1429,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 110.15,
+    "tempo_spread": 1.094,
+    "beat_F": 0.3486,
+    "bar_F": 0.3333,
+    "loop_1bar": 0.2941,
+    "loop_4bar": 0.1429,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00008": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 109.48,
+    "tempo_spread": 1.024,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 109.48,
+    "tempo_spread": 1.024,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 109.48,
+    "tempo_spread": 1.024,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00028": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 200.5,
+    "tempo_spread": 1.029,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 200.5,
+    "tempo_spread": 1.029,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 200.5,
+    "tempo_spread": 1.029,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00034": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 194.8,
+    "tempo_spread": 1.021,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 194.8,
+    "tempo_spread": 1.021,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 194.8,
+    "tempo_spread": 1.021,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00038": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 149.78,
+    "tempo_spread": 1.05,
+    "beat_F": 0.96,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 149.78,
+    "tempo_spread": 1.05,
+    "beat_F": 0.96,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 149.78,
+    "tempo_spread": 1.05,
+    "beat_F": 0.96,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00041": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 188.34,
+    "tempo_spread": 1.023,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 188.36,
+    "tempo_spread": 1.027,
+    "beat_F": 0.984,
+    "bar_F": 0.0426,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 188.36,
+    "tempo_spread": 1.027,
+    "beat_F": 0.984,
+    "bar_F": 0.0426,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00059": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 106.5,
+    "tempo_spread": 1.044,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 106.5,
+    "tempo_spread": 1.044,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 106.5,
+    "tempo_spread": 1.044,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00077": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 185.77,
+    "tempo_spread": 1.054,
+    "beat_F": 0.9348,
+    "bar_F": 0.3043,
+    "loop_1bar": 0.2727,
+    "loop_4bar": 0.1579
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 186.12,
+    "tempo_spread": 1.049,
+    "beat_F": 0.9514,
+    "bar_F": 0.3404,
+    "loop_1bar": 0.3182,
+    "loop_4bar": 0.2105,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 186.12,
+    "tempo_spread": 1.049,
+    "beat_F": 0.9514,
+    "bar_F": 0.3404,
+    "loop_1bar": 0.3182,
+    "loop_4bar": 0.2105,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00080": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 100.19,
+    "tempo_spread": 1.016,
+    "beat_F": 0.6711,
+    "bar_F": 0.6842,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 200.08,
+    "tempo_spread": 1.046,
+    "beat_F": 0.9848,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 200.08,
+    "tempo_spread": 1.046,
+    "beat_F": 0.9848,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/jazz.00099": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 136.49,
+    "tempo_spread": 1.034,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 136.49,
+    "tempo_spread": 1.034,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 136.49,
+    "tempo_spread": 1.034,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00004": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 138.62,
+    "tempo_spread": 1.062,
+    "beat_F": 0.0292,
+    "bar_F": 0.0588,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 138.62,
+    "tempo_spread": 1.059,
+    "beat_F": 0.0292,
+    "bar_F": 0.0588,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 138.62,
+    "tempo_spread": 1.059,
+    "beat_F": 0.0292,
+    "bar_F": 0.0588,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00019": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 109.12,
+    "tempo_spread": 1.28,
+    "beat_F": 0.0745,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0385,
+    "bpm": 217.39,
+    "tempo_spread": 1.33,
+    "beat_F": 0.1226,
+    "bar_F": 0.0741,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0385,
+    "bpm": 217.39,
+    "tempo_spread": 1.33,
+    "beat_F": 0.1226,
+    "bar_F": 0.0741,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00021": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 108.99,
+    "tempo_spread": 1.024,
+    "beat_F": 0.9908,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 108.99,
+    "tempo_spread": 1.024,
+    "beat_F": 0.9908,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 108.99,
+    "tempo_spread": 1.024,
+    "beat_F": 0.9908,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00039": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 119.89,
+    "tempo_spread": 1.011,
+    "beat_F": 0.6591,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 60.01,
+    "tempo_spread": 1.994,
+    "beat_F": 0.9508,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 60.01,
+    "tempo_spread": 1.994,
+    "beat_F": 0.9508,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00055": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 169.35,
+    "tempo_spread": 1.083,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 169.35,
+    "tempo_spread": 1.083,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 169.35,
+    "tempo_spread": 1.083,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00065": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 117.16,
+    "tempo_spread": 1.038,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 117.16,
+    "tempo_spread": 1.038,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 117.16,
+    "tempo_spread": 1.038,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00072": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 119.69,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 119.69,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 119.69,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00073": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 145.19,
+    "tempo_spread": 1.02,
+    "beat_F": 0.6727,
+    "bar_F": 0.6429,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 72.58,
+    "tempo_spread": 2.002,
+    "beat_F": 0.9737,
+    "bar_F": 0.9474,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 72.58,
+    "tempo_spread": 2.002,
+    "beat_F": 0.9737,
+    "bar_F": 0.9474,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/metal.00081": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 151.29,
+    "tempo_spread": 1.17,
+    "beat_F": 1.0,
+    "bar_F": 0.6111,
+    "loop_1bar": 0.5882,
+    "loop_4bar": 0.5
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 151.37,
+    "tempo_spread": 1.151,
+    "beat_F": 0.9796,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.5882,
+    "loop_4bar": 0.5,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0588,
+    "bpm": 151.29,
+    "tempo_spread": 1.17,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 2
+   }
+  },
+  "gtzan/metal.00098": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 77.32,
+    "tempo_spread": 1.022,
+    "beat_F": 0.987,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 77.32,
+    "tempo_spread": 1.022,
+    "beat_F": 0.987,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 77.32,
+    "tempo_spread": 1.022,
+    "beat_F": 0.987,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00004": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 80.22,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 80.22,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 80.22,
+    "tempo_spread": 1.009,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00010": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 107.06,
+    "tempo_spread": 1.011,
+    "beat_F": 0.9907,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 107.06,
+    "tempo_spread": 1.011,
+    "beat_F": 0.9907,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 107.06,
+    "tempo_spread": 1.011,
+    "beat_F": 0.9907,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00018": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 121.95,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 121.95,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 121.95,
+    "tempo_spread": 1.007,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00034": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 96.01,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 96.01,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 96.01,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00049": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 58.99,
+    "tempo_spread": 1.005,
+    "beat_F": 0.9831,
+    "bar_F": 0.9333,
+    "loop_1bar": 0.8571,
+    "loop_4bar": 0.75
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 58.98,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 58.98,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00061": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 95.93,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 95.93,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 95.93,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00062": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 80.61,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 80.61,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 80.61,
+    "tempo_spread": 1.013,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00069": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 105.54,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 105.54,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 105.54,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00076": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 109.6,
+    "tempo_spread": 1.011,
+    "beat_F": 0.6747,
+    "bar_F": 0.6667,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 54.95,
+    "tempo_spread": 2.004,
+    "beat_F": 0.1356,
+    "bar_F": 0.1429,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 54.95,
+    "tempo_spread": 2.004,
+    "beat_F": 0.1356,
+    "bar_F": 0.1429,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/pop.00087": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 102.03,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 102.03,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 102.03,
+    "tempo_spread": 1.01,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00001": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 77.94,
+    "tempo_spread": 1.024,
+    "beat_F": 0.987,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 77.94,
+    "tempo_spread": 1.024,
+    "beat_F": 0.987,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 77.94,
+    "tempo_spread": 1.024,
+    "beat_F": 0.987,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00032": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 75.0,
+    "tempo_spread": 1.062,
+    "beat_F": 0.6491,
+    "bar_F": 0.4828,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 149.98,
+    "tempo_spread": 1.018,
+    "beat_F": 0.973,
+    "bar_F": 0.973,
+    "loop_1bar": 0.9444,
+    "loop_4bar": 0.9333,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 149.98,
+    "tempo_spread": 1.018,
+    "beat_F": 0.973,
+    "bar_F": 0.973,
+    "loop_1bar": 0.9444,
+    "loop_4bar": 0.9333,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00044": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 175.07,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 175.04,
+    "tempo_spread": 1.02,
+    "beat_F": 0.9942,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 175.04,
+    "tempo_spread": 1.02,
+    "beat_F": 0.9942,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00056": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 156.07,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 156.1,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 156.1,
+    "tempo_spread": 1.02,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00075": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 145.01,
+    "tempo_spread": 1.029,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 145.01,
+    "tempo_spread": 1.029,
+    "beat_F": 1.0,
+    "bar_F": 0.9714,
+    "loop_1bar": 0.9412,
+    "loop_4bar": 0.9286,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 145.01,
+    "tempo_spread": 1.029,
+    "beat_F": 1.0,
+    "bar_F": 0.9714,
+    "loop_1bar": 0.9412,
+    "loop_4bar": 0.9286,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00081": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 100.33,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 100.33,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 100.33,
+    "tempo_spread": 1.008,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00085": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 174.25,
+    "tempo_spread": 1.027,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 174.25,
+    "tempo_spread": 1.027,
+    "beat_F": 1.0,
+    "bar_F": 0.9767,
+    "loop_1bar": 0.9524,
+    "loop_4bar": 0.9444,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 174.25,
+    "tempo_spread": 1.027,
+    "beat_F": 1.0,
+    "bar_F": 0.9767,
+    "loop_1bar": 0.9524,
+    "loop_4bar": 0.9444,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00091": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 144.94,
+    "tempo_spread": 1.028,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 144.94,
+    "tempo_spread": 1.028,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 144.94,
+    "tempo_spread": 1.028,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00093": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 90.54,
+    "tempo_spread": 1.017,
+    "beat_F": 0.6667,
+    "bar_F": 0.6471,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 180.83,
+    "tempo_spread": 1.025,
+    "beat_F": 0.9944,
+    "bar_F": 0.9778,
+    "loop_1bar": 0.9545,
+    "loop_4bar": 0.9474,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 180.83,
+    "tempo_spread": 1.025,
+    "beat_F": 0.9944,
+    "bar_F": 0.9778,
+    "loop_1bar": 0.9545,
+    "loop_4bar": 0.9474,
+    "hints": 1
+   }
+  },
+  "gtzan/reggae.00094": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 126.98,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 126.98,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 126.98,
+    "tempo_spread": 1.012,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00011": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 116.05,
+    "tempo_spread": 1.049,
+    "beat_F": 0.9217,
+    "bar_F": 0.9286,
+    "loop_1bar": 0.9231,
+    "loop_4bar": 0.9
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 116.05,
+    "tempo_spread": 1.049,
+    "beat_F": 0.9217,
+    "bar_F": 0.9286,
+    "loop_1bar": 0.9231,
+    "loop_4bar": 0.9,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 116.05,
+    "tempo_spread": 1.049,
+    "beat_F": 0.9217,
+    "bar_F": 0.9286,
+    "loop_1bar": 0.9231,
+    "loop_4bar": 0.9,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00012": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 113.0,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 113.0,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 113.0,
+    "tempo_spread": 1.017,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00017": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 121.19,
+    "tempo_spread": 1.024,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 121.19,
+    "tempo_spread": 1.024,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 121.19,
+    "tempo_spread": 1.024,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00066": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 75.64,
+    "tempo_spread": 1.041,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 75.64,
+    "tempo_spread": 1.041,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 75.64,
+    "tempo_spread": 1.041,
+    "beat_F": 1.0,
+    "bar_F": 0.0,
+    "loop_1bar": 0.0,
+    "loop_4bar": 0.0,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00068": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 124.2,
+    "tempo_spread": 1.088,
+    "beat_F": 1.0,
+    "bar_F": 0.4324,
+    "loop_1bar": 0.1429,
+    "loop_4bar": 0.0
+   },
+   "sections": {
+    "odd_bars": 0.5,
+    "bpm": 124.2,
+    "tempo_spread": 1.088,
+    "beat_F": 1.0,
+    "bar_F": 0.4444,
+    "loop_1bar": 0.2857,
+    "loop_4bar": 0.2222,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.44,
+    "bpm": 124.2,
+    "tempo_spread": 1.088,
+    "beat_F": 1.0,
+    "bar_F": 0.8333,
+    "loop_1bar": 0.7143,
+    "loop_4bar": 0.3889,
+    "hints": 16
+   }
+  },
+  "gtzan/rock.00072": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 103.68,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 103.68,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 103.68,
+    "tempo_spread": 1.006,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00086": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 131.7,
+    "tempo_spread": 1.03,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 131.7,
+    "tempo_spread": 1.03,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 131.7,
+    "tempo_spread": 1.03,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00088": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 91.65,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 91.65,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 91.65,
+    "tempo_spread": 1.016,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00092": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 131.09,
+    "tempo_spread": 1.023,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 131.09,
+    "tempo_spread": 1.023,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 131.09,
+    "tempo_spread": 1.023,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  },
+  "gtzan/rock.00097": {
+   "auto": {
+    "odd_bars": 0.0,
+    "bpm": 127.98,
+    "tempo_spread": 1.04,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0
+   },
+   "sections": {
+    "odd_bars": 0.0,
+    "bpm": 127.98,
+    "tempo_spread": 1.04,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   },
+   "sections_taps": {
+    "odd_bars": 0.0,
+    "bpm": 127.98,
+    "tempo_spread": 1.04,
+    "beat_F": 1.0,
+    "bar_F": 1.0,
+    "loop_1bar": 1.0,
+    "loop_4bar": 1.0,
+    "hints": 1
+   }
+  }
+ }
+}

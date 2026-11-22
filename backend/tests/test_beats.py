@@ -81,8 +81,14 @@ class TestBeatsApi:
             "beatsPerBar": 4,
             "beats": FAKE_BEATS.beats,
             "downbeats": FAKE_BEATS.downbeats,
-            "analyzer": "fake+grid2",
-            "hints": {"beatsPerBar": None, "tempoBpm": None, "barStarts": [], "steadyTempo": False},
+            "analyzer": "fake+grid3",
+            "hints": {
+                "beatsPerBar": None,
+                "tempoBpm": None,
+                "barStarts": [],
+                "steadyTempo": False,
+                "sections": [],
+            },
         }
         assert len(FAKE_BEATS.beats) == 16
         assert FAKE_BEATS.downbeats == [0.5, 2.5, 4.5, 6.5]
@@ -148,12 +154,12 @@ class TestBeatsApi:
         assert analysis["bpm"] == pytest.approx(240, abs=8)
         assert analysis["hints"]["tempoBpm"] == 240
 
-    def test_bar_starts_move_the_bars_without_decoding_again(
+    def test_bar_starts_move_the_bars(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker
     ) -> None:
         download(client)
         beats = wait_for_beats(client, VIDEO_ID)["analysis"]["beats"]
-        # "a bar starts on the 6th beat": from there on, bars are counted from it
+        # "a bar starts on the 6th beat": the grid is decoded again with a bar starting there
         hints = {"beatsPerBar": None, "tempoBpm": None, "barStarts": [beats[5] + 0.01]}
         client.post(f"/api/library/{VIDEO_ID}/beats", json=hints)
         analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
@@ -165,6 +171,34 @@ class TestBeatsApi:
 
         client.post(f"/api/library/{VIDEO_ID}/beats", json={**hints, "barStarts": []})
         assert wait_for_beats(client, VIDEO_ID)["analysis"]["downbeats"] == FAKE_BEATS.downbeats
+
+    def test_sections_give_their_part_of_the_song_its_own_bars(
+        self, client: TestClient, fake_beat_tracker: FakeBeatTracker
+    ) -> None:
+        download(client)
+        beats = wait_for_beats(client, VIDEO_ID)["analysis"]["beats"]
+        section = {"start": beats[8], "beatsPerBar": 3, "pattern": [], "tempoBpm": None}
+        client.post(f"/api/library/{VIDEO_ID}/beats", json={"sections": [section]})
+        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        assert analysis["hints"]["sections"] == [section]
+        assert analysis["downbeats"][-3:] == [beats[8], beats[11], beats[14]]
+        assert len(fake_beat_tracker.analyzed) == 1  # decoded again, the network ran once
+
+    @pytest.mark.parametrize(
+        "section",
+        [
+            {"start": -1},
+            {"start": 1, "beatsPerBar": 1},
+            {"start": 1, "pattern": [6, 0]},
+            {"start": 1, "pattern": [3] * 17},
+            {"start": 1, "tempoBpm": 1000},
+        ],
+    )
+    def test_bad_sections_are_refused(self, client: TestClient, section: dict) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        response = client.post(f"/api/library/{VIDEO_ID}/beats", json={"sections": [section]})
+        assert response.status_code == 422
 
     def test_steady_tempo_spaces_the_beats_evenly(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker
@@ -218,7 +252,7 @@ class TestBeatsApi:
         (settings.library_dir / VIDEO_ID / "analysis.json").write_text(old.model_dump_json())
         assert client.get(f"/api/library/{VIDEO_ID}/beats").json()["status"] == "not_started"
         client.post(f"/api/library/{VIDEO_ID}/beats")
-        assert wait_for_beats(client, VIDEO_ID)["analysis"]["analyzer"] == "fake+grid2"
+        assert wait_for_beats(client, VIDEO_ID)["analysis"]["analyzer"] == "fake+grid3"
 
     def test_grids_of_an_older_decoder_are_decoded_again_with_their_hints(
         self, client: TestClient, settings: Settings
@@ -237,7 +271,7 @@ class TestBeatsApi:
         assert client.get(f"/api/library/{VIDEO_ID}/beats").json()["status"] == "not_started"
         client.post(f"/api/library/{VIDEO_ID}/beats")
         analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
-        assert analysis["analyzer"] == "fake+grid2"
+        assert analysis["analyzer"] == "fake+grid3"
         assert analysis["hints"]["beatsPerBar"] == 3
         assert analysis["beatsPerBar"] == 3
 
