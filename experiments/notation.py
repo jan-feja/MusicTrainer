@@ -8,8 +8,9 @@
    is monophonic (bass, lead), and at least one grid step; a gap of up to an eighth note before
    the next onset is filled (articulation, not a rest worth writing).
 4. Bars come from the bar starts; a bar has as many quarter-note beats as were detected in it.
-5. Guitar and bass get strings and frets from tablature.assign_frets; drums go on a percussion
-   track; other parts on a track with a wide, keyboard-like range (shown as notation).
+5. Guitar and bass get strings and frets from tablature.assign_frets, after dropping the fewest
+   notes that make a chord unplayable (tablature.playable_subset); drums go on a percussion track;
+   other parts on a track with a wide, keyboard-like range (shown as notation only).
 
 Writes Guitar Pro 5 (pyguitarpro), which alphaTab renders as tab + standard notation.
 """
@@ -161,6 +162,7 @@ def write_gp5(path: str, parts: list[dict], beats: np.ndarray, downbeats: np.nda
             # the fingering search works in seconds (chord window, pauses): use the median tempo
             sec_per_unit = float(np.median(np.diff(beats))) / UNIT
             sec = [(q.start * sec_per_unit, q.end * sec_per_unit, q.pitch) for q in notes]
+            sec = tab.playable_subset(sec, tuning=tuning)  # chords no hand can play: drop the fewest notes
             frets = {(round(n.onset / sec_per_unit), n.pitch): n for n in tab.assign_frets(sec, tuning=tuning)}
             for q in notes:
                 f = frets.get((q.start, q.pitch))

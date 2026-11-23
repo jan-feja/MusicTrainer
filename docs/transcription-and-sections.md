@@ -134,7 +134,7 @@ The absolute numbers mostly measure the answer key. The comparison holds, though
 - Still to check: Demucs guitar stems from band mixes (separation artifacts, distortion, several guitars).
 
 ### Notation
-[notation.py](../experiments/notation.py) places notes on the beat grid (sixteenths or triplets per beat), fills short gaps, splits notes at bar lines with ties, and writes Guitar Pro 5 (tab + notation for guitar and bass, percussion for drums). alphaTab renders it ([render_notation.py](../experiments/render_notation.py)).
+[notation.py](../experiments/notation.py) places notes on the beat grid (sixteenths or triplets per beat), fills short gaps, splits notes at bar lines with ties, and writes Guitar Pro 5 (tab + notation for guitar and bass, percussion for drums). alphaTab renders it ([render_notation.py](../experiments/render_notation.py)). Transcribed guitar chords can contain notes no hand reaches together (frets 1–3 and 17–20 at once); [tablature.playable_subset](../experiments/tablature.py) drops the fewest notes so every chord fits on distinct strings within 5 frets. On GuitarSet it drops nothing; on the band-mix score songs it removes 11 % of YourMT3+'s guitar notes, raising their precision from 0.49 to 0.54 at a 1-point cost in recall.
 
 | Notes | Bass | Guitar | Keys | Lead |
 |---|---|---|---|---|

@@ -79,6 +79,38 @@ def _shape_cost(combo) -> tuple[float, float]:
     return cost, float(np.mean(frets))
 
 
+MAX_PLAYABLE_SPAN = 5  # frets between the lowest and highest fretted note of a chord
+
+
+def _playable(pitches: list[int], tuning, max_fret) -> bool:
+    for combo in _fingerings(pitches, tuning, max_fret):
+        if any(s < 0 for s, _ in combo):
+            continue
+        frets = [f for _, f in combo if f > 0]
+        if not frets or max(frets) - min(frets) <= MAX_PLAYABLE_SPAN:
+            return True
+    return False
+
+
+def playable_subset(notes: list[tuple[float, float, int]], tuning=STANDARD, max_fret=MAX_FRET) -> list[tuple[float, float, int]]:
+    """Drop the fewest notes so that every chord (notes starting together) can be fingered: at most
+    one note per string, within MAX_PLAYABLE_SPAN frets. For transcriptions, which can contain notes
+    no hand reaches together (octave doublings, bleed from other instruments)."""
+    keep = []
+    for group in group_chords(notes):
+        idx = sorted(group, key=lambda i: notes[i][2])[: len(tuning) + 2]
+        best = None
+        for size in range(len(idx), 0, -1):
+            for sub in itertools.combinations(idx, size):
+                if _playable([notes[i][2] for i in sub], tuning, max_fret):
+                    best = sub
+                    break
+            if best:
+                break
+        keep.extend(best or [])
+    return [notes[i] for i in sorted(keep)]
+
+
 def assign_frets(notes: list[tuple[float, float, int]], tuning=STANDARD, max_fret=MAX_FRET, note_cost=None) -> list[TabNote]:
     """Strings and frets for (onset, offset, midi pitch) notes, by the fingering search.
 
