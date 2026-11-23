@@ -13,8 +13,9 @@ for comparing methods with each other, not absolute quality.
 Methods: YourMT3+ on the mix (transcription/real_ymt3), htdemucs_6s + Basic Pitch + ADTOF
 (computed here: python test_real_transcription.py pipeline).
 
-Usage: python test_real_transcription.py pipeline     (venv with demucs, basic_pitch, adtof; GPU)
-       python test_real_transcription.py              (writes results/real_transcription.json)
+Usage: python test_real_transcription.py separate      (Demucs; separate process from the next step)
+       python test_real_transcription.py transcribe    (Basic Pitch, ADTOF)
+       python test_real_transcription.py               (writes results/real_transcription.json)
 """
 
 import json
@@ -26,7 +27,6 @@ import numpy as np
 import pretty_midi
 
 from common import DATA, DEVICE, save_result
-from test_import_alignment import CACHE, norm
 from test_multitrack import FAMILIES, RANGES, STEM_FAMILY, _write_midi, drum_f, family
 
 RESULTS = Path(__file__).with_name("results") / "import_alignment.json"
@@ -52,6 +52,8 @@ def lakh_path(song: str, midi_name: str) -> Path:
 
 
 def reference(song: str, midi_name: str) -> dict[str, np.ndarray]:
+    from test_import_alignment import CACHE, norm  # pandas / synctoolbox: kept out of the TensorFlow stage
+
     path = np.load(CACHE / f"synctoolbox__{song}__{norm(Path(midi_name).stem)}.npz")
     audio_t, score_t = path["audio_t"], path["score_t"]
     order = np.argsort(score_t)
@@ -82,24 +84,35 @@ def note_f(ref: np.ndarray, est: np.ndarray, pitch_class: bool) -> float:
         r[:, :2], hz(r[:, 2]), e[:, :2], hz(e[:, 2]), onset_tolerance=0.1, offset_ratio=None)[2])
 
 
-def pipeline() -> None:
+def separate() -> None:
+    """Stage 1 (PyTorch only: Demucs and TensorFlow in one process crash)."""
     import soundfile as sf
+
+    from test_separation import demucs_separate
+
+    for song, _ in selected():
+        stem_dir = WORK / "stems" / "real_htdemucs_6s" / song
+        if (stem_dir / "drums.wav").exists():
+            continue
+        mix, sr = sf.read(Path(DATA, "songs", f"{song}.wav"), always_2d=True)
+        stem_dir.mkdir(parents=True, exist_ok=True)
+        for stem, audio in demucs_separate("htdemucs_6s", mix, sr, DEVICE).items():
+            sf.write(stem_dir / f"{stem}.wav", audio, sr, subtype="FLOAT")
+        print("separated", song, flush=True)
+
+
+def transcribe() -> None:
+    """Stage 2: Basic Pitch per stem, ADTOF on the drum stem."""
     from adtof_pytorch import transcribe_to_midi
     from basic_pitch import ICASSP_2022_MODEL_PATH
     from basic_pitch.inference import Model, predict
 
-    from test_separation import demucs_separate
-
     model = Model(ICASSP_2022_MODEL_PATH)
     for song, _ in selected():
         out = WORK / "real_bp_demucs" / f"{song}.mid"
-        if out.exists():
-            continue
-        mix, sr = sf.read(Path(DATA, "songs", f"{song}.wav"), always_2d=True)
         stem_dir = WORK / "stems" / "real_htdemucs_6s" / song
-        stem_dir.mkdir(parents=True, exist_ok=True)
-        for stem, audio in demucs_separate("htdemucs_6s", mix, sr, DEVICE).items():
-            sf.write(stem_dir / f"{stem}.wav", audio, sr, subtype="FLOAT")
+        if out.exists() or not (stem_dir / "drums.wav").exists():
+            continue
         notes: dict[str, list] = {}
         for wav in sorted(stem_dir.glob("*.wav")):
             fam = STEM_FAMILY[wav.stem]
@@ -112,7 +125,7 @@ def pipeline() -> None:
                 _, _, events = predict(str(wav), model, minimum_frequency=lo, maximum_frequency=hi, melodia_trick=fam in ("bass", "lead"))
                 notes.setdefault(fam, []).extend((e[0], e[1], e[2]) for e in events)
         _write_midi(out, notes)
-        print("pipeline", song, flush=True)
+        print("transcribed", song, flush=True)
 
 
 def main() -> None:
@@ -142,7 +155,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "pipeline":
-        pipeline()
-    else:
-        main()
+    {"separate": separate, "transcribe": transcribe, "evaluate": main}[sys.argv[1] if len(sys.argv) > 1 else "evaluate"]()

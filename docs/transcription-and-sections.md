@@ -9,9 +9,9 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 | Function | Today in the app | Best option found | Measured | Recommendation |
 |---|---|---|---|---|
 | Song sections | none | SongFormer (2025) | *pending* (human agreement ceiling: 64 % of section starts within 0.5 s) | *pending* |
-| Notes per instrument | none | YourMT3+ (one model, all instruments) vs Demucs + Basic Pitch | Demucs + Basic Pitch: 0.43 note F over all pitched notes, keys 0.10 | *pending* |
+| Notes per instrument | none | YourMT3+ (one model, all instruments) and Demucs + Basic Pitch + ADTOF, combined per instrument | note F on full mixes: bass 0.47, guitar 0.49 (Demucs + Basic Pitch), keys 0.32, leads 0.23 (YourMT3+), drums 0.95 (ADTOF) | combine; present as a draft to correct; test MuScriptor |
 | Tabs (strings and frets) | none | fingering search + a network that hears the string (written here) | real guitar: 89 % of notes on the guitarist's string (search alone 58 %, lowest fret 33 %); tab F 0.83 from YourMT3+ notes | use both; check the network on other guitars first |
-| Notation (bars, rhythm) | none | beat-grid quantization → Guitar Pro 5 → alphaTab | 94–100 % of correctly transcribed notes at the exact score position | use it |
+| Notation (bars, rhythm) | none | beat-grid quantization → Guitar Pro 5 → alphaTab (written here) | correctly found notes: 87–100 % at the exact score position with the true beats; rhythm within the beat right for 89–100 % with the app's own grid | use it, after the user has checked the grid |
 | Chords | chroma templates | madmom CNN + CRF | real guitar recordings: 58 % → 76 % of the time right | switch |
 | Key | none | madmom CNN | real recordings: 64 % exact, 78 % among the best two (librosa templates: 49 % / 70 %) | madmom; show the two best keys |
 | Tuning | librosa | librosa | real recordings: median 4 cents off A440, 12 % more than 15 cents | keep; correct before transcribing (*pending*) |
@@ -19,7 +19,7 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 ## What exists in 2026
 
 **Multi-instrument transcription**
-- [YourMT3+](https://arxiv.org/abs/2407.04822) (Chang et al., MLSP 2024; [code and weights](https://huggingface.co/spaces/mimbres/YourMT3), Apache-2.0): one model for 13 instrument classes, including drums and singing voice. Not a pip package; it runs from the Space's code ([yourmt3_runner.py](../experiments/yourmt3_runner.py)). 561 MB checkpoint, ~36 s per song on this laptop's GPU when plugged in.
+- [YourMT3+](https://arxiv.org/abs/2407.04822) (Chang et al., MLSP 2024; [code and weights](https://huggingface.co/spaces/mimbres/YourMT3), Apache-2.0): one model for 13 instrument classes, including drums and singing voice. Not a pip package; it runs from the Space's code ([yourmt3_runner.py](../experiments/yourmt3_runner.py)). 561 MB checkpoint, 15–40 s per song on this laptop's GPU when plugged in (its decoder is autoregressive: dense songs take longer).
 - [MuScriptor](https://huggingface.co/papers/2607.08168) (Mirelo / Kyutai, July 2026): the strongest open model reported so far (its model card: onset F 60.4 vs 32.5 for YourMT3+ on its benchmark). Inference code MIT, but the weights are **CC BY-NC 4.0 and gated** ([model card](https://huggingface.co/MuScriptor/muscriptor-large)): downloading needs a Hugging Face account that accepts the terms. Not tested here; worth testing with the user's token.
 - [Basic Pitch](https://github.com/spotify/basic-pitch) (Apache-2.0) per separated stem, ADTOF for drums: the pipeline the implementation report planned.
 - The [2025 AMT Challenge](https://arxiv.org/pdf/2603.27528) found multi-instrument transcription still far from solved: a YourMT3 variant ranked near the top, and scores drop sharply on dense mixes.
