@@ -10,7 +10,7 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 |---|---|---|---|---|
 | Song sections | none | SongFormer (2025) | *pending* (human agreement ceiling: 64 % of section starts within 0.5 s) | *pending* |
 | Notes per instrument | none | YourMT3+ (one model, all instruments) vs Demucs + Basic Pitch | Demucs + Basic Pitch: 0.43 note F over all pitched notes, keys 0.10 | *pending* |
-| Tabs (strings and frets) | none | fingering search (written here) | 58 % of notes on the guitarist's string (lowest-fret rule: 33 %) | use it; try audio-informed string choice (*pending*) |
+| Tabs (strings and frets) | none | fingering search + a network that hears the string (written here) | real guitar: 89 % of notes on the guitarist's string (search alone 58 %, lowest fret 33 %); tab F 0.83 from YourMT3+ notes | use both; check the network on other guitars first |
 | Notation (bars, rhythm) | none | beat-grid quantization → Guitar Pro 5 → alphaTab | 94–100 % of correctly transcribed notes at the exact score position | use it |
 | Chords | chroma templates | madmom CNN + CRF | real guitar recordings: 58 % → 76 % of the time right | switch |
 | Key | none | madmom CNN | real recordings: 64 % exact, 78 % among the best two (librosa templates: 49 % / 70 %) | madmom; show the two best keys |
@@ -88,7 +88,16 @@ Note F-measure: right pitch, onset within 50 ms. Drums: onset F per drum (kick, 
 
 - Both transcribers saw parts of GuitarSet in training, so their note scores are optimistic. The string choice is not learned by either.
 - **The string is the bottleneck**: [tablature.py](../experiments/tablature.py) chooses strings by a fingering search (hand span, position, movement between chords; Viterbi), tuned on guitarists 00–04: 58 % on guitarist 05 vs 33 % for "lowest fret". Many "wrong" strings are equally playable alternatives; a guitarist would accept them, the metric does not.
-- Next: hearing the string ([test_string_model.py](../experiments/test_string_model.py), a TabCNN-style network combined with the search; *pending*).
+**Hearing the string** ([test_string_model.py](../experiments/test_string_model.py)): the same pitch sounds different on different strings. A small TabCNN-style network (CQT frames → for each string, which fret or silence; trained on guitarists 00–04; about an hour on the CPU including feature extraction) gives each candidate string/fret a probability; the fingering search adds it to its playability costs.
+
+| Guitarist 05 (held out) | Right string (true notes) | Tab F from Basic Pitch notes | Tab F from YourMT3+ notes |
+|---|---|---|---|
+| fingering search alone | 0.58 | 0.38 | 0.46 |
+| network alone | 0.88 | – | – |
+| **search + network** | **0.89** | **0.71** | **0.83** |
+
+- The network nearly doubles the share of right strings. The search still matters for playability (it keeps chord shapes possible), but the sound decides.
+- **Caveat:** all of GuitarSet was played on one acoustic guitar with the same microphone. The network may have learned *that* guitar. Before relying on it, test it on other guitars (IDMT-SMT-Guitar, EGDB: electric, other instruments) and on Demucs guitar stems from band mixes, and train on a mix of them.
 
 ### Notation
 [notation.py](../experiments/notation.py) places notes on the beat grid (sixteenths or triplets per beat), fills short gaps, splits notes at bar lines with ties, and writes Guitar Pro 5 (tab + notation for guitar and bass, percussion for drums). alphaTab renders it ([render_notation.py](../experiments/render_notation.py)).

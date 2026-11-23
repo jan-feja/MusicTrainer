@@ -15,7 +15,7 @@ Methods (each writes MT_DATA/structure/outputs/<method>/<set>__<name>.json):
 Post-processing (method name + "+bars"): every boundary moved to the nearest bar start
 (Beat This! downbeats) when one is within 2 s, as the app would show it.
   songformer_bars  SongFormer's frame outputs decided at bar starts (songformer_bars()), with a
-                   lag and threshold tuned on Harmonix only
+                   lag and threshold tuned on the score songs only
 
 Usage:
   python test_structure.py beats        Beat This! beats and bar starts of every song (cache)
@@ -203,11 +203,12 @@ def songformer_bars(song: sc.Song, lag: float, threshold: float, min_bars: int =
 
 
 def tune_songformer_bars() -> dict:
-    """lag and threshold that maximize HR.5F + HR3F on the Harmonix songs (the model's own training
-    songs: a development set; SALAMI and the score songs stay untouched)."""
-    songs = [s for s in sc.load_manifest() if s.set == "harmonix"]
+    """lag and threshold that maximize HR.5F + HR3F on the score songs (exact section starts, in no
+    model's training data). Not on Harmonix: SongFormer was trained on those songs and puts their
+    boundaries ~1.7 s early, a bias it does not have on unseen music (SALAMI: -0.17 s)."""
+    songs = [s for s in sc.load_manifest() if s.set == "score"]
     best = None
-    for lag in (0.0, 0.5, 1.0, 1.5, 2.0, 2.5):
+    for lag in (-1.0, -0.5, 0.0, 0.5, 1.0):
         for threshold in (0.1, 0.2, 0.3, 0.4, 0.5):
             rows = [sc.evaluate((s.starts, s.labels, s.end), est) for s in songs
                     if (est := songformer_bars(s, lag, threshold)) is not None]
@@ -215,13 +216,13 @@ def tune_songformer_bars() -> dict:
                 continue
             score = float(np.mean([r["HR.5F"] + r["HR3F"] for r in rows]))
             if best is None or score > best[0]:
-                best = (score, lag, threshold)
-    return {"lag": best[1], "threshold": best[2]} if best else {}
+                best = (score, lag, threshold, len(rows))
+    return {"lag": best[1], "threshold": best[2], "tuned_on_songs": best[3]} if best else {}
 
 
 def write_songformer_bars() -> None:
     params = tune_songformer_bars()
-    print("songformer_bars tuned on Harmonix:", params)
+    print("songformer_bars tuned on the score songs:", params)
     for song in sc.load_manifest():
         est = songformer_bars(song, params["lag"], params["threshold"])
         if est is not None:
