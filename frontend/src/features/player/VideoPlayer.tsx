@@ -22,6 +22,8 @@ import {
 } from '../beats/beatGrid'
 import type { BeatTracking } from '../beats/useBeatTracking'
 import { useSnapMode } from '../beats/useSnapMode'
+import { MetronomeControls } from '../metronome/MetronomeControls'
+import { useMetronome } from '../metronome/useMetronome'
 import {
   initialLoopState,
   storedPosition,
@@ -193,6 +195,16 @@ export function VideoPlayer({
     },
     clock: () => stemPlayer.current?.position() ?? gaplessLoop.current?.position() ?? null,
   })
+  // while the gapless loop or the stems play the sound, they also move the muted video
+  const videoFollowsOtherSound = () =>
+    Boolean(gaplessLoop.current?.active || stemPlayer.current?.active)
+  const metronome = useMetronome(
+    videoRef,
+    grid,
+    playedRegion,
+    playback.getCurrentTime,
+    videoFollowsOtherSound,
+  )
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
   const recovery = useVideoRecovery(videoRef, src)
   const duration = playback.duration
@@ -500,6 +512,17 @@ export function VideoPlayer({
               lengthLabel={lengthLabel}
             />
             <ZoomControls zoom={zoom} region={region} />
+          </div>
+          <div className={controlStyles.row}>
+            <MetronomeControls
+              available={grid !== null}
+              enabled={metronome.enabled}
+              starting={metronome.starting}
+              volume={metronome.volume}
+              error={metronome.error}
+              onToggle={metronome.toggle}
+              onVolumeChange={metronome.setVolume}
+            />
           </div>
           {practice && (
             <div className={controlStyles.row}>

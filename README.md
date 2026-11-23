@@ -19,6 +19,9 @@ An app for practising music with songs. The idea and planned features are in [do
       - **‹ Bar start ›**: the bar starts are on the wrong beat from here on (e.g. after a 2/4 bar)
       - **Steady**: the song is played to a click, so all beats are spaced exactly evenly
     - the song's tempo is shown at the current speed
+  - **metronome**: switch it on once beats are detected to hear a synthesized click on each beat,
+    with a higher click on bar starts. It follows playback speed, seeks and loops; its volume is
+    separate from the video's volume. It starts off for each video and does not save its settings.
   - **saved loops**, kept with the video, as many as you like:
     - **+ Save loop** (S) keeps the current loop with its snap and speed; it gets a name (double-click to rename)
     - pick one (or press 1–9): its snap and speed are set, playback goes to its start and the timeline zooms to it
@@ -61,7 +64,8 @@ frontend/       Browser UI (React + TypeScript + Vite)
     app/          app shell: routes, header
     components/   shared UI pieces (video card, grid, progress bar, ...)
     features/     search/, library/, downloads/, player/ (player, A–B loop, gapless loop audio, speed, zoom),
-                  beats/ (beat grid, snapping), practice/ (saved loops, player settings kept with the video),
+                  beats/ (beat grid, snapping), metronome/ (beat-synced clicks),
+                  practice/ (saved loops, player settings kept with the video),
                   stems/ (stem player, mixer, track lanes), chords/ (chord lane)
     lib/          small helpers and hooks
 docs/           planning documents, app survey, implementation report
@@ -170,6 +174,16 @@ Environment variables, or a `.env` file in the folder you start the backend from
 - **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, `stems/` (a FLAC per stem and `stems.json`), `chords.json`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left, incl. the mixer).
 - **Saved loops and settings:** the player loads them with the video (`GET /api/library/<id>/loops` and `/settings`) and stores changes a moment later (`PUT`, the whole list or settings at once; whatever is pending is sent when the page is left).
 - **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`.
+- **Metronome:** synthesized Web Audio clicks are scheduled ahead on the audio clock using the
+  detected beat and bar times: every 25 ms, the clicks of the next 0.2 s. It follows the gapless
+  loop's sound clock when that takes over. Chrome moves `video.currentTime` in uneven steps
+  (±5 ms) and holds it still for ~40 ms after playback starts, so the clicks are planned from a
+  fixed song position whose audio-clock time is averaged over about half a second, and each beat
+  falls into exactly one plan. Planned from the raw reading, about one beat in ten got two clicks or
+  none and the spacing varied by ±4 ms; now none, ±0.3 ms (measured in Chrome on a song at 1×).
+  No sound samples are downloaded. It requires a detected beat grid and a browser with Web Audio;
+  its timing depends on the accuracy of the detected grid and may be affected by browser audio or
+  background-tab scheduling.
 - **Gapless loops** (`frontend/src/features/player/gaplessLoop.ts`): seeking the `<video>` back to A silences it while the browser's media pipeline restarts, 5–190 ms per jump on the library songs. So the loop's sound comes from Web Audio instead:
   1. When A is set, the browser fetches the audio around it once (`GET /api/library/<id>/audio?start=&end=`, a WAV cut sample-exactly by ffmpeg, about 0.2 s for 40 s of audio).
   2. When the video reaches B, a [Signalsmith Stretch](https://github.com/Signalsmith-Audio/signalsmith-stretch) node (MIT, WebAssembly in an AudioWorklet) takes over the sound, exactly at B. It loops the audio sample-exactly and keeps the pitch at any speed.

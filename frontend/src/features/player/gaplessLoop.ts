@@ -109,6 +109,7 @@ export class GaplessLoop {
     this.video = video
     this.audioUrl = audioUrl
     const listeners: [string, () => void][] = [
+      ['durationchange', this.onDurationChange],
       ['pause', this.onPause],
       ['play', this.onPlay],
       ['seeking', this.onSeeking],
@@ -357,6 +358,8 @@ export class GaplessLoop {
   private volume(): number {
     return this.video.muted ? 0 : this.video.volume
   }
+
+  private readonly onDurationChange = () => this.load()
 
   private readonly onSeeking = () => {
     if (this.isOwnSeek()) return

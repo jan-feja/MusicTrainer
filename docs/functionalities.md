@@ -5,6 +5,7 @@ Basic Functionality:
 - get the audio (+ video) file from the internet (youtube) and store it locally
 - set playback speed (relative and bmp - need to get bpm from the track)
 - set practice loops (beat synchronized - need to get beats from the track)
+- beat-synchronized metronome with a bar-start accent and separate volume
 - separate tracks (drums, vocals, guitar, bass, ... - do not know how to do it yet / how reliably it can be done), mute / solo given tracks
 
 Additional functionality:

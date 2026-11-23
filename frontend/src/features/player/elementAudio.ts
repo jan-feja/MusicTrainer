@@ -49,14 +49,8 @@ export function releaseElementAudio(video: HTMLMediaElement): void {
   }
 }
 
-/** The audio-clock time being heard right now. */
-export function heardTime(context: AudioContext): number {
-  const { contextTime, performanceTime } = context.getOutputTimestamp()
-  if (!contextTime || !performanceTime) {
-    return context.currentTime - context.baseLatency - (context.outputLatency || 0)
-  }
-  return contextTime + (performance.now() - performanceTime) / 1000
-}
+/** The audio-clock time being heard right now (shared with the metronome). */
+export { heardTime } from './audioClock'
 
 export function fadeTo(gain: GainNode, value: number, at: number, fade = FADE): void {
   const start = Math.max(gain.context.currentTime, at - fade)
