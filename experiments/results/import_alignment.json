@@ -11,6 +11,18 @@
    "within_100ms_mean": 0.757,
    "within_100ms_median": 0.785,
    "files_over_80pct": 2
+  },
+  "via_notes": {
+   "files": 8,
+   "within_100ms_mean": 0.59,
+   "within_100ms_median": 0.574,
+   "files_over_80pct": 0
+  },
+  "via_notes+beats": {
+   "files": 8,
+   "within_100ms_mean": 0.689,
+   "within_100ms_median": 0.672,
+   "files_over_80pct": 0
   }
  },
  "per_file": {
@@ -24,6 +36,16 @@
     "within_100ms": 0.7853839037927844,
     "median_ms": 12.8503613134896,
     "coverage": 1.0
+   },
+   "via_notes": {
+    "within_100ms": 0.5069380203515264,
+    "median_ms": 96.46636131313358,
+    "coverage": 1.0
+   },
+   "via_notes+beats": {
+    "within_100ms": 0.6327474560592045,
+    "median_ms": 19.797638686497976,
+    "coverage": 1.0
    }
   },
   "0027_blackened/Blackened.2.mid": {
@@ -35,6 +57,16 @@
    "synctoolbox+beats": {
     "within_100ms": 0.7853839037927844,
     "median_ms": 12.8503613134896,
+    "coverage": 1.0
+   },
+   "via_notes": {
+    "within_100ms": 0.5069380203515264,
+    "median_ms": 96.46636131313358,
+    "coverage": 1.0
+   },
+   "via_notes+beats": {
+    "within_100ms": 0.6327474560592045,
+    "median_ms": 19.797638686497976,
     "coverage": 1.0
    }
   },
@@ -48,6 +80,16 @@
     "within_100ms": 0.788159111933395,
     "median_ms": 12.8503613134896,
     "coverage": 1.0
+   },
+   "via_notes": {
+    "within_100ms": 0.5143385753931545,
+    "median_ms": 90.87130535320398,
+    "coverage": 1.0
+   },
+   "via_notes+beats": {
+    "within_100ms": 0.6392229417206291,
+    "median_ms": 19.681361313487855,
+    "coverage": 1.0
    }
   },
   "0065_deadandbloated/Dead & Bloated.1.mid": {
@@ -59,6 +101,16 @@
    "synctoolbox+beats": {
     "within_100ms": 0.9391025641025641,
     "median_ms": 39.652000000003795,
+    "coverage": 1.0
+   },
+   "via_notes": {
+    "within_100ms": 0.6858974358974359,
+    "median_ms": 55.46232601019696,
+    "coverage": 1.0
+   },
+   "via_notes+beats": {
+    "within_100ms": 0.7756410256410257,
+    "median_ms": 48.70032601018437,
     "coverage": 1.0
    }
   },
@@ -72,6 +124,16 @@
     "within_100ms": 0.9391025641025641,
     "median_ms": 39.652000000003795,
     "coverage": 1.0
+   },
+   "via_notes": {
+    "within_100ms": 0.6858974358974359,
+    "median_ms": 55.46232601019696,
+    "coverage": 1.0
+   },
+   "via_notes+beats": {
+    "within_100ms": 0.7756410256410257,
+    "median_ms": 48.70032601018437,
+    "coverage": 1.0
    }
   },
   "0110_girlsandboys/Girls & Boys.1.mid": {
@@ -83,6 +145,16 @@
    "synctoolbox+beats": {
     "within_100ms": 0.740484429065744,
     "median_ms": 29.363365079404957,
+    "coverage": 1.0
+   },
+   "via_notes": {
+    "within_100ms": 0.6020761245674741,
+    "median_ms": 60.023365079103996,
+    "coverage": 1.0
+   },
+   "via_notes+beats": {
+    "within_100ms": 0.7024221453287197,
+    "median_ms": 29.859365079389022,
     "coverage": 1.0
    }
   },
@@ -96,6 +168,16 @@
     "within_100ms": 0.7577854671280276,
     "median_ms": 29.19536507940279,
     "coverage": 1.0
+   },
+   "via_notes": {
+    "within_100ms": 0.6678200692041523,
+    "median_ms": 53.31079365082303,
+    "coverage": 1.0
+   },
+   "via_notes+beats": {
+    "within_100ms": 0.7093425605536332,
+    "median_ms": 29.21936507939904,
+    "coverage": 1.0
    }
   },
   "0566_americanwoman/American Woman.mid": {
@@ -107,6 +189,16 @@
    "synctoolbox+beats": {
     "within_100ms": 0.3194888178913738,
     "median_ms": 251.72016623155002,
+    "coverage": 1.0
+   },
+   "via_notes": {
+    "within_100ms": 0.5463258785942492,
+    "median_ms": 81.14583376862994,
+    "coverage": 1.0
+   },
+   "via_notes+beats": {
+    "within_100ms": 0.6421725239616614,
+    "median_ms": 16.491833768640163,
     "coverage": 1.0
    }
   }

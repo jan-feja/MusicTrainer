@@ -87,6 +87,15 @@ Note F-measure: right pitch, onset within 50 ms. Drums: onset F per drum (kick, 
 - Separation costs a third of the notes; keys and leads mostly vanish with Demucs + Basic Pitch (Demucs's piano stem fails, as the implementation report found).
 - Best per instrument so far: bass and guitar from Demucs + Basic Pitch, keys and leads from YourMT3+, drums from ADTOF.
 
+**Real recordings (rough check).** Three real songs whose fan-made Lakh MIDI file aligned well (Blackened, Dead & Bloated, Girls & Boys; [test_real_transcription.py](../experiments/test_real_transcription.py)) give an approximate answer key. It is rough: arrangements differ, octaves too, and the alignment is ~45 ms off. So: onset within 100 ms, exact pitch / pitch class (octave forgiven).
+
+| Real songs | Bass | Guitar | Keys | Lead / voice | Drums |
+|---|---|---|---|---|---|
+| htdemucs_6s → Basic Pitch / ADTOF | **0.18 / 0.29** | **0.14 / 0.20** | 0.07 / 0.19 | 0.05 / 0.11 | **0.51** |
+| YourMT3+ on the mix | 0.03 / 0.06 | 0.07 / 0.12 | 0.06 / 0.25 | 0.07 / 0.14 | 0.42 |
+
+The absolute numbers mostly measure the answer key. The comparison holds, though: on real rock mixes YourMT3+ falls apart for bass and guitar. On American Woman it wrote most of the distorted riff as strings and brass, and only 26 notes as guitar. Separation followed by per-stem transcription is the safer default; YourMT3+ only for parts nothing else finds (keys, leads).
+
 ### Tabs (GuitarSet guitarist 05, real recordings)
 | Notes from | Note F | Tab F (right string too) | Right string, of the notes found |
 |---|---|---|---|
@@ -148,7 +157,7 @@ Nine downloaded Harmonix songs have MIDI files in the [Lakh MIDI Dataset](https:
 | **mean of 8 files** | **0.71** | **0.76** |
 
 - Median error 42–64 ms where it works (the synthetic test in the implementation report: ~20 ms); the files for one song all aligned alike. American Woman's file is a different arrangement and fails.
-- Aligning via a transcription of the recording (notes vs notes): *pending*.
+- **Aligning via a transcription** (YourMT3+ notes of the recording vs the MIDI's notes, both symbolic) was worse: 0.59 of beats within 100 ms (0.69 snapped to beats), against 0.71 / 0.76 for aligning the audio directly. The transcription's errors hurt more than timbre does.
 
 ### Chords (GuitarSet comping, 180 excerpts, real recordings)
 | Method | Major / minor right (time) | Root right | Chord changes vs truth |

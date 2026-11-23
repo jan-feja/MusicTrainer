@@ -1,5 +1,17 @@
 {
  "summary": {
+  "ymt3_mix": {
+   "bass": 0.028,
+   "bass/pitch_class": 0.056,
+   "drums": 0.423,
+   "guitar": 0.071,
+   "guitar/pitch_class": 0.117,
+   "keys": 0.063,
+   "keys/pitch_class": 0.25,
+   "lead": 0.069,
+   "lead/pitch_class": 0.143,
+   "songs": 3
+  },
   "bp_demucs": {
    "bass": 0.179,
    "bass/pitch_class": 0.291,
@@ -14,6 +26,31 @@
   }
  },
  "per_song": {
+  "ymt3_mix": {
+   "0027_blackened (Blackened.mid)": {
+    "bass": 0.0,
+    "bass/pitch_class": 0.0,
+    "guitar": 0.102,
+    "guitar/pitch_class": 0.141,
+    "lead": 0.0,
+    "lead/pitch_class": 0.13,
+    "drums": 0.477
+   },
+   "0065_deadandbloated (Dead & Bloated.1.mid)": {
+    "lead": 0.137,
+    "lead/pitch_class": 0.156,
+    "drums": 0.296
+   },
+   "0110_girlsandboys (Girls & Boys.mid)": {
+    "bass": 0.055,
+    "bass/pitch_class": 0.112,
+    "guitar": 0.041,
+    "guitar/pitch_class": 0.094,
+    "keys": 0.063,
+    "keys/pitch_class": 0.25,
+    "drums": 0.496
+   }
+  },
   "bp_demucs": {
    "0027_blackened (Blackened.mid)": {
     "bass": 0.136,
