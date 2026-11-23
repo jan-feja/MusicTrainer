@@ -1,4 +1,5 @@
 import type {
+  Comment,
   FollowedPresets,
   BeatAnalysis,
   BeatGridHints,
@@ -253,6 +254,22 @@ export const api = {
       ...(limit && { limit: String(limit) }),
     })
     return request(`/feed?${query}`, { signal })
+  },
+
+  /** Newest first; `before`: the `createdAt` of the last comment of the previous page. */
+  listComments(videoId: string, before?: string, signal?: AbortSignal): Promise<Comment[]> {
+    const query = before ? `?${new URLSearchParams({ before })}` : ''
+    return request(`${videoPath(videoId)}/comments${query}`, { signal })
+  },
+
+  /** Needs an account. */
+  addComment(videoId: string, text: string): Promise<Comment> {
+    return request(`${videoPath(videoId)}/comments`, sendJson('POST', { text }))
+  },
+
+  /** Only the author's own comment. */
+  deleteComment(videoId: string, commentId: number): Promise<void> {
+    return request(`${videoPath(videoId)}/comments/${commentId}`, { method: 'DELETE' })
   },
 
   addToMyLibrary(videoId: string): Promise<void> {

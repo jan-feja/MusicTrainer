@@ -11,6 +11,7 @@ from music_trainer.models import USERNAME_PATTERN, User
 from music_trainer.services.accounts import Accounts
 from music_trainer.services.beat_analysis import BeatAnalysisManager
 from music_trainer.services.chord_detection import ChordDetectionManager
+from music_trainer.services.comments import Comments
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
 from music_trainer.services.practice_history import PracticeHistory
@@ -36,6 +37,7 @@ class Services:
     song_cleanup: SongCleanup
     profiles: Profiles
     practice_history: PracticeHistory
+    comments: Comments
 
 
 SESSION_COOKIE = "music_trainer_session"
@@ -93,6 +95,10 @@ def get_practice_history(request: Request) -> PracticeHistory:
     return get_services(request).practice_history
 
 
+def get_comments(request: Request) -> Comments:
+    return get_services(request).comments
+
+
 def session_token(request: Request) -> str | None:
     return request.cookies.get(SESSION_COOKIE)
 
@@ -127,6 +133,7 @@ UserLibraryDependency = Annotated[UserLibrary, Depends(get_user_library)]
 SongCleanupDependency = Annotated[SongCleanup, Depends(get_song_cleanup)]
 ProfilesDependency = Annotated[Profiles, Depends(get_profiles)]
 PracticeHistoryDependency = Annotated[PracticeHistory, Depends(get_practice_history)]
+CommentsDependency = Annotated[Comments, Depends(get_comments)]
 OptionalUser = Annotated[User | None, Depends(get_optional_user)]
 RequiredUser = Annotated[User, Depends(get_required_user)]
 VideoIdParameter = Annotated[

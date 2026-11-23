@@ -10,6 +10,8 @@ player settings for each. Guests have no rows; their library lives in the browse
     songs            per song: when a guest last used it (songs nobody has are deleted)
     follows          (follower, followed user): accepted, or a request to a private profile
     practice_days    (user, song, day): how long the user practiced the song that day
+    presets_made     (user, song, preset): a preset the user made, for the history and the feed
+    comments         what users wrote under a song; shown to everyone under the song
 """
 
 from datetime import UTC, date, datetime
@@ -152,6 +154,20 @@ class PresetMadeRow(Base):
     name: Mapped[str] = mapped_column(String(100))
     """Follows renames of the preset."""
     title: Mapped[str] = mapped_column(String(500))
+    created_at: Mapped[datetime] = mapped_column(index=True)
+
+
+class CommentRow(Base):
+    """A comment under a song; everyone sees it there, whoever wrote it."""
+
+    __tablename__ = "comments"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    video_id: Mapped[str] = mapped_column(String(20), index=True)
+    title: Mapped[str] = mapped_column(String(500))
+    """The song's title, for the feed (comments outlive the song's files)."""
+    text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(index=True)
 
 

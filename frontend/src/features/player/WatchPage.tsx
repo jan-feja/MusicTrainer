@@ -13,6 +13,7 @@ import { isValidVideoId } from '../../lib/youtube'
 import { useBeatTracking } from '../beats/useBeatTracking'
 import { useDownloadJob, useDownloads } from '../downloads/downloadsContext'
 import { DownloadPanel } from './DownloadPanel'
+import { Comments } from '../comments/Comments'
 import { useMyLibrary } from '../library/myLibrary'
 import { usePracticeStorage } from '../practice/usePracticeStorage'
 import { StarButton } from '../profile/StarButton'
@@ -145,6 +146,7 @@ function PracticePlayer({ video }: { video: LibraryVideo }) {
           )
         }
       />
+      <Comments videoId={video.videoId} />
     </>
   )
 }

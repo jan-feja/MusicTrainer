@@ -17,6 +17,7 @@ from music_trainer.api import (
     auth,
     beats,
     chords,
+    comments,
     downloads,
     feed,
     library,
@@ -35,6 +36,7 @@ from music_trainer.services.beat_analysis import BeatAnalysisManager
 from music_trainer.services.beats import BeatThisTracker, BeatTracker
 from music_trainer.services.chord_detection import ChordDetectionManager
 from music_trainer.services.chords import ChordDetector, LibrosaChordDetector
+from music_trainer.services.comments import Comments
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
 from music_trainer.services.practice_history import PracticeHistory
@@ -66,6 +68,7 @@ def create_app(
     user_library = UserLibrary(database)
     profiles = Profiles(database)
     practice_history = PracticeHistory(database)
+    song_comments = Comments(database)
     if youtube is None:
         _warn_about_missing_tools(settings)
         youtube = YtDlpClient(settings.max_video_height, settings.deno_path, settings.ffmpeg_path)
@@ -135,6 +138,7 @@ def create_app(
         song_cleanup,
         profiles,
         practice_history,
+        song_comments,
     )
 
     @app.get("/api/health", tags=["health"])
@@ -147,6 +151,7 @@ def create_app(
     app.include_router(users.router)
     app.include_router(feed.router)
     app.include_router(search.router)
+    app.include_router(comments.router)
     app.include_router(library.router)
     app.include_router(downloads.router)
     app.include_router(beats.router)

@@ -404,18 +404,37 @@ class ProfileSettings(ApiModel):
 
 
 class PracticeEntry(ApiModel):
-    """How long a user practiced a song on one day (UTC), or a preset they made of it."""
+    """How long a user practiced a song on one day (UTC), a preset they made of it,
+    or a comment they wrote under it."""
 
-    kind: Literal["practice", "preset"] = "practice"
+    kind: Literal["practice", "preset", "comment"] = "practice"
     video_id: str
     title: str
     day: date
     last_at: datetime
-    """When the song was last played that day, or when the preset was made."""
+    """When the song was last played that day, or when the preset or comment was made."""
     seconds: int
-    """0 for a preset."""
+    """0 for a preset or a comment."""
     preset: str | None = None
     """The preset's name."""
+    comment: str | None = None
+    """The comment's text."""
+
+
+MAX_COMMENT_LENGTH = 250
+
+
+class NewComment(ApiModel):
+    text: str = Field(min_length=1, max_length=MAX_COMMENT_LENGTH)
+
+
+class Comment(ApiModel):
+    """A comment under a song, shown to everyone there."""
+
+    id: int
+    username: str
+    text: str
+    created_at: datetime
 
 
 class FeedEntry(PracticeEntry):

@@ -1,5 +1,5 @@
 """What users practiced: one entry per user, song and day, with the time the music played,
-and one entry per preset they made.
+one entry per preset they made, and one per comment they wrote.
 
 The player reports the playing time in small parts; they add up in the day's
 entry, so opening a song ten times a day is still one entry. Entries under
@@ -9,6 +9,7 @@ A preset keeps its entry while it exists: renaming it renames the entry,
 deleting it removes the entry.
 
 The feed lists the newest entries of public profiles, or of the users one follows.
+(A private profile's comments still show to everyone under the song itself.)
 """
 
 from collections.abc import Callable
@@ -17,7 +18,14 @@ from typing import Literal, TypeVar
 
 from sqlalchemy import Select, delete, func, select
 
-from music_trainer.db import Database, FollowRow, PracticeDayRow, PresetMadeRow, UserRow
+from music_trainer.db import (
+    CommentRow,
+    Database,
+    FollowRow,
+    PracticeDayRow,
+    PresetMadeRow,
+    UserRow,
+)
 from music_trainer.models import FeedEntry, PracticeEntry, Preset
 from music_trainer.services.accounts import utc_now
 
@@ -87,13 +95,14 @@ class PracticeHistory:
         self, user_id: int, limit: int, before: datetime | None = None
     ) -> list[PracticeEntry]:
         """The user's entries, newest first; `before` continues an earlier page."""
-        practice, presets = _queries(before)
+        practice, presets, comments = _queries(before)
         with self._db.session() as session:
             practiced = session.scalars(
                 practice.where(PracticeDayRow.user_id == user_id).limit(limit)
             )
             made = session.scalars(presets.where(PresetMadeRow.user_id == user_id).limit(limit))
-            entries = [*map(_practiced, practiced), *map(_made, made)]
+            wrote = session.scalars(comments.where(CommentRow.user_id == user_id).limit(limit))
+            entries = [*map(_practiced, practiced), *map(_made, made), *map(_commented, wrote)]
         return _newest(entries, limit)
 
     def today_seconds(self, user_id: int) -> int:
@@ -122,7 +131,7 @@ class PracticeHistory:
     ) -> list[FeedEntry]:
         """The newest entries of public profiles ('everyone'), or of the users the viewer
         follows ('following', private ones too once they accepted)."""
-        practice, presets = _queries(before)
+        practice, presets, comments = _queries(before)
 
         def visible(query: Select, user_column: object) -> Select:  # type: ignore[type-arg]
             query = query.add_columns(UserRow.username).join(UserRow, UserRow.id == user_column)
@@ -136,26 +145,32 @@ class PracticeHistory:
         with self._db.session() as session:
             practiced = session.execute(visible(practice, PracticeDayRow.user_id).limit(limit))
             made = session.execute(visible(presets, PresetMadeRow.user_id).limit(limit))
+            wrote = session.execute(visible(comments, CommentRow.user_id).limit(limit))
             entries = [
                 *(
                     FeedEntry(**_practiced(row).model_dump(), username=name)
                     for row, name in practiced
                 ),
                 *(FeedEntry(**_made(row).model_dump(), username=name) for row, name in made),
+                *(FeedEntry(**_commented(row).model_dump(), username=name) for row, name in wrote),
             ]
         return _newest(entries, limit)
 
 
-def _queries(before: datetime | None) -> tuple[Select, Select]:  # type: ignore[type-arg]
-    """The shown practice days and the presets made, newest first (before `before`)."""
+def _queries(before: datetime | None) -> tuple[Select, Select, Select]:  # type: ignore[type-arg]
+    """The shown practice days, the presets made and the comments written, newest first
+    (before `before`)."""
     practice = select(PracticeDayRow).where(PracticeDayRow.seconds >= MIN_SHOWN_SECONDS)
     presets = select(PresetMadeRow)
+    comments = select(CommentRow)
     if before is not None:
         practice = practice.where(PracticeDayRow.last_at < before)
         presets = presets.where(PresetMadeRow.created_at < before)
+        comments = comments.where(CommentRow.created_at < before)
     return (
         practice.order_by(PracticeDayRow.last_at.desc()),
         presets.order_by(PresetMadeRow.created_at.desc()),
+        comments.order_by(CommentRow.created_at.desc()),
     )
 
 
@@ -182,4 +197,16 @@ def _made(row: PresetMadeRow) -> PracticeEntry:
         last_at=row.created_at,
         seconds=0,
         preset=row.name,
+    )
+
+
+def _commented(row: CommentRow) -> PracticeEntry:
+    return PracticeEntry(
+        kind="comment",
+        video_id=row.video_id,
+        title=row.title,
+        day=row.created_at.date(),
+        last_at=row.created_at,
+        seconds=0,
+        comment=row.text,
     )

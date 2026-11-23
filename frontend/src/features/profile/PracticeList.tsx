@@ -7,7 +7,7 @@ import { youtubeThumbnailUrl } from '../../lib/youtube'
 import { UserAvatar } from './UserAvatar'
 import styles from './Profile.module.css'
 
-/** A user's history: the songs practiced and the presets made, grouped by day, newest first. */
+/** A user's history: the songs practiced, the presets made and the comments written, grouped by day, newest first. */
 export function PracticeHistory({ entries }: { entries: readonly PracticeEntry[] }) {
   const days: { day: string; entries: PracticeEntry[] }[] = []
   for (const entry of entries) {
@@ -32,11 +32,7 @@ export function PracticeHistory({ entries }: { entries: readonly PracticeEntry[]
               {dayEntries.map((entry) => (
                 <li key={entryKey(entry)} className={styles.practiceRow}>
                   <SongLink entry={entry} />
-                  <span className={styles.practiceMeta}>
-                    {entry.kind === 'preset'
-                      ? `New preset “${entry.preset}”`
-                      : formatDuration(entry.seconds)}
-                  </span>
+                  <span className={styles.practiceMeta}>{historyMeta(entry)}</span>
                 </li>
               ))}
             </ul>
@@ -47,7 +43,7 @@ export function PracticeHistory({ entries }: { entries: readonly PracticeEntry[]
   )
 }
 
-/** What people practiced and the presets they made: who, which song, how long, when. */
+/** What people practiced, the presets they made and their comments: who, which song, how long, when. */
 export function FeedList({ entries }: { entries: readonly FeedEntry[] }) {
   return (
     <ul className={styles.practiceList}>
@@ -80,6 +76,22 @@ function SongLink({ entry }: { entry: PracticeEntry }) {
       <span className={styles.songTitle}>{entry.title}</span>
     </Link>
   )
+}
+
+function historyMeta(entry: PracticeEntry): string {
+  switch (entry.kind) {
+    case 'preset':
+      return `New preset “${entry.preset}”`
+    case 'comment':
+      return `Commented “${shorten(entry.comment ?? '', 40)}”`
+    case 'practice':
+      return formatDuration(entry.seconds)
+  }
+}
+
+function shorten(text: string, length: number): string {
+  const line = text.replace(/\s+/g, ' ').trim()
+  return line.length > length ? `${line.slice(0, length - 1).trimEnd()}…` : line
 }
 
 function entryKey(entry: PracticeEntry): string {

@@ -15,6 +15,7 @@ An app for practising music with songs. The idea and planned features are in [do
 - **Notifications** (the bell in the header): follow requests to accept or decline, new followers (with *Follow back*), and accepted requests; the count shows what is new since you last opened them
 - **Home** (`/`): a greeting with how long you practiced today (guests are invited to register), the latest of the feed, a few random songs from your library (`/library`) and a few from everyone else's, a few of the people you follow and a few public profiles to discover; all picked anew every visit, only full rows
 - **Feed**: what people practiced lately, from everyone with a public profile or only from the people you follow
+- **Comments** under every song: everyone reads them, an account writes them (up to 250 characters); they show in the feed like other activity, a private profile's only under the song; authors can delete their own
 - **Search** YouTube, or paste a video link.
 - **Download** videos into your library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
 - **Play** from the library:
@@ -65,15 +66,15 @@ backend/        Python server: REST API, YouTube access, video library, beats, s
     api/          HTTP routes: /api/auth, /api/me/library (the user's songs, presets, settings, stars),
                   /api/me (profile settings, notifications, followers, practice reports), /api/users/{name}
                   (profiles, following), /api/feed, /api/search,
-                  /api/library/random (a few songs for the home page), /api/library/{id} (a song: /media, /audio, /beats, /stems, /chords), /api/downloads
+                  /api/library/random (a few songs for the home page), /api/library/{id} (a song: /media, /audio, /beats, /stems, /chords, /comments), /api/downloads
     services/     accounts.py (users, passwords, login sessions), user_library.py (who has which song),
-                  profiles.py (description, privacy, follows), practice_history.py (history, feed),
+                  profiles.py (description, privacy, follows), practice_history.py (history, feed), comments.py (comments under songs),
                   song_cleanup.py (deletes songs nobody has), youtube.py (search, download), library.py (videos on disk), downloads.py (background jobs),
                   beats.py + beat_analysis.py (beat detection and its background job),
                   beat_decoding.py (beat grid from the network output), audio.py (ffmpeg decoding),
                   stems.py + stem_worker.py + stem_separation.py (Demucs in its own process, queue),
                   chords.py + chord_detection.py (chords on the beat grid and their background job)
-    db.py         the SQLite database (SQLAlchemy): users, sessions, library entries, follows, practice days
+    db.py         the SQLite database (SQLAlchemy): users, sessions, library entries, follows, practice days, comments
     config.py     settings, read from MUSIC_TRAINER_* environment variables
     models.py     data models shared by services and API
   tests/          pytest; tests/integration use the real YouTube and beat model (opt-in)
@@ -82,7 +83,7 @@ frontend/       Browser UI (React + TypeScript + Vite)
     api/          typed client for the backend API
     app/          app shell: routes, header
     components/   shared UI pieces (video card, grid, progress bar, ...)
-    features/     home/ (the home page), auth/ (login, register, settings), profile/ (profiles, stars, feed), search/, library/ (your library; a guest's is in
+    features/     home/ (the home page), auth/ (login, register, settings), profile/ (profiles, stars, feed), comments/ (under a song), search/, library/ (your library; a guest's is in
                   localStorage), downloads/, player/ (player, A–B loop, gapless loop audio, speed, zoom),
                   beats/ (beat grid, snapping), metronome/ (beat-synced clicks),
                   practice/ (presets, player settings kept with the song),

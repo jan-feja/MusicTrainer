@@ -253,8 +253,8 @@ export interface PracticeToday {
 
 /** How long a user practiced a song on one day (UTC). */
 export interface PracticeEntry {
-  /** Time spent with a song that day, or a preset made of it. */
-  kind: 'practice' | 'preset'
+  /** Time spent with a song that day, a preset made of it, or a comment written under it. */
+  kind: 'practice' | 'preset' | 'comment'
   videoId: string
   title: string
   /** YYYY-MM-DD */
@@ -265,6 +265,16 @@ export interface PracticeEntry {
   seconds: number
   /** The preset's name. */
   preset: string | null
+  /** The comment's text. */
+  comment: string | null
+}
+
+/** A comment under a song; everyone sees it, also a private profile's. */
+export interface Comment {
+  id: number
+  username: string
+  text: string
+  createdAt: string
 }
 
 /** The presets someone the user follows made of a song. */

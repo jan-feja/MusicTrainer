@@ -10,11 +10,13 @@ const entry = (kind: PracticeEntry['kind'], seconds: number, preset: string | nu
   lastAt: '2026-11-23T10:00:00Z',
   seconds,
   preset,
+  comment: kind === 'comment' ? 'Nice' : null,
 })
 
 describe('describeActivity', () => {
-  it('names the practice time or the new preset', () => {
+  it('names the practice time, the new preset or the comment', () => {
     expect(describeActivity(entry('practice', 300, null))).toBe('practiced for 5 min')
     expect(describeActivity(entry('preset', 0, 'Verse'))).toBe('created new preset “Verse”')
+    expect(describeActivity(entry('comment', 0, null))).toBe('commented “Nice”')
   })
 })

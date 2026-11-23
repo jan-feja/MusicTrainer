@@ -328,6 +328,7 @@ a.userName:hover,
 .feedLine {
   margin: 0;
   font-size: 0.9375rem;
+  overflow-wrap: anywhere;
 }
 
 /* feed tabs */
