@@ -121,7 +121,16 @@ The absolute numbers mostly measure the answer key. The comparison holds, though
   | fingering search alone | 0.50 / 0.51 / 0.54 | 0.49 | 0.36 |
   | + network trained on GuitarSet only | **0.65 / 0.68 / 0.65** | **0.67** | 0.41–0.43 |
 
-  The network still helps a lot (+12 to +18 points), but much less than on the guitar it was trained on (0.89). Training on several guitars: see *cross-guitar* below (*pending*). The scales are a deliberate worst case: chromatic runs up one string, which no fingering rule would choose.
+  The network still helps a lot (+12 to +18 points), but much less than on the guitar it was trained on (0.89). The scales are a deliberate worst case: chromatic runs up one string, which no fingering rule would choose.
+- **Trained on several guitars** (`cross-guitar`: GuitarSet 00–04 + IDMT Aristides, Stratocaster and Ibanez; tested on the Les Paul, held out):
+
+  | Right string | Les Paul licks | Les Paul scales | GuitarSet guitarist 05 |
+  |---|---|---|---|
+  | fingering search alone | 0.54 | 0.36 | 0.58 |
+  | network trained on GuitarSet only | 0.65 | 0.43 | 0.89 |
+  | **network trained on several guitars** | **0.83** | **0.52** | **0.89** |
+
+  Variety in training closes most of the gap without losing anything on GuitarSet. Caveat: the same licks, played by the same person on the other guitars, were in the training data, so part of the gain may be his fingering habits rather than the guitar's sound. A cleaner test needs a second player (EGDB).
 - Still to check: Demucs guitar stems from band mixes (separation artifacts, distortion, several guitars).
 
 ### Notation

@@ -1,0 +1,30 @@
+{
+ "dataset2/LP/search_only": {
+  "right_string": 0.0,
+  "notes": 10
+ },
+ "dataset2/LP/search_plus_network": {
+  "right_string": 1.0,
+  "notes": 10
+ },
+ "licks/LP/search_only": {
+  "right_string": 0.541,
+  "notes": 1146
+ },
+ "licks/LP/search_plus_network": {
+  "right_string": 0.834,
+  "notes": 1146
+ },
+ "scales/LP/search_only": {
+  "right_string": 0.357,
+  "notes": 126
+ },
+ "scales/LP/search_plus_network": {
+  "right_string": 0.524,
+  "notes": 126
+ },
+ "guitarset_05/search_plus_network": {
+  "right_string": 0.893,
+  "notes": 8715
+ }
+}
