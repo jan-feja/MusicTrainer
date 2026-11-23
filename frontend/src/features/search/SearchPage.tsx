@@ -7,7 +7,7 @@ import { VideoGrid } from '../../components/VideoGrid'
 import { errorMessage, formatViewCount } from '../../lib/format'
 import { useAsync } from '../../lib/useAsync'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
-import { DownloadButton } from '../downloads/DownloadButton'
+import { AddToLibraryButton } from '../downloads/AddToLibraryButton'
 
 const noResults = (): Promise<SearchResult[]> => Promise.resolve([])
 
@@ -51,10 +51,11 @@ export function SearchPage() {
             thumbnailUrl={result.thumbnailUrl}
             details={result.viewCount !== null ? formatViewCount(result.viewCount) : undefined}
             actions={
-              <DownloadButton
+              <AddToLibraryButton
                 videoId={result.videoId}
                 title={result.title}
-                isDownloaded={result.isDownloaded}
+                isOnServer={result.isDownloaded}
+                inAccountLibrary={result.inLibrary}
               />
             }
           />

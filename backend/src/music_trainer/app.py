@@ -4,25 +4,47 @@ import logging
 import shutil
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from datetime import timedelta
 from pathlib import Path
 
+from argon2 import PasswordHasher
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from music_trainer import __version__
-from music_trainer.api import beats, chords, downloads, library, search, stems
+from music_trainer.api import (
+    auth,
+    beats,
+    chords,
+    comments,
+    downloads,
+    feed,
+    library,
+    me,
+    me_profile,
+    search,
+    stems,
+    users,
+)
 from music_trainer.api.dependencies import Services
 from music_trainer.config import Settings
+from music_trainer.db import Database
+from music_trainer.services.accounts import Accounts
 from music_trainer.services.audio import ffmpeg_executable
 from music_trainer.services.beat_analysis import BeatAnalysisManager
 from music_trainer.services.beats import BeatThisTracker, BeatTracker
 from music_trainer.services.chord_detection import ChordDetectionManager
 from music_trainer.services.chords import ChordDetector, LibrosaChordDetector
+from music_trainer.services.comments import Comments
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
+from music_trainer.services.practice_history import PracticeHistory
+from music_trainer.services.profiles import Profiles
+from music_trainer.services.song_cleanup import SongCleanup
 from music_trainer.services.stem_separation import StemSeparationManager
 from music_trainer.services.stems import DemucsSeparator, StemSeparator
+from music_trainer.services.user_library import UserLibrary
 from music_trainer.services.youtube import YouTubeClient, YtDlpClient
 
 logger = logging.getLogger(__name__)
@@ -34,11 +56,19 @@ def create_app(
     beat_tracker: BeatTracker | None = None,
     stem_separator: StemSeparator | None = None,
     chord_detector: ChordDetector | None = None,
+    password_hasher: PasswordHasher | None = None,
 ) -> FastAPI:
-    """Create the app. Tests pass their own settings and fakes for YouTube and the models."""
+    """Create the app. Tests pass their own settings and fakes for YouTube and the models
+    (and a faster password hasher)."""
     settings = settings or Settings()
     video_library = Library(settings.library_dir)
     video_library.clear_staging()
+    database = Database(settings.database_path)
+    accounts = Accounts(database, timedelta(days=settings.session_days), hasher=password_hasher)
+    user_library = UserLibrary(database)
+    profiles = Profiles(database)
+    practice_history = PracticeHistory(database)
+    song_comments = Comments(database)
     if youtube is None:
         _warn_about_missing_tools(settings)
         youtube = YtDlpClient(settings.max_video_height, settings.deno_path, settings.ffmpeg_path)
@@ -63,6 +93,8 @@ def create_app(
     chord_detection = ChordDetectionManager(chord_detector, video_library)
 
     def after_download(video_id: str) -> None:
+        if song_cleanup.release(video_id):
+            return  # its last owner removed it from their library while it downloaded
         if settings.analyze_beats_after_download:
             beat_analysis.start(video_id)
         if settings.separate_stems_after_download:
@@ -71,14 +103,26 @@ def create_app(
     download_manager = DownloadManager(
         youtube, video_library, settings.max_parallel_downloads, on_completed=after_download
     )
+    song_cleanup = SongCleanup(
+        video_library,
+        user_library,
+        download_manager,
+        beat_analysis,
+        stem_separation,
+        chord_detection,
+        guest_keep=timedelta(days=settings.guest_song_days),
+    )
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        song_cleanup.start()  # deletes the songs nobody has, then checks every hour
         yield
+        song_cleanup.shutdown()
         download_manager.shutdown()
         beat_analysis.shutdown()
         stem_separation.shutdown()
         chord_detection.shutdown()
+        database.close()
 
     app = FastAPI(title="Music Trainer", version=__version__, lifespan=lifespan)
     app.state.services = Services(
@@ -89,13 +133,25 @@ def create_app(
         beat_analysis,
         stem_separation,
         chord_detection,
+        accounts,
+        user_library,
+        song_cleanup,
+        profiles,
+        practice_history,
+        song_comments,
     )
 
     @app.get("/api/health", tags=["health"])
     def health() -> dict[str, str]:
         return {"status": "ok", "version": __version__}
 
+    app.include_router(auth.router)
+    app.include_router(me.router)
+    app.include_router(me_profile.router)
+    app.include_router(users.router)
+    app.include_router(feed.router)
     app.include_router(search.router)
+    app.include_router(comments.router)
     app.include_router(library.router)
     app.include_router(downloads.router)
     app.include_router(beats.router)

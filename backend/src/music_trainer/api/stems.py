@@ -8,8 +8,10 @@ from fastapi.responses import FileResponse
 
 from music_trainer.api.dependencies import (
     LibraryDependency,
+    OptionalUser,
     StemSeparationDependency,
     VideoIdParameter,
+    require_account_to_change,
 )
 from music_trainer.models import STEM_NAME_PATTERN, StemSeparationState
 from music_trainer.services.library import VideoNotInLibraryError
@@ -40,12 +42,16 @@ def get_stems(
 def separate_stems(
     video_id: VideoIdParameter,
     separation: StemSeparationDependency,
+    user: OptionalUser,
     force: Annotated[bool, Query(description="Separate again even if stems exist")] = False,
 ) -> StemSeparationState:
     """Separate this song next (runs in the background, ~2 min per song on a CPU; poll GET).
 
     Called by the player for the open song: moves it to the front of the queue.
+    `force` needs an account (the stems are shared by everyone who has the song).
     """
+    if force:
+        require_account_to_change(user, "separate the song again")
     try:
         return separation.start(video_id, force=force, first=True)
     except VideoNotInLibraryError as error:

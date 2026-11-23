@@ -7,7 +7,7 @@ export function NotFoundPage() {
   useDocumentTitle('Page not found')
   return (
     <StatusMessage kind="info">
-      This page does not exist. <Link to={paths.library}>Go to your library</Link>.
+      This page does not exist. <Link to={paths.home}>Go to the home page</Link>.
     </StatusMessage>
   )
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { PlayerSettings, SavedLoop } from '../../api/types'
+import type { PlayerSettings } from '../../api/types'
 import { EMPTY_LOOP } from '../player/loop'
 import { initialLoopState, storedPosition } from './playerSettings'
 
@@ -12,35 +12,18 @@ const SETTINGS: PlayerSettings = {
   loopStart: null,
   loopEnd: null,
   loopEnabled: false,
-  activeLoopId: null,
-}
-
-const SAVED: SavedLoop = {
-  id: 'a',
-  name: 'Solo',
-  start: 60,
-  end: 66,
-  snapMode: 'bar',
-  playbackRate: 0.75,
+  activePresetId: null,
 }
 
 describe('initialLoopState', () => {
   it('starts empty without settings', () => {
-    expect(initialLoopState(null, null)).toEqual(EMPTY_LOOP)
-  })
-
-  it('takes the active saved loop', () => {
-    expect(initialLoopState({ ...SETTINGS, loopEnabled: true }, SAVED)).toEqual({
-      start: 60,
-      end: 66,
-      enabled: true,
-    })
+    expect(initialLoopState(null)).toEqual(EMPTY_LOOP)
   })
 
   it('takes the loop that was set, on or off', () => {
     const settings = { ...SETTINGS, loopStart: 10, loopEnd: 20, loopEnabled: false }
-    expect(initialLoopState(settings, null)).toEqual({ start: 10, end: 20, enabled: false })
-    expect(initialLoopState({ ...settings, loopEnd: null, loopEnabled: true }, null)).toEqual({
+    expect(initialLoopState(settings)).toEqual({ start: 10, end: 20, enabled: false })
+    expect(initialLoopState({ ...settings, loopEnd: null, loopEnabled: true })).toEqual({
       start: 10,
       end: null,
       enabled: false,
@@ -49,7 +32,7 @@ describe('initialLoopState', () => {
 
   it('drops an end that is not after the start', () => {
     const settings = { ...SETTINGS, loopStart: 10, loopEnd: 10, loopEnabled: true }
-    expect(initialLoopState(settings, null)).toEqual({ start: 10, end: null, enabled: false })
+    expect(initialLoopState(settings)).toEqual({ start: 10, end: null, enabled: false })
   })
 })
 

@@ -206,11 +206,15 @@ def wait_for_beats(client: TestClient, video_id: str, timeout: float = 5.0) -> d
     raise AssertionError(f"beat detection of {video_id} did not finish within {timeout} s")
 
 
-def wait_for_chords(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:
-    """Poll chord detection until it is no longer queued or running; return the final state."""
+def wait_for_chords(
+    client: TestClient, video_id: str, timeout: float = 5.0, grid: str | None = None
+) -> dict:
+    """Poll chord detection (on the grid, default the detected one) until it is no longer
+    queued or running; return the final state."""
+    params = {"grid": grid} if grid else {}
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
-        state = client.get(f"/api/library/{video_id}/chords").json()
+        state = client.get(f"/api/library/{video_id}/chords", params=params).json()
         if state["status"] not in ("queued", "analyzing"):
             return state
         time.sleep(0.02)

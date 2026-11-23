@@ -1,0 +1,13 @@
+.icon {
+  display: inline-grid;
+  place-items: center;
+}
+
+.icon[data-starred='true'] {
+  color: #f5b300;
+}
+
+/* a pressed button is drawn red by default: a star keeps its own look */
+.labelled[data-starred='true'] {
+  border-color: #f5b300;
+}

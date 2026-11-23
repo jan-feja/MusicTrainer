@@ -122,7 +122,7 @@ class TestStemsApi:
         client.post(STEMS_URL)
         assert fake_stem_separator.started.wait(timeout=5)
 
-        assert client.delete(f"/api/library/{VIDEO_ID}").status_code == 204
+        assert client.delete(f"/api/me/library/{VIDEO_ID}").status_code == 204
         assert fake_stem_separator.stopped == 1
         assert client.get(STEMS_URL).status_code == 404
 
@@ -164,7 +164,7 @@ class TestStemsApi:
         client.post(STEMS_URL)
         assert fake_stem_separator.started.wait(timeout=5)
         client.post(f"/api/library/{OTHER_VIDEO_ID}/stems")
-        assert client.delete(f"/api/library/{OTHER_VIDEO_ID}").status_code == 204
+        assert client.delete(f"/api/me/library/{OTHER_VIDEO_ID}").status_code == 204
 
         fake_stem_separator.release.set()
         assert wait_for_stems(client, VIDEO_ID)["status"] == "completed"

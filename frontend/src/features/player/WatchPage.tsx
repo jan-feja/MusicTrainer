@@ -10,10 +10,13 @@ import { useAsync } from '../../lib/useAsync'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
 import { useOnChange } from '../../lib/useOnChange'
 import { isValidVideoId } from '../../lib/youtube'
-import { type BeatTracking, useBeatTracking } from '../beats/useBeatTracking'
+import { useBeatTracking } from '../beats/useBeatTracking'
 import { useDownloadJob, useDownloads } from '../downloads/downloadsContext'
 import { DownloadPanel } from './DownloadPanel'
+import { Comments } from '../comments/Comments'
+import { useMyLibrary } from '../library/myLibrary'
 import { usePracticeStorage } from '../practice/usePracticeStorage'
+import { StarButton } from '../profile/StarButton'
 import { VideoDetails } from './VideoDetails'
 import { type PlayerPractice, VideoPlayer } from './VideoPlayer'
 import styles from './WatchPage.module.css'
@@ -34,7 +37,6 @@ function WatchVideo({ videoId }: { videoId: string }) {
   const job = useDownloadJob(videoId)
   const video = useAsync((signal) => api.getVideo(videoId, signal), videoId)
   const [startError, setStartError] = useState<string | null>(null)
-  const beatTracking = useBeatTracking(videoId, video.status === 'success')
 
   const isMissing = video.status === 'error' && isNotFoundError(video.error)
   const title =
@@ -56,8 +58,7 @@ function WatchVideo({ videoId }: { videoId: string }) {
   if (video.status === 'success') {
     return (
       <article className={styles.page}>
-        <PracticePlayer video={video.data} beatTracking={beatTracking} />
-        <VideoDetails video={video.data} />
+        <PracticePlayer video={video.data} />
       </article>
     )
   }
@@ -91,15 +92,14 @@ function WatchVideo({ videoId }: { videoId: string }) {
   )
 }
 
-/** The player, with the video's saved loops and settings loaded first and changes stored. */
-function PracticePlayer({
-  video,
-  beatTracking,
-}: {
-  video: LibraryVideo
-  beatTracking: BeatTracking
-}) {
+/** The player, with the user's presets and settings for the video loaded first. */
+function PracticePlayer({ video }: { video: LibraryVideo }) {
   const storage = usePracticeStorage(video.videoId)
+  const { reportPractice, followedPresets } = useMyLibrary()
+  const followed = useAsync(
+    (signal) => followedPresets?.(video.videoId, signal) ?? Promise.resolve([]),
+    video.videoId,
+  )
   const { data } = storage
   if (data.status === 'loading') {
     return <StatusMessage kind="loading">Loading…</StatusMessage>
@@ -107,30 +107,61 @@ function PracticePlayer({
   const practice: PlayerPractice | undefined =
     data.status === 'success'
       ? {
-          loops: data.data.loops,
+          presets: data.data.presets,
           settings: data.data.settings,
-          onLoopsChange: storage.saveLoops,
+          onPresetsChange: storage.savePresets,
           onSettingsChange: storage.saveSettings,
           saveError: storage.saveError,
+          // not worth an error message: the user's own presets work without them
+          followedPresets: followed.status === 'success' ? followed.data : [],
+          onPracticed:
+            reportPractice &&
+            ((seconds, keepalive) => reportPractice(video.videoId, seconds, keepalive)),
         }
       : undefined
   return (
     <>
       {data.status === 'error' && (
         <StatusMessage kind="error" onRetry={data.reload}>
-          Saved loops and settings could not be loaded: {errorMessage(data.error)}
+          Presets and settings could not be loaded: {errorMessage(data.error)}
         </StatusMessage>
       )}
-      <VideoPlayer
+      <PlayerWithGrid
         // loaded later (after a retry), the saved state starts the player over
-        key={`${video.videoId}:${practice ? 'saved' : 'unsaved'}`}
-        videoId={video.videoId}
-        src={video.mediaUrl}
-        audioUrl={video.audioUrl}
-        poster={video.thumbnailUrl ?? undefined}
-        beatTracking={beatTracking}
+        key={practice ? 'saved' : 'unsaved'}
+        video={video}
         practice={practice}
       />
+      <VideoDetails
+        video={video}
+        actions={
+          data.status === 'success' &&
+          data.data.starred !== undefined && (
+            <StarButton
+              videoId={video.videoId}
+              title={video.title}
+              starred={data.data.starred}
+              labelled
+            />
+          )
+        }
+      />
+      <Comments videoId={video.videoId} />
     </>
+  )
+}
+
+/** The player with the user's beat grid (the detected one with their saved fixes). */
+function PlayerWithGrid({ video, practice }: { video: LibraryVideo; practice?: PlayerPractice }) {
+  const beatTracking = useBeatTracking(video.videoId, true, practice?.settings?.gridHints ?? null)
+  return (
+    <VideoPlayer
+      videoId={video.videoId}
+      src={video.mediaUrl}
+      audioUrl={video.audioUrl}
+      poster={video.thumbnailUrl ?? undefined}
+      beatTracking={beatTracking}
+      practice={practice}
+    />
   )
 }

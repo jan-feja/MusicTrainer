@@ -16,7 +16,7 @@ interface BeatSnapControlsProps {
   onResetBarStarts: () => void
 }
 
-/** Beat detection status, the loop snap setting and fixes for the beat grid. */
+/** Beat detection status, the loop snap setting and the user's fixes of their beat grid. */
 export function BeatSnapControls(props: BeatSnapControlsProps) {
   return (
     <div className={styles.group} role="group" aria-label="Beat grid">

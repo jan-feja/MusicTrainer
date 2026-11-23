@@ -1,33 +1,36 @@
 import { memo } from 'react'
-import type { SavedLoop } from '../../api/types'
+import type { Preset } from '../../api/types'
 import type { TimeView } from '../player/timelineView'
-import styles from './SavedLoops.module.css'
+import { presetLoop } from './presets'
+import styles from './PresetMarks.module.css'
 
-interface SavedLoopMarksProps {
+interface PresetMarksProps {
   view: TimeView
-  loops: readonly SavedLoop[]
+  presets: readonly Preset[]
   /** Not marked: the timeline shows it as the current loop. */
   activeId: string | null
 }
 
-/** Thin marks above the timeline where the other saved loops are. */
-export const SavedLoopMarks = memo(function SavedLoopMarks({
+/** Thin marks above the timeline where the loops of the other presets are. */
+export const PresetMarks = memo(function PresetMarks({
   view,
-  loops,
+  presets,
   activeId,
-}: SavedLoopMarksProps) {
+}: PresetMarksProps) {
   const length = view.end - view.start
   if (length <= 0) return null
   const percent = (time: number) => ((time - view.start) / length) * 100
   return (
     <div className={styles.marks} aria-hidden="true">
-      {loops.map((loop) => {
+      {presets.map((preset) => {
+        const loop = presetLoop(preset)
+        if (!loop || preset.id === activeId) return null
         const start = Math.max(loop.start, view.start)
         const end = Math.min(loop.end, view.end)
-        if (loop.id === activeId || end <= start) return null
+        if (end <= start) return null
         return (
           <span
-            key={loop.id}
+            key={preset.id}
             className={styles.mark}
             style={{ left: `${percent(start)}%`, width: `${percent(end) - percent(start)}%` }}
           />

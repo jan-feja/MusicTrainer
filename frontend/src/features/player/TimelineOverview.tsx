@@ -1,5 +1,6 @@
 import { type KeyboardEvent, type PointerEvent, useRef } from 'react'
-import type { SavedLoop } from '../../api/types'
+import type { Preset } from '../../api/types'
+import { presetLoop } from '../practice/presets'
 import { formatTimePrecise } from '../../lib/format'
 import { clamp } from '../../lib/math'
 import { type LoopState, getLoopRegion } from './loop'
@@ -14,7 +15,8 @@ interface TimelineOverviewProps {
   view: TimeView
   currentTime: number
   loop: LoopState
-  savedLoops: readonly SavedLoop[]
+  /** Their loops are marked. */
+  presets: readonly Preset[]
   onViewChange: (view: TimeView) => void
 }
 
@@ -27,7 +29,7 @@ export function TimelineOverview({
   view,
   currentTime,
   loop,
-  savedLoops,
+  presets,
   onViewChange,
 }: TimelineOverviewProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -83,16 +85,21 @@ export function TimelineOverview({
       onPointerUp={(event) => event.currentTarget.releasePointerCapture(event.pointerId)}
       onKeyDown={handleKeyDown}
     >
-      {savedLoops.map((saved) => (
-        <span
-          key={saved.id}
-          className={styles.overviewSaved}
-          style={{
-            left: `${percent(saved.start)}%`,
-            width: `${percent(saved.end - saved.start)}%`,
-          }}
-        />
-      ))}
+      {presets.map((preset) => {
+        const saved = presetLoop(preset)
+        return (
+          saved && (
+            <span
+              key={preset.id}
+              className={styles.overviewSaved}
+              style={{
+                left: `${percent(saved.start)}%`,
+                width: `${percent(saved.end - saved.start)}%`,
+              }}
+            />
+          )
+        )
+      })}
       {region && (
         <span
           className={styles.overviewLoop}

@@ -29,6 +29,9 @@ class SearchResult(ApiModel):
     view_count: int | None = None
     thumbnail_url: str | None = None
     is_downloaded: bool = False
+    """On the server (someone has it): adding it to a library is instant."""
+    in_library: bool = False
+    """In the logged-in user's library (a guest's library is in the browser: always False)."""
 
 
 class VideoMetadata(ApiModel):
@@ -151,26 +154,41 @@ class BeatTrackingState(ApiModel):
 SnapMode = Literal["off", "beat", "bar"]
 """What loop points snap to: nothing, beats or bar starts."""
 
-LOOP_ID_PATTERN = r"^[A-Za-z0-9_-]{1,40}$"
+PRESET_ID_PATTERN = r"^[A-Za-z0-9_-]{1,40}$"
 MIN_PLAYBACK_RATE = 0.25
 MAX_PLAYBACK_RATE = 2.0
 
 
-class SavedLoop(ApiModel):
-    """A practice loop saved with a video; the video's loops.json holds a list of them."""
+class MetronomeSettings(ApiModel):
+    enabled: bool = False
+    volume: float = Field(default=0.3, ge=0, le=1)
 
-    id: str = Field(pattern=LOOP_ID_PATTERN)
+
+class Preset(ApiModel):
+    """A named way to practice a song: its loop, speed, stem mix and metronome.
+
+    A user's presets of a song are a list of them. Choosing one sets the player
+    that way; what a preset does not hold (no stem mix, say) is left as it is.
+    """
+
+    id: str = Field(pattern=PRESET_ID_PATTERN)
     name: str = Field(min_length=1, max_length=100)
-    start: float = Field(ge=0)
-    end: float = Field(gt=0)
+    start: float | None = Field(default=None, ge=0)
+    """The loop, in seconds; None (with `end`): the whole song, no loop."""
+    end: float | None = Field(default=None, gt=0)
     snap_mode: SnapMode = "off"
-    """How the loop points were set; selecting the loop sets the snap again."""
+    """What the loop points snap to while the preset is played."""
     playback_rate: float = Field(default=1.0, ge=MIN_PLAYBACK_RATE, le=MAX_PLAYBACK_RATE)
-    """The speed the loop is practiced at."""
+    mixer: "MixerSettings | None" = None
+    """The stem mix; None: the stems are left as they are."""
+    metronome: MetronomeSettings | None = None
+    """None: the metronome is left as it is."""
 
     @model_validator(mode="after")
-    def _end_after_start(self) -> Self:
-        if self.end <= self.start:
+    def _whole_loop(self) -> Self:
+        if (self.start is None) != (self.end is None):
+            raise ValueError("a loop needs both start and end")
+        if self.start is not None and self.end is not None and self.end <= self.start:
             raise ValueError("end must be after start")
         return self
 
@@ -188,10 +206,13 @@ class PlayerSettings(ApiModel):
     loop_start: float | None = Field(default=None, ge=0)
     loop_end: float | None = Field(default=None, ge=0)
     loop_enabled: bool = False
-    active_loop_id: str | None = Field(default=None, pattern=LOOP_ID_PATTERN)
-    """The saved loop being played and edited, if any."""
+    active_preset_id: str | None = Field(default=None, pattern=PRESET_ID_PATTERN)
+    """The preset chosen last, if any."""
     mixer: "MixerSettings | None" = None
     """The stem mixer; None: stems were never turned on for this video."""
+    metronome: MetronomeSettings | None = None
+    grid_hints: BeatGridHints | None = None
+    """The user's fixes of the beat grid; None: the detected grid as it is."""
 
 
 STEM_NAME_PATTERN = r"^[a-z][a-z0-9_]{0,30}$"
@@ -251,16 +272,20 @@ class ChordAnalysis(ApiModel):
     chords: list[Chord]
     """In time order, without gaps between neighbours."""
     grid: str | None = None
-    """The beat grid the chords were found on (see chords.beat_grid_key); other grids
-    detect them again."""
+    """The beat grid the chords were found on (see chords.beat_grid_key)."""
     from_stems: bool = False
     """Found on the pitched stems (no drums or vocals) rather than the whole mix."""
 
 
+GRID_KEY_PATTERN = r"^[0-9a-f]{16}$"
+
+
 class ChordDetectionState(ApiModel):
-    """Where chord detection of a video stands, with the chords once it is done."""
+    """Where chord detection of a video on one beat grid stands, with the chords once done."""
 
     video_id: str
+    grid: str | None = None
+    """The beat grid (see chords.beat_grid_key); None: the song has no beat grid yet."""
     status: AnalysisStatus
     analysis: ChordAnalysis | None = None
     error: str | None = None
@@ -279,3 +304,185 @@ class MixerSettings(ApiModel):
 
 
 PlayerSettings.model_rebuild()
+Preset.model_rebuild()
+
+
+USERNAME_PATTERN = r"^[A-Za-z0-9_.-]{3,30}$"
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_LENGTH = 128
+MAX_PRESETS = 200
+
+
+class User(ApiModel):
+    """A user account as the API returns it."""
+
+    id: int
+    username: str
+
+
+class RegisterRequest(ApiModel):
+    username: str = Field(pattern=USERNAME_PATTERN)
+    """3-30 letters, digits, '.', '_' or '-'; unique regardless of case."""
+    password: str = Field(min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH)
+
+
+class LoginRequest(ApiModel):
+    username: str = Field(max_length=100)
+    password: str = Field(max_length=MAX_PASSWORD_LENGTH)
+
+
+class ChangePasswordRequest(ApiModel):
+    current_password: str = Field(max_length=MAX_PASSWORD_LENGTH)
+    new_password: str = Field(min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH)
+
+
+class DeleteAccountRequest(ApiModel):
+    password: str = Field(max_length=MAX_PASSWORD_LENGTH)
+
+
+class GuestImportEntry(ApiModel):
+    """A song from a guest's library in the browser, moved into the account on login."""
+
+    video_id: str = Field(pattern=VIDEO_ID_PATTERN)
+    presets: list[Preset] | None = Field(default=None, max_length=MAX_PRESETS)
+    settings: PlayerSettings | None = None
+
+
+MAX_DESCRIPTION_LENGTH = 300
+MAX_PRACTICE_REPORT_SECONDS = 600
+"""The player reports practice time at least this often."""
+
+FollowState = Literal["none", "requested", "following", "self"]
+"""How the viewer relates to a profile: 'requested' waits for a private profile's owner."""
+
+
+class MyLibraryVideo(LibraryVideo):
+    """A song in the logged-in user's library."""
+
+    starred: bool = False
+
+
+class MyLibraryEntry(ApiModel):
+    video_id: str
+    added_at: datetime
+    starred: bool
+
+
+class StarRequest(ApiModel):
+    starred: bool
+
+
+class UserSummary(ApiModel):
+    """A user in a list (followers, requests)."""
+
+    username: str
+    description: str = ""
+
+
+class Profile(ApiModel):
+    """A user's profile as the viewer may see it."""
+
+    username: str
+    description: str
+    is_private: bool
+    joined_at: datetime
+    followers: int
+    following: int
+    follow_state: FollowState
+    can_view: bool
+    """The viewer may see the songs and history: the profile is public, the viewer's own,
+    or the viewer is an accepted follower."""
+    library_count: int | None = None
+    """None when the viewer may not see it (also below)."""
+    practice_seconds: int | None = None
+    """Practice time in all."""
+
+
+class ProfileSettings(ApiModel):
+    description: str = Field(default="", max_length=MAX_DESCRIPTION_LENGTH)
+    is_private: bool = False
+
+
+class PracticeEntry(ApiModel):
+    """How long a user practiced a song on one day (UTC), a preset they made of it,
+    or a comment they wrote under it."""
+
+    kind: Literal["practice", "preset", "comment"] = "practice"
+    video_id: str
+    title: str
+    day: date
+    last_at: datetime
+    """When the song was last played that day, or when the preset or comment was made."""
+    seconds: int
+    """0 for a preset or a comment."""
+    preset: str | None = None
+    """The preset's name."""
+    comment: str | None = None
+    """The comment's text."""
+
+
+MAX_COMMENT_LENGTH = 250
+
+
+class NewComment(ApiModel):
+    text: str = Field(min_length=1, max_length=MAX_COMMENT_LENGTH)
+
+
+class Comment(ApiModel):
+    """A comment under a song, shown to everyone there."""
+
+    id: int
+    username: str
+    text: str
+    created_at: datetime
+
+
+class FeedEntry(PracticeEntry):
+    username: str
+
+
+class PracticeToday(ApiModel):
+    """How long the music played for the user today."""
+
+    seconds: int
+
+
+class PracticeReport(ApiModel):
+    """The player's report: the music played this many more seconds."""
+
+    video_id: str = Field(pattern=VIDEO_ID_PATTERN)
+    seconds: int = Field(ge=1, le=MAX_PRACTICE_REPORT_SECONDS)
+
+
+class FollowedPresets(ApiModel):
+    """The presets someone the user follows made of a song."""
+
+    username: str
+    presets: list[Preset]
+
+
+class ProfileLibrary(ApiModel):
+    """The first songs of a user's library, most recently added first."""
+
+    videos: list[LibraryVideo]
+    total: int
+
+
+NotificationKind = Literal["follow_request", "new_follower", "request_accepted"]
+"""Someone asks to follow the user / started following them / accepted the user's request."""
+
+
+class Notification(ApiModel):
+    kind: NotificationKind
+    username: str
+    """The other user."""
+    at: datetime
+    unread: bool
+    """Newer than when the user last opened the notifications."""
+    follow_state: FollowState
+    """How the user relates to the other user (e.g. whether they follow back)."""
+
+
+class Notifications(ApiModel):
+    items: list[Notification]
+    unread: int

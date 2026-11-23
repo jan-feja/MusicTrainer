@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
-import { api } from '../../api/client'
-import type { LibraryVideo } from '../../api/types'
+import type { DownloadJob } from '../../api/types'
+import { paths } from '../../app/paths'
 import { DeleteIcon } from '../../components/icons'
 import { StatusMessage } from '../../components/StatusMessage'
 import { VideoCard } from '../../components/VideoCard'
@@ -9,48 +9,85 @@ import { errorMessage } from '../../lib/format'
 import { useAsync } from '../../lib/useAsync'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
 import { useOnChange } from '../../lib/useOnChange'
-import { DownloadList } from '../downloads/DownloadList'
 import { useDownloads } from '../downloads/downloadsContext'
+import { StarButton } from '../profile/StarButton'
+import { DownloadingCard } from './DownloadingCard'
+import { useMyLibrary } from './myLibrary'
 import styles from './LibraryPage.module.css'
 
 export function LibraryPage() {
-  const { completedCount, forgetDownload } = useDownloads()
-  const videos = useAsync((signal) => api.listVideos(signal), 'library')
-  useOnChange(completedCount, videos.reload)
+  const { jobs, completedCount, startDownload, forgetDownload } = useDownloads()
+  const library = useMyLibrary()
+  const listing = useAsync((signal) => library.list(signal), 'library')
+  useOnChange(completedCount, listing.reload)
   useDocumentTitle('Library')
 
-  const deleteVideo = async (video: LibraryVideo) => {
-    if (!window.confirm(`Delete “${video.title}” from your library?`)) return
+  const removeVideo = async (videoId: string, title: string) => {
+    if (!window.confirm(`Remove “${title}” and its presets from your library?`)) return
     try {
-      await api.deleteVideo(video.videoId)
-      forgetDownload(video.videoId)
-      videos.reload()
+      await library.remove(videoId)
+      forgetDownload(videoId)
+      listing.reload()
     } catch (error) {
-      window.alert(`Could not delete the video: ${errorMessage(error)}`)
+      window.alert(`Could not remove the video: ${errorMessage(error)}`)
     }
   }
+  const retryDownload = (job: DownloadJob) => {
+    startDownload(job.videoId, job.title ?? undefined).catch((error: unknown) =>
+      window.alert(`Could not start the download: ${errorMessage(error)}`),
+    )
+  }
+
+  const videos = listing.status === 'success' ? listing.data.videos : null
+  // songs not on the server yet, newest first; a finished one stays until the list has it
+  const listed = new Set(videos?.map((video) => video.videoId))
+  const downloading = videos ? [...jobs.values()].filter((job) => !listed.has(job.videoId)) : []
+  downloading.reverse()
+  const isEmpty = videos?.length === 0 && downloading.length === 0
 
   return (
     <>
-      <DownloadList />
       <h1 className={styles.heading}>Library</h1>
-      {videos.status === 'loading' && (
+      {library.isGuest && (
+        <p className={styles.guestNote}>
+          You are not logged in: your library is saved in this browser only, and songs nobody opens
+          for a week are deleted from the server. <Link to={paths.register}>Register</Link> or{' '}
+          <Link to={paths.login}>log in</Link> to keep it.
+        </p>
+      )}
+      {listing.status === 'success' && listing.data.removedCount > 0 && (
+        <StatusMessage kind="info">
+          {listing.data.removedCount === 1
+            ? 'A song was'
+            : `${listing.data.removedCount} songs were`}{' '}
+          deleted from the server because nobody opened them for a while.
+        </StatusMessage>
+      )}
+      {listing.status === 'loading' && (
         <StatusMessage kind="loading">Loading your library…</StatusMessage>
       )}
-      {videos.status === 'error' && (
-        <StatusMessage kind="error" onRetry={videos.reload}>
-          {errorMessage(videos.error)}
+      {listing.status === 'error' && (
+        <StatusMessage kind="error" onRetry={listing.reload}>
+          {errorMessage(listing.error)}
         </StatusMessage>
       )}
-      {videos.status === 'success' && videos.data.length === 0 && (
+      {isEmpty && (
         <StatusMessage kind="info">
-          Your library is empty. Search for a video above and download it; downloaded videos appear
-          here. <Link to="/search">Search</Link>
+          Your library is empty. Search for a song above and add it; it appears here.{' '}
+          <Link to="/search">Search</Link>
         </StatusMessage>
       )}
-      {videos.status === 'success' && videos.data.length > 0 && (
+      {videos && !isEmpty && (
         <VideoGrid>
-          {videos.data.map((video) => (
+          {downloading.map((job) => (
+            <DownloadingCard
+              key={job.videoId}
+              job={job}
+              onRetry={() => retryDownload(job)}
+              onRemove={() => void removeVideo(job.videoId, job.title ?? job.videoId)}
+            />
+          ))}
+          {videos.map((video) => (
             <VideoCard
               key={video.videoId}
               videoId={video.videoId}
@@ -59,14 +96,23 @@ export function LibraryPage() {
               durationSeconds={video.durationSeconds}
               thumbnailUrl={video.thumbnailUrl}
               actions={
-                <button
-                  type="button"
-                  className="button button-small button-ghost"
-                  onClick={() => void deleteVideo(video)}
-                  aria-label={`Delete ${video.title}`}
-                >
-                  <DeleteIcon /> Delete
-                </button>
+                <>
+                  {video.starred !== undefined && (
+                    <StarButton
+                      videoId={video.videoId}
+                      title={video.title}
+                      starred={video.starred}
+                    />
+                  )}
+                  <button
+                    type="button"
+                    className="button button-small button-ghost"
+                    onClick={() => void removeVideo(video.videoId, video.title)}
+                    aria-label={`Remove ${video.title} from your library`}
+                  >
+                    <DeleteIcon /> Remove
+                  </button>
+                </>
               }
             />
           ))}

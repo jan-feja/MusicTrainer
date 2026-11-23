@@ -77,3 +77,75 @@ export const DeleteIcon = (props: IconProps) => (
 export const DownloadIcon = (props: IconProps) => (
   <Icon path="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" {...props} />
 )
+
+export const AddIcon = (props: IconProps) => (
+  <Icon path="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" {...props} />
+)
+
+export const EditIcon = (props: IconProps) => (
+  <Icon
+    path="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+    {...props}
+  />
+)
+
+export const SpeedIcon = (props: IconProps) => (
+  <Icon
+    path="m20.38 8.57-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44zm-9.79 6.84a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z"
+    {...props}
+  />
+)
+
+/** Mixer sliders. */
+export const MixIcon = (props: IconProps) => (
+  <Icon
+    path="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"
+    {...props}
+  />
+)
+
+export const MetronomeIcon = (props: IconProps) => (
+  <svg
+    viewBox="0 0 24 24"
+    width="1em"
+    height="1em"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    {...props}
+  >
+    <path d="M9 3h6l4 18H5z" />
+    <path d="m12 16 5-9" />
+  </svg>
+)
+
+export const StarIcon = (props: IconProps) => (
+  <Icon
+    path="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+    {...props}
+  />
+)
+
+export const StarOutlineIcon = (props: IconProps) => (
+  <Icon
+    path="m22 9.24-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"
+    {...props}
+  />
+)
+
+export const LockIcon = (props: IconProps) => (
+  <Icon
+    path="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"
+    {...props}
+  />
+)
+
+export const BellIcon = (props: IconProps) => (
+  <Icon
+    path="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
+    {...props}
+  />
+)

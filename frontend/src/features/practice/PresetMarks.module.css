@@ -1,0 +1,17 @@
+/* above the timeline track: where the loops of the other presets are */
+.marks {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 16px);
+  left: 0;
+  height: 3px;
+  pointer-events: none;
+}
+
+.mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 2px;
+  background: var(--player-saved);
+}

@@ -1,8 +1,10 @@
 """Runs beat detection in the background, one song at a time (it uses all CPU cores).
 
-A job runs the beat network (or reuses its stored output) and decodes the grid
-with the user's hints; new hints only decode again, which takes a few seconds.
-The last decodings are kept in memory, so moving the bar starts is instant.
+A job runs the beat network (or reuses its stored output) and decodes the
+detected grid, which everyone who has the song shares. A user's fixes (hints)
+give that user's own grid: the stored network output is decoded again with
+them, which takes a moment. The last decodings are kept in memory, so moving
+the bar starts is instant.
 """
 
 import logging
@@ -14,6 +16,8 @@ from music_trainer.models import AnalysisStatus, BeatAnalysis, BeatGridHints, Be
 from music_trainer.services.audio import AudioDecodeError
 from music_trainer.services.beat_decoding import DecodedBeats
 from music_trainer.services.beats import (
+    GRID_DECODER,
+    NO_HINTS,
     BeatTracker,
     BeatTrackingError,
     decode_grid,
@@ -29,10 +33,14 @@ _DECODINGS_KEPT = 16
 _DecodingKey = tuple[str, str, int | None, float | None]  # video, model, beats per bar, tempo
 
 
+class BeatsNotDetectedError(Exception):
+    def __init__(self, video_id: str) -> None:
+        super().__init__(f"The beats of {video_id} are not detected yet")
+
+
 @dataclass
 class _Job:
     video_id: str
-    hints: BeatGridHints
     rerun_network: bool
     """Run the network even if its output is stored."""
     status: AnalysisStatus = AnalysisStatus.QUEUED
@@ -50,28 +58,19 @@ class BeatAnalysisManager:
         self._decodings: dict[_DecodingKey, DecodedBeats] = {}  # oldest first
         self._lock = threading.Lock()
 
-    def start(
-        self, video_id: str, force: bool = False, hints: BeatGridHints | None = None
-    ) -> BeatTrackingState:
-        """Detect the beats unless that is running or done.
-
-        `force` runs the beat network again; `hints` decodes the grid again with
-        them (keeping the stored network output). Without hints, a new detection
-        keeps the hints of the previous one.
-        """
+    def start(self, video_id: str, force: bool = False) -> BeatTrackingState:
+        """Detect the beats unless that is running or done; `force` runs the network again."""
         self._require_video(video_id)
         with self._lock:
             job = self._jobs.get(video_id)
             if job is not None and job.status.is_active:
                 return self._state_of(job)
             analysis = self._current_analysis(video_id)
-            if not force and hints is None and analysis is not None:
+            if not force and analysis is not None:
                 return BeatTrackingState(
                     video_id=video_id, status=AnalysisStatus.COMPLETED, analysis=analysis
                 )
-            if hints is None:
-                hints = analysis.hints if analysis is not None else BeatGridHints()
-            job = _Job(video_id, hints=hints, rerun_network=force)
+            job = _Job(video_id, rerun_network=force)
             self._jobs[video_id] = job
             self._executor.submit(self._run, job)
             return self._state_of(job)
@@ -88,6 +87,35 @@ class BeatAnalysisManager:
                 video_id=video_id, status=AnalysisStatus.COMPLETED, analysis=analysis
             )
         return BeatTrackingState(video_id=video_id, status=AnalysisStatus.NOT_STARTED)
+
+    def detected(self, video_id: str) -> BeatAnalysis | None:
+        """The detected grid (without anyone's fixes), once detection is done."""
+        self._require_video(video_id)
+        return self._current_analysis(video_id)
+
+    def grid(self, video_id: str, hints: BeatGridHints) -> BeatAnalysis:
+        """The grid decoded with a user's hints, from the stored network output.
+
+        Takes a moment for new tempo or meter hints (decoded once, then kept a while).
+        Raises BeatsNotDetectedError until the detection is done.
+        """
+        self._require_video(video_id)
+        detected = self._current_analysis(video_id)
+        if detected is None:
+            raise BeatsNotDetectedError(video_id)
+        if hints == NO_HINTS:
+            return detected
+        model = self._tracker.model
+        key = (video_id, model, hints.beats_per_bar, hints.tempo_bpm)
+        with self._lock:
+            decoded = self._decodings.get(key)
+        if decoded is None:
+            activations = self._library.read_beat_activations(video_id)
+            if activations is None or activations.model != model:
+                raise BeatsNotDetectedError(video_id)
+            decoded = decode_grid(activations, hints)
+            self._remember(key, decoded)
+        return grid_analysis(decoded, model, hints)
 
     def forget(self, video_id: str) -> None:
         """Drop a finished job, e.g. after its video was deleted."""
@@ -107,7 +135,7 @@ class BeatAnalysisManager:
             if media_path is None:
                 raise VideoNotInLibraryError(job.video_id)
             model = self._tracker.model
-            key = (job.video_id, model, job.hints.beats_per_bar, job.hints.tempo_bpm)
+            key = (job.video_id, model, NO_HINTS.beats_per_bar, NO_HINTS.tempo_bpm)
             with self._lock:
                 if job.rerun_network:
                     self._forget_decodings(job.video_id)
@@ -119,9 +147,9 @@ class BeatAnalysisManager:
                 if activations is None or activations.model != model:
                     activations = self._tracker.activations(media_path)
                     self._library.write_beat_activations(job.video_id, activations)
-                decoded = decode_grid(activations, job.hints)
+                decoded = decode_grid(activations, NO_HINTS)
                 self._remember(key, decoded)
-            analysis = grid_analysis(decoded, model, job.hints)
+            analysis = grid_analysis(decoded, model, NO_HINTS)
             self._library.write_beat_analysis(job.video_id, analysis)
         except (BeatTrackingError, AudioDecodeError, VideoNotInLibraryError) as error:
             logger.warning("Beat detection of %s failed: %s", job.video_id, error)
@@ -140,9 +168,17 @@ class BeatAnalysisManager:
             self._update(job, status=AnalysisStatus.COMPLETED)
 
     def _current_analysis(self, video_id: str) -> BeatAnalysis | None:
-        """The stored grid, unless an older method made it (then it is detected again)."""
+        """The stored detected grid; None (detect again) if an older method or another
+        network made it, or it has hints (from when fixes were shared by everyone)."""
         analysis = self._library.read_beat_analysis(video_id)
-        return analysis if analysis is not None and is_current_analysis(analysis) else None
+        if (
+            analysis is None
+            or not is_current_analysis(analysis)
+            or analysis.analyzer != f"{self._tracker.model}+{GRID_DECODER}"
+            or analysis.hints != NO_HINTS
+        ):
+            return None
+        return analysis
 
     def _remember(self, key: _DecodingKey, decoded: DecodedBeats) -> None:
         with self._lock:

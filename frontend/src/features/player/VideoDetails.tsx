@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react'
 import type { LibraryVideo } from '../../api/types'
 import { formatDate, formatViewCount } from '../../lib/format'
 import styles from './VideoDetails.module.css'
 
-export function VideoDetails({ video }: { video: LibraryVideo }) {
+/** The video's title and details; `actions` go next to the title (e.g. the star). */
+export function VideoDetails({ video, actions }: { video: LibraryVideo; actions?: ReactNode }) {
   const meta = [
     video.channel,
     video.viewCount !== null ? formatViewCount(video.viewCount) : null,
@@ -11,7 +13,10 @@ export function VideoDetails({ video }: { video: LibraryVideo }) {
 
   return (
     <section className={styles.details}>
-      <h1 className={styles.title}>{video.title}</h1>
+      <div className={styles.heading}>
+        <h1 className={styles.title}>{video.title}</h1>
+        {actions}
+      </div>
       <p className={styles.meta}>
         {meta.join(' · ')}
         {meta.length > 0 && ' · '}
