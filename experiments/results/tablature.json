@@ -1,0 +1,19 @@
+{
+ "tuned_costs": {
+  "move": 1.5,
+  "height": 0.05,
+  "open_bonus": 0.0
+ },
+ "train_00-04": {
+  "search": 0.684,
+  "lowest_fret": 0.439
+ },
+ "test_05": {
+  "search": 0.577,
+  "lowest_fret": 0.328
+ },
+ "notes": {
+  "train": 53761,
+  "test": 8715
+ }
+}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><title>Transcription as notation</title>
+<style>
+  body { font-family: sans-serif; margin: 8px; background: #fff; }
+  #at { border: 1px solid #ccc; }
+</style>
+<script src="/data/vendor/alphatab/alphaTab.js"></script>
+</head>
+<body>
+<div id="at"></div>
+<script>
+// Renders every track of a Guitar Pro / MusicXML file: /notation.html?file=/data/...&bars=8
+const V = '/data/vendor/alphatab';
+const params = new URLSearchParams(location.search);
+const info = { file: params.get('file') };
+const api = new alphaTab.AlphaTabApi(document.getElementById('at'), {
+  core: { fontDirectory: V + '/font/', useWorkers: false },
+  display: { barCount: Number(params.get('bars') || 8), barCountPerPartial: 4, scale: 0.75, layoutMode: 'page' },
+  player: { playerMode: 'Disabled' },
+});
+api.error.on(e => { info.error = String(e && e.message || e); window.__result = info; });
+api.scoreLoaded.on(score => {
+  info.title = score.title;
+  info.tracks = score.tracks.map(t => t.name);
+  info.bars = score.masterBars.length;
+  info.tempo = score.tempo;
+  setTimeout(() => api.renderTracks(score.tracks), 0);
+});
+let renders = 0;
+api.renderFinished.on(() => { renders += 1; if (renders === 2) window.__result = info; });
+fetch(info.file).then(r => r.arrayBuffer()).then(buf => api.load(new Uint8Array(buf)));
+</script>
+</body>
+</html>

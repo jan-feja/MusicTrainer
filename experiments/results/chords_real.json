@@ -1,0 +1,20 @@
+{
+ "app": {
+  "majmin": 0.577,
+  "root": 0.629,
+  "changes_ratio": 0.711,
+  "excerpts": 180
+ },
+ "app_bar": {
+  "majmin": 0.327,
+  "root": 0.343,
+  "changes_ratio": 0.15,
+  "excerpts": 180
+ },
+ "madmom": {
+  "majmin": 0.762,
+  "root": 0.802,
+  "changes_ratio": 1.205,
+  "excerpts": 180
+ }
+}
