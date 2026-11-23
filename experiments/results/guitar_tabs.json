@@ -1,0 +1,26 @@
+{
+ "basic_pitch": {
+  "note_f": 0.813,
+  "note_p": 0.792,
+  "note_r": 0.862,
+  "tab_f": 0.378,
+  "string_of_found": 0.545,
+  "excerpts": 60
+ },
+ "yourmt3": {
+  "note_f": 0.956,
+  "note_p": 0.957,
+  "note_r": 0.955,
+  "tab_f": 0.413,
+  "string_of_found": 0.512,
+  "excerpts": 9
+ },
+ "true_notes": {
+  "note_f": 1.0,
+  "note_p": 1.0,
+  "note_r": 1.0,
+  "tab_f": 0.505,
+  "string_of_found": 0.577,
+  "excerpts": 60
+ }
+}

@@ -14,11 +14,14 @@ Methods (each writes MT_DATA/structure/outputs/<method>/<set>__<name>.json):
                how much two people agree, a ceiling for every method
 Post-processing (method name + "+bars"): every boundary moved to the nearest bar start
 (Beat This! downbeats) when one is within 2 s, as the app would show it.
+  songformer_bars  SongFormer's frame outputs decided at bar starts (songformer_bars()), with a
+                   lag and threshold tuned on Harmonix only
 
 Usage:
   python test_structure.py beats        Beat This! beats and bar starts of every song (cache)
   python test_structure.py laplacian
   python test_structure.py allin1       (WSL venv with allin1)
+  python test_structure.py songformer-bars   (after SongFormer and beats)
   python test_structure.py evaluate     writes results/structure.json
 """
 
@@ -136,6 +139,72 @@ def allin1() -> None:
         print("allin1", song.set, song.name, flush=True)
 
 
+# SongFormer label ids allowed for its Harmonix-style output (dataset/label2id.py of the SongFormer code)
+SF_LABELS = {0: "intro", 1: "verse", 2: "chorus", 3: "bridge", 4: "inst", 5: "outro", 6: "silence", 8: "prechorus"}
+SF_RATE = 8.333  # SongFormer output frames per second
+
+
+def songformer_bars(song: sc.Song, lag: float, threshold: float, min_bars: int = 2):
+    """Sections from SongFormer's frame outputs, decided at bar starts.
+
+    Boundary strength of a bar start: the highest boundary probability within half a bar of it,
+    after moving the activation `lag` seconds later. A bar start becomes a section start when its
+    strength is above `threshold` and the largest within `min_bars` bars on either side.
+    Label: the class with the highest mean probability over the section."""
+    npz = sc.output_path("songformer", song).with_suffix(".npz")
+    grid = load_beats(song)
+    if not npz.exists() or grid is None or len(grid[1]) < 4:
+        return None
+    data = np.load(npz)
+    prob = 1 / (1 + np.exp(-data["boundary"]))
+    ids = list(SF_LABELS)
+    logits = data["function"][:, ids]
+    func = np.exp(logits - logits.max(axis=1, keepdims=True))
+    func /= func.sum(axis=1, keepdims=True)
+    times = np.arange(len(prob)) / SF_RATE + lag
+    bars = grid[1]
+    half = np.median(np.diff(bars)) / 2
+    strength = np.array([prob[(times >= b - half) & (times < b + half)].max(initial=0.0) for b in bars])
+    starts = [0.0]
+    for i, b in enumerate(bars):
+        window = strength[max(0, i - min_bars + 1): i + min_bars]
+        if strength[i] >= threshold and strength[i] == window.max() and b - starts[-1] >= 2 * half * min_bars * 0.9:
+            starts.append(float(b))
+    end = len(prob) / SF_RATE
+    labels = []
+    for a, z in zip(starts, starts[1:] + [end]):
+        sel = (times >= a) & (times < z)
+        labels.append(SF_LABELS[ids[int(np.argmax(func[sel].mean(axis=0)))]] if sel.any() else "inst")
+    return starts, labels, end
+
+
+def tune_songformer_bars() -> dict:
+    """lag and threshold that maximize HR.5F + HR3F on the Harmonix songs (the model's own training
+    songs: a development set; SALAMI and the score songs stay untouched)."""
+    songs = [s for s in sc.load_manifest() if s.set == "harmonix"]
+    best = None
+    for lag in (0.0, 0.5, 1.0, 1.5, 2.0, 2.5):
+        for threshold in (0.1, 0.2, 0.3, 0.4, 0.5):
+            rows = [sc.evaluate((s.starts, s.labels, s.end), est) for s in songs
+                    if (est := songformer_bars(s, lag, threshold)) is not None]
+            if not rows:
+                continue
+            score = float(np.mean([r["HR.5F"] + r["HR3F"] for r in rows]))
+            if best is None or score > best[0]:
+                best = (score, lag, threshold)
+    return {"lag": best[1], "threshold": best[2]} if best else {}
+
+
+def write_songformer_bars() -> None:
+    params = tune_songformer_bars()
+    print("songformer_bars tuned on Harmonix:", params)
+    for song in sc.load_manifest():
+        est = songformer_bars(song, params["lag"], params["threshold"])
+        if est is not None:
+            write_output("songformer_bars", song, *est)
+    Path(sc.OUTPUTS, "songformer_bars", "params.json").write_text(json.dumps(params))
+
+
 def snap_to_bars(starts, labels, downbeats, window=SNAP_WINDOW):
     """Boundaries moved to the nearest bar start within `window` s; segments that vanish are dropped."""
     out_s, out_l = [], []
@@ -204,4 +273,5 @@ def label_confusion(method: str, songs: list) -> dict:
 
 
 if __name__ == "__main__":
-    {"beats": compute_beats, "laplacian": laplacian, "allin1": allin1, "evaluate": evaluate}[sys.argv[1]]()
+    {"beats": compute_beats, "laplacian": laplacian, "allin1": allin1, "songformer-bars": write_songformer_bars,
+     "evaluate": evaluate}[sys.argv[1]]()

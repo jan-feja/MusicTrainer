@@ -1,0 +1,113 @@
+{
+ "score_beats/true_notes": {
+  "bass": {
+   "notation_f": 0.998,
+   "position_right_of_found": 1.0
+  },
+  "guitar": {
+   "notation_f": 0.943,
+   "position_right_of_found": 0.946
+  },
+  "keys": {
+   "notation_f": 0.994,
+   "position_right_of_found": 0.998
+  },
+  "lead": {
+   "notation_f": 0.994,
+   "position_right_of_found": 1.0
+  }
+ },
+ "score_beats/ymt3_mix": {
+  "bass": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "guitar": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "keys": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "lead": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  }
+ },
+ "score_beats/bp_demucs": {
+  "bass": {
+   "notation_f": 0.605,
+   "position_right_of_found": 0.967
+  },
+  "guitar": {
+   "notation_f": 0.415,
+   "position_right_of_found": 0.874
+  },
+  "keys": {
+   "notation_f": 0.139,
+   "position_right_of_found": 0.912
+  },
+  "lead": {
+   "notation_f": 0.187,
+   "position_right_of_found": 0.987
+  }
+ },
+ "detected_beats/true_notes": {
+  "bass": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "guitar": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "keys": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "lead": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "songs_with_wrong_tempo": 28
+ },
+ "detected_beats/ymt3_mix": {
+  "bass": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "guitar": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "keys": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "lead": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "songs_with_wrong_tempo": 28
+ },
+ "detected_beats/bp_demucs": {
+  "bass": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "guitar": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "keys": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "lead": {
+   "notation_f": 0.0,
+   "position_right_of_found": 0.0
+  },
+  "songs_with_wrong_tempo": 28
+ }
+}
