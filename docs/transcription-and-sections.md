@@ -14,7 +14,7 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 | Notation (bars, rhythm) | none | beat-grid quantization → Guitar Pro 5 → alphaTab (written here) | correctly found notes: 87–100 % at the exact score position with the true beats; rhythm within the beat right for 89–100 % with the app's own grid | use it, after the user has checked the grid |
 | Chords | chroma templates | madmom CNN + CRF | real guitar recordings: 58 % → 76 % of the time right | switch |
 | Key | none | madmom CNN | real recordings: 64 % exact, 78 % among the best two (librosa templates: 49 % / 70 %) | madmom; show the two best keys |
-| Tuning | librosa | librosa | real recordings: median 4 cents off A440, 12 % more than 15 cents | keep; correct before transcribing (*pending*) |
+| Tuning | librosa | librosa | real recordings: median 4 cents off A440, 12 % more than 15 cents; transcription loses up to 3/4 of its notes when the recording is detuned | keep; always correct the tuning before transcribing |
 
 ## What exists in 2026
 
@@ -183,7 +183,14 @@ Also tried ([test_chords.py](../experiments/test_chords.py)):
 ### Tuning
 - 196 real recordings (Harmonix + SALAMI): median 4 cents from A440; 12 % are more than 15 cents off, 7 % more than 25 cents ([test_tuning.py](../experiments/test_tuning.py)).
 - librosa estimated synthetic detunings of ±25 / ±45 cents within 4 cents.
-- Whether transcription needs the correction: *pending*.
+- **Transcription needs the correction.** YourMT3+ on 8 score songs played back detuned (note F, all pitched notes):
+
+  | Detuning | −45 cents | −25 cents | 0 | +25 cents | +45 cents |
+  |---|---|---|---|---|---|
+  | as recorded | 0.15 | 0.37 | 0.56 | 0.47 | 0.35 |
+  | tuning detected, resampled to A440 first | 0.54 | 0.56 | – | 0.56 | 0.54 |
+
+  Near a quarter tone, notes land between semitones and are named wrong. Detecting the tuning and resampling before transcription recovers everything.
 
 ### Key (GTZAN, 837 real excerpts, 9 genres)
 [test_key.py](../experiments/test_key.py). MIREX weighted score: exact key 1, a fifth off 0.5, relative 0.3, parallel 0.2.
@@ -223,7 +230,7 @@ Also tried ([test_chords.py](../experiments/test_chords.py)):
 
 **Key**: madmom's CNN, showing the two best keys (right ~4 of 5 times). Without madmom: librosa chroma with drums removed and the EDMKey profile (49 % / 70 %).
 
-**Tuning**: keep librosa's estimate and show it ("this recording is 30 cents flat"). Whether to correct before transcribing: *pending*.
+**Tuning**: keep librosa's estimate and show it ("this recording is 30 cents flat"). Before transcribing, always resample the audio to A440 by the estimated amount, then shift the notes' times back. Without that, a quarter-tone-off recording loses three quarters of its notes.
 
 **Imported notation**: synctoolbox alignment, then snap the aligned beats to the app's beat grid: ~76 % of beats within 100 ms on real songs. The rest needs a manual sync editor: drag a bar line to where it is heard; alphaTab's Media Sync Editor is a model. Lakh MIDI files exist for only ~7 % of songs and vary in quality; the user's own Guitar Pro / MusicXML files remain the main source.
 

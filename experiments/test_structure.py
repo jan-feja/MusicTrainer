@@ -130,7 +130,8 @@ def laplacian() -> None:
 
 def allin1() -> None:
     """Linux / WSL only (NATTEN). Demucs runs on MT_DEVICE; the structure model on ALLIN1_DEVICE
-    (default cpu: NATTEN built without CUDA works there)."""
+    (default cpu: NATTEN built without CUDA works there). ALLIN1_MODEL: harmonix-all (the 8-fold
+    ensemble, default) or one fold, e.g. harmonix-fold0 (8x faster; used here, CPU-only NATTEN)."""
     import os
 
     import allin1 as a1
@@ -156,7 +157,7 @@ def allin1() -> None:
         return
     demix([link for _, link in todo], work / "demix", DEVICE)
     for song, link in todo:
-        r = a1.analyze(link, device=os.environ.get("ALLIN1_DEVICE", "cpu"), demix_dir=work / "demix",
+        r = a1.analyze(link, model=os.environ.get("ALLIN1_MODEL", "harmonix-all"), device=os.environ.get("ALLIN1_DEVICE", "cpu"), demix_dir=work / "demix",
                        spec_dir=work / "spec", keep_byproducts=True, multiprocess=False)
         segs = [seg for seg in r.segments if seg.end > seg.start]
         write_output("allin1", song, [seg.start for seg in segs], [seg.label for seg in segs], segs[-1].end)
