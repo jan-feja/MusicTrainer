@@ -1,0 +1,75 @@
+{
+ "songs": 837,
+ "librosa_krumhansl": {
+  "accuracy": 0.46,
+  "weighted": 0.558,
+  "fifth": 0.108,
+  "relative": 0.041,
+  "parallel": 0.162,
+  "right_in_top2": 0.64
+ },
+ "librosa_temperley": {
+  "accuracy": 0.443,
+  "weighted": 0.528,
+  "fifth": 0.088,
+  "relative": 0.061,
+  "parallel": 0.114,
+  "right_in_top2": 0.609
+ },
+ "librosa_shaath": {
+  "accuracy": 0.47,
+  "weighted": 0.559,
+  "fifth": 0.087,
+  "relative": 0.047,
+  "parallel": 0.16,
+  "right_in_top2": 0.663
+ },
+ "librosa_bellman": {
+  "accuracy": 0.444,
+  "weighted": 0.496,
+  "fifth": 0.053,
+  "relative": 0.043,
+  "parallel": 0.061,
+  "right_in_top2": 0.595
+ },
+ "librosa_hpss_krumhansl": {
+  "accuracy": 0.486,
+  "weighted": 0.586,
+  "fifth": 0.111,
+  "relative": 0.043,
+  "parallel": 0.158,
+  "right_in_top2": 0.676
+ },
+ "librosa_hpss_temperley": {
+  "accuracy": 0.471,
+  "weighted": 0.557,
+  "fifth": 0.093,
+  "relative": 0.057,
+  "parallel": 0.111,
+  "right_in_top2": 0.626
+ },
+ "librosa_hpss_shaath": {
+  "accuracy": 0.493,
+  "weighted": 0.584,
+  "fifth": 0.09,
+  "relative": 0.049,
+  "parallel": 0.158,
+  "right_in_top2": 0.695
+ },
+ "librosa_hpss_bellman": {
+  "accuracy": 0.468,
+  "weighted": 0.519,
+  "fifth": 0.049,
+  "relative": 0.044,
+  "parallel": 0.062,
+  "right_in_top2": 0.611
+ },
+ "madmom_cnn": {
+  "accuracy": 0.64,
+  "weighted": 0.697,
+  "fifth": 0.039,
+  "relative": 0.051,
+  "parallel": 0.109,
+  "right_in_top2": 0.783
+ }
+}

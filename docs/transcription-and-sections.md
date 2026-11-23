@@ -13,7 +13,7 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 | Tabs (strings and frets) | none | fingering search (written here) | 58 % of notes on the guitarist's string (lowest-fret rule: 33 %) | use it; try audio-informed string choice (*pending*) |
 | Notation (bars, rhythm) | none | beat-grid quantization → Guitar Pro 5 → alphaTab | 94–100 % of correctly transcribed notes at the exact score position | use it |
 | Chords | chroma templates | madmom CNN + CRF | real guitar recordings: 58 % → 76 % of the time right | switch |
-| Key | none | *pending* | *pending* | *pending* |
+| Key | none | madmom CNN | real recordings: 64 % exact, 78 % among the best two (librosa templates: 49 % / 70 %) | madmom; show the two best keys |
 | Tuning | librosa | librosa | real recordings: median 4 cents off A440, 12 % more than 15 cents | keep; correct before transcribing (*pending*) |
 
 ## What exists in 2026
@@ -66,20 +66,25 @@ Note F-measure: right pitch, onset within 50 ms. Drums: onset F per drum (kick, 
 | Pipeline | All pitched | Bass | Guitar | Keys | Lead | Drums |
 |---|---|---|---|---|---|---|
 | Basic Pitch on the true stems (best case) | 0.66 | 0.63 | 0.67 | 0.40 | 0.80 | 0.97 |
-| htdemucs_6s → Basic Pitch / ADTOF | 0.43 | 0.47 | 0.49 | 0.10 | 0.18 | 0.95 |
+| htdemucs_6s → Basic Pitch / ADTOF | 0.43 | **0.47** | **0.49** | 0.10 | 0.18 | **0.95** |
+| YourMT3+ on the mix | **0.57** | 0.38 | 0.45 | 0.29 | 0.23 | 0.63 |
+| YourMT3+, notes moved to the loudest Demucs stem | 0.57 | 0.33 | 0.36 | 0.10 | 0.21 | 0.95 |
+| YourMT3+ labels, ADTOF drums, low notes to bass if the bass stem dominates | 0.57 | 0.41 | 0.42 | **0.32** | **0.23** | 0.95 |
 | BS-RoFormer-SW → Basic Pitch / ADTOF | *pending* | | | | | |
-| YourMT3+ on the mix | *pending* | | | | | |
 | htdemucs_6s → YourMT3+ per stem | *pending* | | | | | |
 
-- Separation costs a third of the notes; keys and leads mostly vanish (Demucs's piano stem fails, as the implementation report found).
-- Drums are close to perfect on synthetic drums; the ADTOF authors report ~0.88 on real recordings.
+- **YourMT3+ finds more notes, but often names the wrong instrument.** Over all pitched notes it beats separation + Basic Pitch (0.57 vs 0.43). Per instrument it finds 60 % of the guitar notes and 73 % of the keys notes (Demucs + Basic Pitch: 48 % / 46 %), but labels a third to half of them as another instrument: a third of the bass notes come out as "keys". Separation keeps the bass label right 98 % of the time.
+- **Drums:** ADTOF on the Demucs drum stem (0.95) is far better than YourMT3+'s drums (0.63; cymbals and toms 0.3). Synthetic drums are easy; the ADTOF authors report ~0.88 on real recordings.
+- **Moving notes to the loudest stem** (tried to fix the labels) made things worse: Demucs's piano stem is unreliable, so keys notes landed in "other".
+- Separation costs a third of the notes; keys and leads mostly vanish with Demucs + Basic Pitch (Demucs's piano stem fails, as the implementation report found).
+- Best per instrument so far: bass and guitar from Demucs + Basic Pitch, keys and leads from YourMT3+, drums from ADTOF.
 
 ### Tabs (GuitarSet guitarist 05, real recordings)
 | Notes from | Note F | Tab F (right string too) | Right string, of the notes found |
 |---|---|---|---|
 | the annotation (perfect notes) | 1.00 | 0.50 | 58 % |
 | Basic Pitch | 0.81 | 0.38 | 55 % |
-| YourMT3+ (first 9 excerpts) | 0.96 | 0.41 | 51 % |
+| YourMT3+ | 0.94 | 0.46 | 56 % |
 
 - Both transcribers saw parts of GuitarSet in training, so their note scores are optimistic. The string choice is not learned by either.
 - **The string is the bottleneck**: [tablature.py](../experiments/tablature.py) chooses strings by a fingering search (hand span, position, movement between chords; Viterbi), tuned on guitarists 00–04: 58 % on guitarist 05 vs 33 % for "lowest fret". Many "wrong" strings are equally playable alternatives; a guitarist would accept them, the metric does not.
@@ -93,7 +98,32 @@ Note F-measure: right pitch, onset within 50 ms. Drums: onset F per drum (kick, 
 | played notes (quantization alone), share at the exact score position | 1.00 | 0.95 | 1.00 | 1.00 |
 | htdemucs_6s + Basic Pitch: correctly found notes at the exact position | 0.97 | 0.87 | 0.91 | 0.99 |
 
-With the score's own beats; with Beat This! beats: *pending*. Guitar loses a little because strummed chords are spread over ~30 ms.
+Guitar loses a little because strummed chords are spread over ~30 ms.
+
+With a detected beat grid instead of the score's (correctly found notes):
+
+| Grid | Right place within the beat (rhythm) | Right bar and beat | Songs with the tempo octave wrong |
+|---|---|---|---|
+| Beat This! peaks | 89–100 % | 62–93 % | 5 of 28 |
+| the app's grid (Beat This! + the app's decoder) | 89–100 % | 71–90 % | 9 of 28 |
+
+The rhythm figures come out right; whole-bar positions break where the grid itself is off. These score songs were written to break beat trackers (half-time feels, odd meters, rubato); the app's ½× / 2× and bar-start hints fix exactly those cases, and notation would be generated after the user has checked the grid.
+
+![Generated Guitar Pro 5 file rendered by alphaTab (funk test song: 16th-note chord strumming, bass with ties, drums)](../experiments/results/notation_funk.png)
+
+### Imported notation on real recordings
+Nine downloaded Harmonix songs have MIDI files in the [Lakh MIDI Dataset](https://colinraffel.com/projects/lmd/) (fan-made, 1–4 versions each). Aligned to the YouTube recording, the MIDI's own beats should land on the annotated beats ([test_import_alignment.py](../experiments/test_import_alignment.py); 5 songs left out because their annotations do not line up with the YouTube audio):
+
+| Song | Beats within 100 ms (synctoolbox) | + snapped to the app's beats |
+|---|---|---|
+| Blackened (3 files) | 0.76 | 0.79 |
+| Dead & Bloated (2 files) | 0.88 | 0.94 |
+| Girls & Boys (2 files) | 0.64–0.73 | 0.74–0.76 |
+| American Woman | 0.23 | 0.32 |
+| **mean of 8 files** | **0.71** | **0.76** |
+
+- Median error 42–64 ms where it works (the synthetic test in the implementation report: ~20 ms); the files for one song all aligned alike. American Woman's file is a different arrangement and fails.
+- Aligning via a transcription of the recording (notes vs notes): *pending*.
 
 ### Chords (GuitarSet comping, 180 excerpts, real recordings)
 | Method | Major / minor right (time) | Root right | Chord changes vs truth |
@@ -108,8 +138,20 @@ The app's detector was only ever tested on one synthetic song (98 %). On real pl
 - librosa estimated synthetic detunings of ±25 / ±45 cents within 4 cents.
 - Whether transcription needs the correction: *pending*.
 
-### Key
-*pending* ([test_key.py](../experiments/test_key.py): librosa with four key profiles, with and without drums removed, and madmom's CNN on GTZAN).
+### Key (GTZAN, 837 real excerpts, 9 genres)
+[test_key.py](../experiments/test_key.py). MIREX weighted score: exact key 1, a fifth off 0.5, relative 0.3, parallel 0.2.
+
+| Method | Exact key | Weighted | Right key among the best two |
+|---|---|---|---|
+| **madmom CNN** (Korzeniowski & Widmer 2018) | **0.64** | **0.70** | **0.78** |
+| librosa chroma, drums removed (HPSS), EDMKey profile | 0.49 | 0.58 | 0.70 |
+| librosa chroma, drums removed, Krumhansl profile | 0.49 | 0.59 | 0.68 |
+| librosa chroma, Krumhansl profile | 0.46 | 0.56 | 0.64 |
+| librosa chroma, Temperley / Bellman-Budge profiles | 0.44 | 0.50–0.53 | 0.60–0.61 |
+
+- Removing drums first helps every profile by 2–3 points.
+- madmom's network is 15 points better than any template method. The typical miss of every method is the parallel key (C major vs C minor: 11–16 %), then the fifth.
+- A "pick one of two" control would make the key right for ~4 of 5 songs with madmom.
 
 ## Recommendations
 *pending*
