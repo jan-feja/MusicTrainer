@@ -3,13 +3,13 @@
     <library>/<video_id>/meta.json       VideoMetadata
     <library>/<video_id>/video.mp4       media file (its name is stored in meta.json)
     <library>/<video_id>/thumbnail.jpg   optional
-    <library>/<video_id>/analysis.json   BeatAnalysis (beats and bar starts), once detected
-    <library>/<video_id>/beat_activations.npz  beat network output, to decode again with new hints
+    <library>/<video_id>/analysis.json   BeatAnalysis: the detected beats and bar starts
+    <library>/<video_id>/beat_activations.npz  beat network output, decoded with each user's hints
     <library>/<video_id>/stems/          separated instruments: stems.json (StemSet), one FLAC each
-    <library>/<video_id>/chords.json     ChordAnalysis (chords on the beat grid), once detected
+    <library>/<video_id>/chords-<grid>.json  ChordAnalysis: the chords on one beat grid
     <library>/.staging/<video_id>/       downloads in progress, moved into place when done
 
-What belongs to a user (their library, saved loops, player settings) is in the
+What belongs to a user (their library, presets, player settings, beat grid fixes) is in the
 database instead (see db.py): one song folder serves everyone who has the song.
 
 Stems are FLAC, lossless: AAC or Opus would shift them in time against each
@@ -17,6 +17,7 @@ other. They are written to stems.partial/ and renamed to stems/ when complete.
 """
 
 import logging
+import re
 import shutil
 import threading
 import time
@@ -29,6 +30,7 @@ import numpy as np
 from pydantic import BaseModel, ValidationError
 
 from music_trainer.models import (
+    GRID_KEY_PATTERN,
     BeatAnalysis,
     ChordAnalysis,
     StemSet,
@@ -38,6 +40,16 @@ from music_trainer.services.beat_decoding import BeatActivations
 from music_trainer.video_ids import require_valid_video_id
 
 logger = logging.getLogger(__name__)
+
+_GRID_KEY_RE = re.compile(GRID_KEY_PATTERN)
+
+
+def require_grid_key(grid: str) -> str:
+    """A beat grid key as made by chords.beat_grid_key (it becomes part of a file name)."""
+    if _GRID_KEY_RE.match(grid) is None:
+        raise ValueError(f"Invalid beat grid key: {grid!r}")
+    return grid
+
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 DELETE_ATTEMPTS = 5
@@ -60,7 +72,7 @@ class Library:
     STEMS_DIR = "stems"
     STEMS_STAGING_DIR = "stems.partial"
     STEMS_FILE = "stems.json"
-    CHORDS_FILE = "chords.json"
+    CHORDS_FILE = "chords-{grid}.json"
     STAGING_DIR = ".staging"
 
     def __init__(self, root: Path) -> None:
@@ -137,11 +149,16 @@ class Library:
             )
         partial.replace(target)
 
-    def read_chords(self, video_id: str) -> ChordAnalysis | None:
-        return self._read_json(self._video_dir(video_id) / self.CHORDS_FILE, ChordAnalysis)
+    def read_chords(self, video_id: str, grid: str) -> ChordAnalysis | None:
+        """The chords found on the beat grid `grid` (see chords.beat_grid_key)."""
+        file_name = self.CHORDS_FILE.format(grid=require_grid_key(grid))
+        return self._read_json(self._video_dir(video_id) / file_name, ChordAnalysis)
 
     def write_chords(self, video_id: str, chords: ChordAnalysis) -> None:
-        self._write_text(video_id, self.CHORDS_FILE, chords.model_dump_json())
+        if chords.grid is None:
+            raise ValueError("Chords are stored per beat grid")
+        file_name = self.CHORDS_FILE.format(grid=require_grid_key(chords.grid))
+        self._write_text(video_id, file_name, chords.model_dump_json())
 
     def stem_paths(self, video_id: str, names: Sequence[str]) -> list[Path]:
         """The audio files of those of the named stems that were separated."""

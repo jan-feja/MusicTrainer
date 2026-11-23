@@ -1,4 +1,4 @@
-"""Users' libraries: which songs each account has, with its own loops and player settings.
+"""Users' libraries: which songs each account has, with its own presets and player settings.
 
 Also remembers when a guest last used a song: guests' libraries are in their
 browsers, so that is all the server knows about them (see song_cleanup.py).
@@ -12,12 +12,12 @@ from pydantic import TypeAdapter, ValidationError
 from sqlalchemy import delete, select
 
 from music_trainer.db import Database, LibraryEntryRow, SongRow
-from music_trainer.models import GuestImportEntry, PlayerSettings, SavedLoop
+from music_trainer.models import GuestImportEntry, PlayerSettings, Preset
 from music_trainer.services.accounts import utc_now
 
 logger = logging.getLogger(__name__)
 
-_LOOP_LIST = TypeAdapter(list[SavedLoop])
+_PRESET_LIST = TypeAdapter(list[Preset])
 GUEST_USE_RESOLUTION = timedelta(hours=1)
 """A guest opening a song is written down at most this often."""
 
@@ -58,27 +58,27 @@ class UserLibrary:
             )
             return result.rowcount > 0  # type: ignore[attr-defined]
 
-    def read_loops(self, user_id: int, video_id: str) -> list[SavedLoop] | None:
-        """The saved loops; None if the song is not in the library."""
+    def read_presets(self, user_id: int, video_id: str) -> list[Preset] | None:
+        """The user's presets of the song; None if the song is not in the library."""
         with self._db.session() as session:
             entry = session.get(LibraryEntryRow, (user_id, video_id))
             if entry is None:
                 return None
-            if entry.loops_json is None:
+            if entry.presets_json is None:
                 return []
             try:
-                return _LOOP_LIST.validate_json(entry.loops_json)
+                return _PRESET_LIST.validate_json(entry.presets_json)
             except ValidationError as error:
-                logger.warning("Ignoring unreadable loops of %s: %s", video_id, error)
+                logger.warning("Ignoring unreadable presets of %s: %s", video_id, error)
                 return []
 
-    def write_loops(self, user_id: int, video_id: str, loops: list[SavedLoop]) -> bool:
+    def write_presets(self, user_id: int, video_id: str, presets: list[Preset]) -> bool:
         """Returns False if the song is not in the library."""
         with self._db.session() as session, session.begin():
             entry = session.get(LibraryEntryRow, (user_id, video_id))
             if entry is None:
                 return False
-            entry.loops_json = _LOOP_LIST.dump_json(loops).decode()
+            entry.presets_json = _PRESET_LIST.dump_json(presets).decode()
             return True
 
     def read_settings(self, user_id: int, video_id: str) -> PlayerSettings | None:
@@ -105,7 +105,7 @@ class UserLibrary:
             return True
 
     def import_guest(self, user_id: int, entries: Iterable[GuestImportEntry]) -> None:
-        """Add a guest's songs; their loops and settings are kept where the user has none."""
+        """Add a guest's songs; their presets and settings are kept where the user has none."""
         now = self._clock()
         with self._db.session() as session, session.begin():
             for item in entries:
@@ -113,8 +113,8 @@ class UserLibrary:
                 if entry is None:
                     entry = _new_entry(user_id, item.video_id, now)
                     session.add(entry)
-                if item.loops and entry.loops_json in (None, "[]"):
-                    entry.loops_json = _LOOP_LIST.dump_json(item.loops).decode()
+                if item.presets and entry.presets_json in (None, "[]"):
+                    entry.presets_json = _PRESET_LIST.dump_json(item.presets).decode()
                 if item.settings is not None and entry.settings_json is None:
                     entry.settings_json = item.settings.model_dump_json()
 
@@ -151,5 +151,5 @@ class UserLibrary:
 
 def _new_entry(user_id: int, video_id: str, now: datetime) -> LibraryEntryRow:
     return LibraryEntryRow(
-        user_id=user_id, video_id=video_id, added_at=now, loops_json=None, settings_json=None
+        user_id=user_id, video_id=video_id, added_at=now, presets_json=None, settings_json=None
     )

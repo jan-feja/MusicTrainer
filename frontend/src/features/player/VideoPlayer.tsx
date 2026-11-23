@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import type { MixerSettings, PlayerSettings, SavedLoop } from '../../api/types'
+import type { MixerSettings, PlayerSettings, Preset } from '../../api/types'
 import { ExitFullscreenIcon, FullscreenIcon, PauseIcon, PlayIcon } from '../../components/icons'
 import { formatTime } from '../../lib/format'
 import { useLatest } from '../../lib/useLatest'
@@ -30,7 +30,19 @@ import {
   useReportPlayerSettings,
   useRestorePlayerSettings,
 } from '../practice/playerSettings'
-import { SavedLoopMarks } from '../practice/SavedLoopMarks'
+import { PresetMarks } from '../practice/PresetMarks'
+import { PresetsPanel } from '../practice/PresetsPanel'
+import {
+  type PracticeState,
+  createPreset,
+  isDefaultState,
+  nextPresetName,
+  matchesPreset,
+  presetFromState,
+  presetLoop,
+  presetTags,
+} from '../practice/presets'
+import { usePresets } from '../practice/usePresets'
 import {
   mixerGains,
   withLevel,
@@ -42,9 +54,6 @@ import { StemsControls } from '../stems/StemsControls'
 import { TrackLanes } from '../stems/TrackLanes'
 import { useStemPlayer } from '../stems/useStemPlayer'
 import { useStems } from '../stems/useStems'
-import { SavedLoops } from '../practice/SavedLoops'
-import { createLoop, describeLoop } from '../practice/loopList'
-import { useSavedLoops } from '../practice/useSavedLoops'
 import { LoopControls } from './LoopControls'
 import { LOOP_NUDGE_SECONDS, getLoopRegion, loopJumpTarget, loopReducer } from './loop'
 import { normalizePlaybackRate, stepPlaybackRate } from './playbackRate'
@@ -77,16 +86,16 @@ const MAX_HELPER_BEAT_MARKS = 120
 const MAX_BAR_NUMBERS = 40
 /** Z without a loop zooms this far in around the playhead. */
 const PLAIN_ZOOM_FACTOR = 8
-const NO_LOOPS: SavedLoop[] = []
+const NO_PRESETS: Preset[] = []
 
 type LoopPoint = 'start' | 'end'
 
-/** A video's saved loops and player settings, and where to report changes to store them. */
+/** A video's presets and player settings, and where to report changes to store them. */
 export interface PlayerPractice {
-  loops: SavedLoop[]
+  presets: Preset[]
   /** null: never opened; the player starts from its defaults. */
   settings: PlayerSettings | null
-  onLoopsChange: (loops: SavedLoop[]) => void
+  onPresetsChange: (presets: Preset[]) => void
   onSettingsChange: (settings: PlayerSettings) => void
   /** The last save failed with this message. */
   saveError: string | null
@@ -102,13 +111,13 @@ interface VideoPlayerProps {
   autoPlay?: boolean
   /** Beat grid of the video; lets the loop snap to beats and bars. */
   beatTracking?: BeatTracking
-  /** Saved loops and settings; without them nothing is restored or stored. */
+  /** Presets and settings; without them nothing is restored or stored. */
   practice?: PlayerPractice
 }
 
 /**
  * Video player with speed control, a zoomable timeline and an A–B loop that
- * can snap to the beat grid and be saved. Give it a `key` per video so its
+ * can snap to the beat grid, with the song's presets below it. Give it a `key` per video so its
  * state starts over when the video changes.
  */
 export function VideoPlayer({
@@ -123,18 +132,16 @@ export function VideoPlayer({
   const containerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const initialSettings = practice?.settings ?? null
-  const saved = useSavedLoops(
-    practice?.loops ?? NO_LOOPS,
-    initialSettings?.activeLoopId ?? null,
-    practice?.onLoopsChange,
+  const saved = usePresets(
+    practice?.presets ?? NO_PRESETS,
+    initialSettings?.activePresetId ?? null,
+    practice?.onPresetsChange,
   )
   const [loop, dispatchLoop] = useReducer(loopReducer, null, () =>
-    initialLoopState(initialSettings, saved.active),
+    initialLoopState(initialSettings),
   )
-  const [snapMode, setSnapMode] = useSnapMode(
-    saved.active?.snapMode ?? initialSettings?.snapMode ?? null,
-  )
-  useRestorePlayerSettings(videoRef, initialSettings, saved.active, loop)
+  const [snapMode, setSnapMode] = useSnapMode(initialSettings?.snapMode ?? null)
+  useRestorePlayerSettings(videoRef, initialSettings, loop)
 
   const [mixer, setMixer] = useState<MixerSettings | null>(initialSettings?.mixer ?? null)
   const stemsEnabled = mixer?.enabled ?? false
@@ -205,6 +212,7 @@ export function VideoPlayer({
     playedRegion,
     playback.getCurrentTime,
     videoFollowsOtherSound,
+    initialSettings?.metronome?.volume,
   )
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
   const recovery = useVideoRecovery(videoRef, src)
@@ -221,21 +229,17 @@ export function VideoPlayer({
       loopStart: loop.start,
       loopEnd: loop.end,
       loopEnabled: loop.enabled,
-      activeLoopId: saved.activeId,
+      activePresetId: saved.activeId,
       mixer,
+      metronome: { enabled: metronome.enabled, volume: metronome.volume },
+      gridHints: beatTracking?.hints ?? null,
     },
     duration > 0,
     initialSettings,
     practice?.onSettingsChange,
   )
 
-  // edits of the active saved loop go into it; a loop without both points lets go of it
-  const { activeId, update: updateSaved, setActiveId } = saved
-  useEffect(() => {
-    if (activeId === null) return
-    if (loop.start === null || loop.end === null) setActiveId(null)
-    else updateSaved(activeId, { start: loop.start, end: loop.end })
-  }, [loop.start, loop.end, activeId, updateSaved, setActiveId])
+  const { activeId } = saved
 
   // the loop that was open last time fills the timeline once the duration is known
   const [fittedAtStart, setFittedAtStart] = useState(false)
@@ -297,7 +301,6 @@ export function VideoPlayer({
 
   const changeSnapMode = (mode: SnapMode) => {
     setSnapMode(mode)
-    if (activeId) updateSaved(activeId, { snapMode: mode })
     if (grid && mode !== 'off') snapLoopTo(gridPoints(grid, mode))
   }
 
@@ -308,12 +311,7 @@ export function VideoPlayer({
     changeSnapMode(next)
   }
 
-  // the speed of the active saved loop is kept with it
-  const changeRate = (rate: number) => {
-    const next = normalizePlaybackRate(rate)
-    playback.setPlaybackRate(next)
-    if (activeId) updateSaved(activeId, { playbackRate: next })
-  }
+  const changeRate = (rate: number) => playback.setPlaybackRate(normalizePlaybackRate(rate))
   const stepRate = (steps: number) =>
     changeRate(stepPlaybackRate(videoRef.current?.playbackRate ?? playback.playbackRate, steps))
 
@@ -337,26 +335,73 @@ export function VideoPlayer({
   const toggleLoop = () => dispatchLoop({ type: 'toggle' })
   const clearLoop = () => dispatchLoop({ type: 'clear' })
 
-  /** Load a saved loop with its snap and speed, go to its start and zoom to it. */
-  const selectLoop = (id: string) => {
-    const chosen = saved.loops.find((candidate) => candidate.id === id)
+  // what a preset would keep; the mix only once the song has stems
+  const stemsSeparated = ['available', 'loading', 'ready'].includes(stems.status.kind)
+  const practiceState: PracticeState = {
+    loop: region,
+    snapMode,
+    playbackRate: playback.playbackRate,
+    mixer: stemsSeparated ? (mixer ?? withStemsEnabled(null, false)) : null,
+    metronome: { enabled: metronome.enabled, volume: metronome.volume },
+  }
+  // the metronome opens off (audio needs a click): until it is switched, it matches the preset
+  const activeMetronome = saved.active?.metronome
+  const comparedState =
+    activeMetronome && !metronome.touched
+      ? {
+          ...practiceState,
+          metronome: { ...practiceState.metronome, enabled: activeMetronome.enabled },
+        }
+      : practiceState
+  const presetModified = saved.active !== null && !matchesPreset(saved.active, comparedState)
+
+  /** Set the player as the preset says: loop, snap, speed, stem mix, metronome. */
+  const selectPreset = (id: string) => {
+    const chosen = saved.presets.find((candidate) => candidate.id === id)
     if (!chosen) return
-    setActiveId(id)
+    saved.setActiveId(id)
     setSnapMode(chosen.snapMode)
-    dispatchLoop({ type: 'load', start: chosen.start, end: chosen.end, duration })
     playback.setPlaybackRate(chosen.playbackRate)
-    const chosenLead = grid && chosen.snapMode !== 'off' ? SNAP_LEAD_SECONDS : 0
-    playback.seek(Math.max(0, chosen.start - chosenLead))
-    zoom.fit(chosen)
+    if (chosen.mixer) setMixer(chosen.mixer)
+    if (chosen.metronome) {
+      metronome.setVolume(chosen.metronome.volume)
+      metronome.setOn(chosen.metronome.enabled)
+    }
+    const chosenLoop = presetLoop(chosen)
+    if (chosenLoop) {
+      dispatchLoop({ type: 'load', ...chosenLoop, duration })
+      const chosenLead = grid && chosen.snapMode !== 'off' ? SNAP_LEAD_SECONDS : 0
+      playback.seek(Math.max(0, chosenLoop.start - chosenLead))
+      zoom.fit(chosenLoop)
+    } else {
+      dispatchLoop({ type: 'clear' })
+      zoom.reset()
+    }
   }
-  const canSaveLoop = practice !== undefined && region !== null && activeId === null
-  const saveLoop = () => {
-    if (!canSaveLoop || !region) return
-    saved.add(createLoop(saved.loops, region, snapMode, playback.playbackRate))
+  /** The player as the song first opens: whole song, normal speed, stems and metronome off. */
+  const selectDefault = () => {
+    saved.setActiveId(null)
+    setSnapMode('off')
+    playback.setPlaybackRate(1)
+    if (mixer) setMixer(withStemsEnabled(null, false))
+    metronome.setOn(false)
+    dispatchLoop({ type: 'clear' })
+    zoom.reset()
+    playback.seek(0)
   }
-  const deleteLoop = (id: string) => {
-    const doomed = saved.loops.find((candidate) => candidate.id === id)
-    if (doomed && window.confirm(`Delete the saved loop “${doomed.name}”?`)) saved.remove(id)
+  const defaultActive = saved.active === null && isDefaultState(practiceState)
+
+  const savePreset = (name?: string) => {
+    if (!practice || (saved.active && !presetModified)) return
+    saved.add(createPreset(saved.presets, practiceState, name))
+  }
+  const updatePreset = () => {
+    const { active } = saved
+    if (active) saved.replace(presetFromState(active.id, active.name, practiceState))
+  }
+  const deletePreset = (id: string) => {
+    const doomed = saved.presets.find((candidate) => candidate.id === id)
+    if (doomed && window.confirm(`Delete the preset “${doomed.name}”?`)) saved.remove(id)
   }
   const toggleZoom = () => {
     if (zoom.zoomed) zoom.reset()
@@ -374,10 +419,14 @@ export function VideoPlayer({
     setLoopEnd: setLoopEndHere,
     toggleLoop,
     clearLoop,
-    saveLoop,
-    selectSavedLoop: (key) => {
-      const chosen = saved.loops[Number(key) - 1]
-      if (chosen) selectLoop(chosen.id)
+    savePreset: () => savePreset(),
+    selectPreset: (key) => {
+      if (key === '0') {
+        selectDefault()
+        return
+      }
+      const chosen = saved.presets[Number(key) - 1]
+      if (chosen) selectPreset(chosen.id)
     },
     toggleZoom,
     cycleSnapMode,
@@ -447,7 +496,7 @@ export function VideoPlayer({
                     barNumbers={lastBar - firstBar <= MAX_BAR_NUMBERS}
                   />
                 )}
-                <SavedLoopMarks view={view} loops={saved.loops} activeId={activeId} />
+                <PresetMarks view={view} presets={saved.presets} activeId={activeId} />
               </>
             }
           />
@@ -459,7 +508,7 @@ export function VideoPlayer({
                 view={view}
                 currentTime={playback.currentTime}
                 loop={loop}
-                savedLoops={saved.loops}
+                presets={saved.presets}
                 onViewChange={zoom.setView}
               />
             )}
@@ -525,22 +574,6 @@ export function VideoPlayer({
               onVolumeChange={metronome.setVolume}
             />
           </div>
-          {practice && (
-            <div className={controlStyles.row}>
-              <SavedLoops
-                loops={saved.loops}
-                activeId={activeId}
-                canSave={canSaveLoop}
-                describe={(candidate) => describeLoop(candidate, grid)}
-                onSelect={selectLoop}
-                onSave={saveLoop}
-                onNew={clearLoop}
-                onRename={(id, name) => updateSaved(id, { name })}
-                onDelete={deleteLoop}
-                saveError={practice.saveError}
-              />
-            </div>
-          )}
           {beatTracking && (
             <div className={controlStyles.row}>
               <BeatSnapControls
@@ -586,6 +619,26 @@ export function VideoPlayer({
           )}
         </div>
       </div>
+      {practice && (
+        <PresetsPanel
+          presets={saved.presets}
+          activeId={activeId}
+          modified={presetModified}
+          tags={(preset) => presetTags(preset, grid)}
+          draft={{
+            name: nextPresetName(saved.presets),
+            tags: presetTags(presetFromState('draft', '', practiceState), grid),
+          }}
+          defaultActive={defaultActive}
+          onSelectDefault={selectDefault}
+          onSelect={selectPreset}
+          onSave={savePreset}
+          onUpdate={updatePreset}
+          onRename={saved.rename}
+          onDelete={deletePreset}
+          saveError={practice.saveError}
+        />
+      )}
       <ShortcutHelp />
     </div>
   )

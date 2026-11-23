@@ -5,16 +5,25 @@ import type { BeatGrid } from '../beats/beatGrid'
 import type { LoopRegion } from '../player/loop'
 import { MetronomeAudio } from './metronomeAudio'
 
+const DEFAULT_VOLUME = 0.3
+
+/**
+ * A click on every beat of the grid. It starts off: browsers let audio start
+ * only from a click (`toggle` / `setOn` in an event handler).
+ */
 export function useMetronome(
   videoRef: RefObject<HTMLVideoElement | null>,
   grid: BeatGrid | null,
   loop: LoopRegion | null,
   position: () => number,
   gaplessActive: () => boolean,
+  initialVolume: number = DEFAULT_VOLUME,
 ) {
   const [enabled, setEnabled] = useState(false)
   const [starting, setStarting] = useState(false)
-  const [volume, setVolume] = useState(0.3)
+  // switched on or off since the page opened (it always opens off)
+  const [touched, setTouched] = useState(false)
+  const [volume, setVolume] = useState(initialVolume)
   const [error, setError] = useState<string | null>(null)
   const contextRef = useRef<AudioContext | null>(null)
   const audioRef = useRef<MetronomeAudio | null>(null)
@@ -72,6 +81,7 @@ export function useMetronome(
   }, [enabled])
 
   const toggle = () => {
+    setTouched(true)
     if (enabled) {
       setEnabled(false)
       return
@@ -99,5 +109,9 @@ export function useMetronome(
     }
   }
 
-  return { enabled, starting, volume, setVolume, error, toggle }
+  const setOn = (on: boolean) => {
+    if (on !== (enabled || starting)) toggle()
+  }
+
+  return { enabled, starting, volume, setVolume, error, toggle, setOn, touched }
 }

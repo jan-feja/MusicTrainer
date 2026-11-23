@@ -1,4 +1,4 @@
-"""/api/me/library: the logged-in user's library, with their loops and player settings.
+"""/api/me/library: the logged-in user's library, with their presets and player settings.
 
 Guests keep their library in the browser; these routes need an account.
 """
@@ -17,11 +17,11 @@ from music_trainer.api.dependencies import (
 )
 from music_trainer.api.library import to_library_video
 from music_trainer.models import (
-    MAX_LOOPS,
+    MAX_PRESETS,
     GuestImportEntry,
     LibraryVideo,
     PlayerSettings,
-    SavedLoop,
+    Preset,
 )
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
@@ -74,36 +74,36 @@ def remove_video(
     user_library: UserLibraryDependency,
     song_cleanup: SongCleanupDependency,
 ) -> Response:
-    """Remove the song from the library, with the loops; deletes it if nobody else has it."""
+    """Remove the song from the library, with the presets; deletes it if nobody else has it."""
     if not user_library.remove(user.id, video_id):
         raise _not_in_library(video_id)
     song_cleanup.release(video_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.get("/{video_id}/loops", response_model=list[SavedLoop])
-def get_loops(
+@router.get("/{video_id}/presets", response_model=list[Preset])
+def get_presets(
     video_id: VideoIdParameter, user: RequiredUser, user_library: UserLibraryDependency
-) -> list[SavedLoop]:
-    loops = user_library.read_loops(user.id, video_id)
-    if loops is None:
+) -> list[Preset]:
+    presets = user_library.read_presets(user.id, video_id)
+    if presets is None:
         raise _not_in_library(video_id)
-    return loops
+    return presets
 
 
-@router.put("/{video_id}/loops", response_model=list[SavedLoop])
-def put_loops(
+@router.put("/{video_id}/presets", response_model=list[Preset])
+def put_presets(
     video_id: VideoIdParameter,
     user: RequiredUser,
     user_library: UserLibraryDependency,
-    loops: Annotated[list[SavedLoop], Body(max_length=MAX_LOOPS)],
-) -> list[SavedLoop]:
-    """Replace the saved loops."""
-    if len({loop.id for loop in loops}) != len(loops):
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Loop ids must be unique")
-    if not user_library.write_loops(user.id, video_id, loops):
+    presets: Annotated[list[Preset], Body(max_length=MAX_PRESETS)],
+) -> list[Preset]:
+    """Replace the presets."""
+    if len({preset.id for preset in presets}) != len(presets):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Preset ids must be unique")
+    if not user_library.write_presets(user.id, video_id, presets):
         raise _not_in_library(video_id)
-    return loops
+    return presets
 
 
 @router.get("/{video_id}/settings", response_model=PlayerSettings)
@@ -139,7 +139,7 @@ def import_guest_library(
 ) -> Response:
     """Move a guest's library from the browser into the account after logging in.
 
-    Songs no longer on the server are skipped; loops and settings are kept only for
+    Songs no longer on the server are skipped; presets and settings are kept only for
     songs the account has none for yet.
     """
     available = [e for e in entries if _song_available(e.video_id, library, downloads)]

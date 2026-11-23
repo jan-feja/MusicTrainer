@@ -154,26 +154,41 @@ class BeatTrackingState(ApiModel):
 SnapMode = Literal["off", "beat", "bar"]
 """What loop points snap to: nothing, beats or bar starts."""
 
-LOOP_ID_PATTERN = r"^[A-Za-z0-9_-]{1,40}$"
+PRESET_ID_PATTERN = r"^[A-Za-z0-9_-]{1,40}$"
 MIN_PLAYBACK_RATE = 0.25
 MAX_PLAYBACK_RATE = 2.0
 
 
-class SavedLoop(ApiModel):
-    """A practice loop saved with a video; the video's loops.json holds a list of them."""
+class MetronomeSettings(ApiModel):
+    enabled: bool = False
+    volume: float = Field(default=0.3, ge=0, le=1)
 
-    id: str = Field(pattern=LOOP_ID_PATTERN)
+
+class Preset(ApiModel):
+    """A named way to practice a song: its loop, speed, stem mix and metronome.
+
+    A user's presets of a song are a list of them. Choosing one sets the player
+    that way; what a preset does not hold (no stem mix, say) is left as it is.
+    """
+
+    id: str = Field(pattern=PRESET_ID_PATTERN)
     name: str = Field(min_length=1, max_length=100)
-    start: float = Field(ge=0)
-    end: float = Field(gt=0)
+    start: float | None = Field(default=None, ge=0)
+    """The loop, in seconds; None (with `end`): the whole song, no loop."""
+    end: float | None = Field(default=None, gt=0)
     snap_mode: SnapMode = "off"
-    """How the loop points were set; selecting the loop sets the snap again."""
+    """What the loop points snap to while the preset is played."""
     playback_rate: float = Field(default=1.0, ge=MIN_PLAYBACK_RATE, le=MAX_PLAYBACK_RATE)
-    """The speed the loop is practiced at."""
+    mixer: "MixerSettings | None" = None
+    """The stem mix; None: the stems are left as they are."""
+    metronome: MetronomeSettings | None = None
+    """None: the metronome is left as it is."""
 
     @model_validator(mode="after")
-    def _end_after_start(self) -> Self:
-        if self.end <= self.start:
+    def _whole_loop(self) -> Self:
+        if (self.start is None) != (self.end is None):
+            raise ValueError("a loop needs both start and end")
+        if self.start is not None and self.end is not None and self.end <= self.start:
             raise ValueError("end must be after start")
         return self
 
@@ -191,10 +206,13 @@ class PlayerSettings(ApiModel):
     loop_start: float | None = Field(default=None, ge=0)
     loop_end: float | None = Field(default=None, ge=0)
     loop_enabled: bool = False
-    active_loop_id: str | None = Field(default=None, pattern=LOOP_ID_PATTERN)
-    """The saved loop being played and edited, if any."""
+    active_preset_id: str | None = Field(default=None, pattern=PRESET_ID_PATTERN)
+    """The preset chosen last, if any."""
     mixer: "MixerSettings | None" = None
     """The stem mixer; None: stems were never turned on for this video."""
+    metronome: MetronomeSettings | None = None
+    grid_hints: BeatGridHints | None = None
+    """The user's fixes of the beat grid; None: the detected grid as it is."""
 
 
 STEM_NAME_PATTERN = r"^[a-z][a-z0-9_]{0,30}$"
@@ -254,16 +272,20 @@ class ChordAnalysis(ApiModel):
     chords: list[Chord]
     """In time order, without gaps between neighbours."""
     grid: str | None = None
-    """The beat grid the chords were found on (see chords.beat_grid_key); other grids
-    detect them again."""
+    """The beat grid the chords were found on (see chords.beat_grid_key)."""
     from_stems: bool = False
     """Found on the pitched stems (no drums or vocals) rather than the whole mix."""
 
 
+GRID_KEY_PATTERN = r"^[0-9a-f]{16}$"
+
+
 class ChordDetectionState(ApiModel):
-    """Where chord detection of a video stands, with the chords once it is done."""
+    """Where chord detection of a video on one beat grid stands, with the chords once done."""
 
     video_id: str
+    grid: str | None = None
+    """The beat grid (see chords.beat_grid_key); None: the song has no beat grid yet."""
     status: AnalysisStatus
     analysis: ChordAnalysis | None = None
     error: str | None = None
@@ -282,12 +304,13 @@ class MixerSettings(ApiModel):
 
 
 PlayerSettings.model_rebuild()
+Preset.model_rebuild()
 
 
 USERNAME_PATTERN = r"^[A-Za-z0-9_.-]{3,30}$"
 MIN_PASSWORD_LENGTH = 8
 MAX_PASSWORD_LENGTH = 128
-MAX_LOOPS = 200
+MAX_PRESETS = 200
 
 
 class User(ApiModel):
@@ -321,5 +344,5 @@ class GuestImportEntry(ApiModel):
     """A song from a guest's library in the browser, moved into the account on login."""
 
     video_id: str = Field(pattern=VIDEO_ID_PATTERN)
-    loops: list[SavedLoop] | None = Field(default=None, max_length=MAX_LOOPS)
+    presets: list[Preset] | None = Field(default=None, max_length=MAX_PRESETS)
     settings: PlayerSettings | None = None

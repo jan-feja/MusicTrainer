@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { PlayerSettings, SavedLoop } from '../../api/types'
+import type { PlayerSettings, Preset } from '../../api/types'
 import { errorMessage } from '../../lib/format'
 import { type AsyncResult, useAsync } from '../../lib/useAsync'
 import { useLatest } from '../../lib/useLatest'
@@ -7,28 +7,28 @@ import { type PracticeData, useMyLibrary } from '../library/myLibrary'
 
 export interface PracticeStorage {
   data: AsyncResult<PracticeData>
-  /** Store the loops / settings a moment later; the latest value wins. */
-  saveLoops: (loops: SavedLoop[]) => void
+  /** Store the presets / settings a moment later; the latest value wins. */
+  savePresets: (presets: Preset[]) => void
   saveSettings: (settings: PlayerSettings) => void
   /** The last save failed with this message. */
   saveError: string | null
 }
 
-const LOOPS_SAVE_DELAY_MS = 300
+const PRESETS_SAVE_DELAY_MS = 300
 // settings change often (volume drags, the position while playing)
 const SETTINGS_SAVE_DELAY_MS = 1000
 
 /**
- * Adds the video to the user's library, loads the user's saved loops and
+ * Adds the video to the user's library, loads the user's presets and
  * player settings for it, and stores changes to them (on the server for an
  * account, in this browser for a guest).
  */
 export function usePracticeStorage(videoId: string): PracticeStorage {
   const library = useMyLibrary()
   const data = useAsync((signal) => library.openSong(videoId, signal), videoId)
-  const loops = useDelayedSave<SavedLoop[]>(
-    (value, keepalive) => library.saveLoops(videoId, value, keepalive),
-    LOOPS_SAVE_DELAY_MS,
+  const presets = useDelayedSave<Preset[]>(
+    (value, keepalive) => library.savePresets(videoId, value, keepalive),
+    PRESETS_SAVE_DELAY_MS,
   )
   const settings = useDelayedSave<PlayerSettings>(
     (value, keepalive) => library.saveSettings(videoId, value, keepalive),
@@ -36,9 +36,9 @@ export function usePracticeStorage(videoId: string): PracticeStorage {
   )
   return {
     data,
-    saveLoops: loops.save,
+    savePresets: presets.save,
     saveSettings: settings.save,
-    saveError: loops.error ?? settings.error,
+    saveError: presets.error ?? settings.error,
   }
 }
 

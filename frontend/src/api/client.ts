@@ -1,4 +1,5 @@
 import type {
+  BeatAnalysis,
   BeatGridHints,
   BeatTrackingState,
   ChordDetectionState,
@@ -6,7 +7,7 @@ import type {
   GuestImportEntry,
   LibraryVideo,
   PlayerSettings,
-  SavedLoop,
+  Preset,
   SearchResult,
   StemSeparationState,
   User,
@@ -144,22 +145,15 @@ export const api = {
     return request(`${videoPath(videoId)}/beats`, { signal })
   },
 
-  /**
-   * Start beat detection. `force` runs the beat network again even if a result
-   * exists; `hints` only decodes the grid again with them (a few seconds).
-   */
-  detectBeats(
-    videoId: string,
-    options: { force?: boolean; hints?: BeatGridHints } = {},
-  ): Promise<BeatTrackingState> {
+  /** Start beat detection; `force` runs the beat network again even if a result exists. */
+  detectBeats(videoId: string, options: { force?: boolean } = {}): Promise<BeatTrackingState> {
     const query = options.force ? '?force=true' : ''
-    return request(`${videoPath(videoId)}/beats${query}`, {
-      method: 'POST',
-      ...(options.hints && {
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(options.hints),
-      }),
-    })
+    return request(`${videoPath(videoId)}/beats${query}`, { method: 'POST' })
+  },
+
+  /** The user's own beat grid: the detected one with their fixes (a moment for new ones). */
+  getBeatGrid(videoId: string, hints: BeatGridHints, signal?: AbortSignal): Promise<BeatAnalysis> {
+    return request(`${videoPath(videoId)}/beats/grid`, { ...sendJson('POST', hints), signal })
   },
 
   getStems(videoId: string, signal?: AbortSignal): Promise<StemSeparationState> {
@@ -177,24 +171,32 @@ export const api = {
     return `${API_BASE}${videoPath(videoId)}/stems/${encodeURIComponent(name)}`
   },
 
-  getChords(videoId: string, signal?: AbortSignal): Promise<ChordDetectionState> {
-    return request(`${videoPath(videoId)}/chords`, { signal })
+  /** The chords on the beat grid `grid` (from a state detectChords returned). */
+  getChords(videoId: string, grid: string, signal?: AbortSignal): Promise<ChordDetectionState> {
+    const query = new URLSearchParams({ grid })
+    return request(`${videoPath(videoId)}/chords?${query}`, { signal })
   },
 
-  /** Start chord detection (needs the beat grid: 409 before it is there). */
-  detectChords(videoId: string, options: { force?: boolean } = {}): Promise<ChordDetectionState> {
-    const query = options.force ? '?force=true' : ''
-    return request(`${videoPath(videoId)}/chords${query}`, { method: 'POST' })
+  /**
+   * Start chord detection on the user's beat grid, or get the chords if they
+   * are there (needs the beats: 409 before they are detected).
+   */
+  detectChords(
+    videoId: string,
+    hints: BeatGridHints | null,
+    signal?: AbortSignal,
+  ): Promise<ChordDetectionState> {
+    return request(`${videoPath(videoId)}/chords`, { ...sendJson('POST', hints), signal })
   },
 
-  /** The user's loops for a song in their library. */
-  getLoops(videoId: string, signal?: AbortSignal): Promise<SavedLoop[]> {
-    return request(`${myVideoPath(videoId)}/loops`, { signal })
+  /** The user's presets for a song in their library. */
+  getPresets(videoId: string, signal?: AbortSignal): Promise<Preset[]> {
+    return request(`${myVideoPath(videoId)}/presets`, { signal })
   },
 
   /** `keepalive` lets the request finish while the page is being closed. */
-  saveLoops(videoId: string, loops: SavedLoop[], keepalive = false): Promise<SavedLoop[]> {
-    return request(`${myVideoPath(videoId)}/loops`, putJson(loops, keepalive))
+  savePresets(videoId: string, presets: Preset[], keepalive = false): Promise<Preset[]> {
+    return request(`${myVideoPath(videoId)}/presets`, putJson(presets, keepalive))
   },
 
   getPlayerSettings(videoId: string, signal?: AbortSignal): Promise<PlayerSettings> {

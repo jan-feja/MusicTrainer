@@ -77,3 +77,47 @@ export const DeleteIcon = (props: IconProps) => (
 export const DownloadIcon = (props: IconProps) => (
   <Icon path="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" {...props} />
 )
+
+export const AddIcon = (props: IconProps) => (
+  <Icon path="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" {...props} />
+)
+
+export const EditIcon = (props: IconProps) => (
+  <Icon
+    path="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+    {...props}
+  />
+)
+
+export const SpeedIcon = (props: IconProps) => (
+  <Icon
+    path="m20.38 8.57-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44zm-9.79 6.84a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z"
+    {...props}
+  />
+)
+
+/** Mixer sliders. */
+export const MixIcon = (props: IconProps) => (
+  <Icon
+    path="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"
+    {...props}
+  />
+)
+
+export const MetronomeIcon = (props: IconProps) => (
+  <svg
+    viewBox="0 0 24 24"
+    width="1em"
+    height="1em"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    {...props}
+  >
+    <path d="M9 3h6l4 18H5z" />
+    <path d="m12 16 5-9" />
+  </svg>
+)

@@ -183,11 +183,12 @@ class TestLibrary:
         assert download(client)["status"] == "completed"
         assert client.get(f"/api/library/{VIDEO_ID}").status_code == 200
 
-    def test_saved_loops(self, client: TestClient) -> None:
+    def test_presets(self, client: TestClient) -> None:
         download(client)
-        url = f"/api/me/library/{VIDEO_ID}/loops"
+        url = f"/api/me/library/{VIDEO_ID}/presets"
         assert client.get(url).json() == []
-        loops = [
+        mixer = {"enabled": True, "volumes": {"bass": 0.5}, "muted": ["vocals"], "solo": []}
+        presets = [
             {
                 "id": "l1",
                 "name": "Verse",
@@ -197,21 +198,39 @@ class TestLibrary:
                 "playbackRate": 0.8,
             },
             {"id": "l2", "name": "Solo", "start": 60.5, "end": 66.25},
+            {
+                "id": "l3",
+                "name": "No vocals",
+                "start": None,
+                "end": None,
+                "snapMode": "off",
+                "playbackRate": 1.0,
+                "mixer": mixer,
+                "metronome": {"enabled": True, "volume": 0.5},
+            },
         ]
-        assert client.put(url, json=loops).status_code == 200
+        assert client.put(url, json=presets).status_code == 200
         stored = client.get(url).json()
-        assert stored[0] == loops[0]
-        assert stored[1] == {**loops[1], "snapMode": "off", "playbackRate": 1.0}
+        assert stored[0] == {**presets[0], "mixer": None, "metronome": None}
+        assert stored[1] == {
+            **presets[1],
+            "snapMode": "off",
+            "playbackRate": 1.0,
+            "mixer": None,
+            "metronome": None,
+        }
+        assert stored[2] == presets[2]
 
-    def test_saved_loops_are_validated(self, client: TestClient) -> None:
+    def test_presets_are_validated(self, client: TestClient) -> None:
         download(client)
-        url = f"/api/me/library/{VIDEO_ID}/loops"
+        url = f"/api/me/library/{VIDEO_ID}/presets"
         loop = {"id": "l1", "name": "Verse", "start": 10, "end": 20}
         assert client.put(url, json=[loop, loop]).status_code == 422  # same id twice
         assert client.put(url, json=[{**loop, "end": 5}]).status_code == 422
         assert client.put(url, json=[{**loop, "playbackRate": 3}]).status_code == 422
         assert client.put(url, json=[{**loop, "snapMode": "half"}]).status_code == 422
         assert client.put(url, json=[{**loop, "id": "../x"}]).status_code == 422
+        assert client.put(url, json=[{**loop, "end": None}]).status_code == 422
         many = [{**loop, "id": f"l{i}"} for i in range(201)]
         assert client.put(url, json=many).status_code == 422
 
@@ -221,7 +240,8 @@ class TestLibrary:
         defaults = client.get(url).json()
         assert defaults["volume"] == 1.0
         assert defaults["snapMode"] is None
-        assert defaults["activeLoopId"] is None
+        assert defaults["activePresetId"] is None
+        assert defaults["gridHints"] is None
         settings = {
             **defaults,
             "volume": 0.3,
@@ -232,7 +252,9 @@ class TestLibrary:
             "loopStart": 10,
             "loopEnd": 20,
             "loopEnabled": True,
-            "activeLoopId": "l1",
+            "activePresetId": "l1",
+            "metronome": {"enabled": True, "volume": 0.4},
+            "gridHints": {"beatsPerBar": 3, "tempoBpm": None, "barStarts": [], "steadyTempo": True},
         }
         assert client.put(url, json=settings).json() == settings
         assert client.get(url).json() == settings
@@ -243,7 +265,7 @@ class TestLibrary:
         assert client.get(f"/api/library/{VIDEO_ID}/media").status_code == 404
         audio = client.get(f"/api/library/{VIDEO_ID}/audio", params={"start": 0, "end": 1})
         assert audio.status_code == 404
-        assert client.get(f"/api/me/library/{VIDEO_ID}/loops").status_code == 404
-        assert client.put(f"/api/me/library/{VIDEO_ID}/loops", json=[]).status_code == 404
+        assert client.get(f"/api/me/library/{VIDEO_ID}/presets").status_code == 404
+        assert client.put(f"/api/me/library/{VIDEO_ID}/presets", json=[]).status_code == 404
         assert client.get(f"/api/me/library/{VIDEO_ID}/settings").status_code == 404
         assert client.put(f"/api/me/library/{VIDEO_ID}/settings", json={}).status_code == 404

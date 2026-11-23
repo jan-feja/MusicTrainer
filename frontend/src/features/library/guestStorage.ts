@@ -1,18 +1,20 @@
 /**
- * A guest's library, kept in this browser: which songs, with their saved loops
+ * A guest's library, kept in this browser: which songs, with their presets
  * and player settings. Moved into the account on login (see `importEntries`).
  *
  * Storage can be missing or full (private mode, blocked site data): reads then
  * find nothing and writes are dropped, so the app still works for the page.
  */
-import type { GuestImportEntry, PlayerSettings, SavedLoop } from '../../api/types'
+import type { GuestImportEntry, PlayerSettings, Preset } from '../../api/types'
 import { isValidVideoId } from '../../lib/youtube'
 
 export type KeyValueStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 
 const PREFIX = 'musicTrainer.guest.'
 const LIBRARY_KEY = `${PREFIX}library`
-const loopsKey = (videoId: string) => `${PREFIX}loops.${videoId}`
+const presetsKey = (videoId: string) => `${PREFIX}presets.${videoId}`
+/** Before presets there were saved loops; a saved loop is a valid preset. */
+const oldLoopsKey = (videoId: string) => `${PREFIX}loops.${videoId}`
 const settingsKey = (videoId: string) => `${PREFIX}settings.${videoId}`
 
 export interface GuestSong {
@@ -45,23 +47,25 @@ export class GuestStorage {
     this.write(LIBRARY_KEY, [{ videoId, addedAt: now }, ...songs])
   }
 
-  /** Remove the song with its loops and settings. */
+  /** Remove the song with its presets and settings. */
   remove(videoId: string): void {
     this.write(
       LIBRARY_KEY,
       this.songs().filter((song) => song.videoId !== videoId),
     )
-    this.delete(loopsKey(videoId))
+    this.delete(presetsKey(videoId))
+    this.delete(oldLoopsKey(videoId))
     this.delete(settingsKey(videoId))
   }
 
-  loops(videoId: string): SavedLoop[] {
-    const stored = this.read(loopsKey(videoId))
-    return Array.isArray(stored) ? stored.filter(isSavedLoop) : []
+  presets(videoId: string): Preset[] {
+    const stored = this.read(presetsKey(videoId)) ?? this.read(oldLoopsKey(videoId))
+    return Array.isArray(stored) ? stored.filter(isPreset) : []
   }
 
-  saveLoops(videoId: string, loops: SavedLoop[]): void {
-    this.write(loopsKey(videoId), loops)
+  savePresets(videoId: string, presets: Preset[]): void {
+    this.write(presetsKey(videoId), presets)
+    this.delete(oldLoopsKey(videoId))
   }
 
   /** How the player was left; null if never opened (the caller uses the defaults). */
@@ -77,11 +81,11 @@ export class GuestStorage {
   /** Everything, as the account's import takes it. */
   importEntries(): GuestImportEntry[] {
     return this.songs().map(({ videoId }) => {
-      const loops = this.loops(videoId)
+      const presets = this.presets(videoId)
       const settings = this.settings(videoId)
       return {
         videoId,
-        ...(loops.length > 0 && { loops }),
+        ...(presets.length > 0 && { presets }),
         ...(settings && { settings }),
       }
     })
@@ -143,13 +147,12 @@ function isGuestSong(value: unknown): value is GuestSong {
   )
 }
 
-function isSavedLoop(value: unknown): value is SavedLoop {
-  return (
-    isObject(value) &&
-    typeof value.id === 'string' &&
-    typeof value.name === 'string' &&
-    typeof value.start === 'number' &&
-    typeof value.end === 'number' &&
-    value.end > value.start
-  )
+function isPreset(value: unknown): value is Preset {
+  if (!isObject(value) || typeof value.id !== 'string' || typeof value.name !== 'string') {
+    return false
+  }
+  const { start, end } = value
+  const wholeSong = (start === null || start === undefined) && (end === null || end === undefined)
+  const loop = typeof start === 'number' && typeof end === 'number' && end > start
+  return wholeSong || loop
 }

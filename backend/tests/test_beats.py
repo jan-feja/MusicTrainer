@@ -2,6 +2,7 @@
 
 import hashlib
 import itertools
+import json
 from pathlib import Path
 
 import pytest
@@ -32,6 +33,9 @@ from tests.fakes import (
 def download(client: TestClient, video_id: str = VIDEO_ID) -> None:
     client.post("/api/downloads", json={"videoId": video_id})
     assert wait_for_download(client, video_id)["status"] == "completed"
+
+
+GRID_URL = f"/api/library/{VIDEO_ID}/beats/grid"
 
 
 class TestBeatGrid:
@@ -135,76 +139,83 @@ class TestBeatsApi:
     ) -> None:
         download(client)
         wait_for_beats(client, VIDEO_ID)
-        response = client.post(f"/api/library/{VIDEO_ID}/beats", json={"beatsPerBar": 3})
-        assert response.status_code == 202
-        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        analysis = client.post(GRID_URL, json={"beatsPerBar": 3}).json()
         assert analysis["beatsPerBar"] == 3
         assert analysis["hints"]["beatsPerBar"] == 3
         assert analysis["downbeats"] == analysis["beats"][::3]
         assert len(fake_beat_tracker.analyzed) == 1  # the stored network output was reused
 
-        client.post(f"/api/library/{VIDEO_ID}/beats", json={"tempoBpm": 240})
-        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        analysis = client.post(GRID_URL, json={"tempoBpm": 240}).json()
         assert analysis["bpm"] == pytest.approx(240, abs=8)
         assert analysis["hints"]["tempoBpm"] == 240
+        # the detected grid everyone starts from stays as it was
+        assert wait_for_beats(client, VIDEO_ID)["analysis"]["beatsPerBar"] == 4
 
-    def test_bar_starts_move_the_bars_without_decoding_again(
-        self, client: TestClient, fake_beat_tracker: FakeBeatTracker
-    ) -> None:
+    def test_no_hints_give_the_detected_grid(self, client: TestClient) -> None:
+        download(client)
+        detected = wait_for_beats(client, VIDEO_ID)["analysis"]
+        assert client.post(GRID_URL, json={}).json() == detected
+
+    def test_bar_starts_move_the_bars(self, client: TestClient) -> None:
         download(client)
         beats = wait_for_beats(client, VIDEO_ID)["analysis"]["beats"]
         # "a bar starts on the 6th beat": from there on, bars are counted from it
         hints = {"beatsPerBar": None, "tempoBpm": None, "barStarts": [beats[5] + 0.01]}
-        client.post(f"/api/library/{VIDEO_ID}/beats", json=hints)
-        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        analysis = client.post(GRID_URL, json=hints).json()
         # the one-beat bar this would leave (beat 4 to 5) joins the bar before: 5 beats
         assert analysis["downbeats"] == [beats[0], beats[5], beats[9], beats[13]]
         assert analysis["hints"]["barStarts"] == [beats[5] + 0.01]
         assert analysis["beatsPerBar"] == 4
-        assert len(fake_beat_tracker.analyzed) == 1
 
-        client.post(f"/api/library/{VIDEO_ID}/beats", json={**hints, "barStarts": []})
-        assert wait_for_beats(client, VIDEO_ID)["analysis"]["downbeats"] == FAKE_BEATS.downbeats
-
-    def test_steady_tempo_spaces_the_beats_evenly(
-        self, client: TestClient, fake_beat_tracker: FakeBeatTracker
-    ) -> None:
+    def test_steady_tempo_spaces_the_beats_evenly(self, client: TestClient) -> None:
         download(client)
         wait_for_beats(client, VIDEO_ID)
-        client.post(f"/api/library/{VIDEO_ID}/beats", json={"steadyTempo": True})
-        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
+        analysis = client.post(GRID_URL, json={"steadyTempo": True}).json()
         assert analysis["hints"]["steadyTempo"] is True
         gaps = {round(b - a, 3) for a, b in itertools.pairwise(analysis["beats"])}
         assert gaps <= {0.499, 0.5, 0.501}  # rounded to ms
-        assert len(fake_beat_tracker.analyzed) == 1
 
-    def test_running_the_network_again_keeps_the_hints(
+    def test_grid_needs_the_detection_first(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker
     ) -> None:
+        fake_beat_tracker.release.clear()
         download(client)
+        try:
+            assert client.post(GRID_URL, json={"beatsPerBar": 3}).status_code == 409
+        finally:
+            fake_beat_tracker.release.set()
         wait_for_beats(client, VIDEO_ID)
-        client.post(f"/api/library/{VIDEO_ID}/beats", json={"beatsPerBar": 3})
-        wait_for_beats(client, VIDEO_ID)
-        client.post(f"/api/library/{VIDEO_ID}/beats", params={"force": True})
-        analysis = wait_for_beats(client, VIDEO_ID)["analysis"]
-        assert analysis["hints"]["beatsPerBar"] == 3
-        assert len(fake_beat_tracker.analyzed) == 2
+        assert client.post(GRID_URL, json={"beatsPerBar": 3}).status_code == 200
 
-    def test_output_of_another_network_is_not_reused(
+    def test_output_of_another_network_is_detected_again(
         self, client: TestClient, fake_beat_tracker: FakeBeatTracker
     ) -> None:
         download(client)
         wait_for_beats(client, VIDEO_ID)
         fake_beat_tracker.model = "fake-v2"
-        client.post(f"/api/library/{VIDEO_ID}/beats", json={"beatsPerBar": 4})
-        wait_for_beats(client, VIDEO_ID)
+        assert client.get(f"/api/library/{VIDEO_ID}/beats").json()["status"] == "not_started"
+        assert client.post(GRID_URL, json={"beatsPerBar": 3}).status_code == 409
+        client.post(f"/api/library/{VIDEO_ID}/beats")
+        assert wait_for_beats(client, VIDEO_ID)["analysis"]["analyzer"] == "fake-v2+grid"
         assert len(fake_beat_tracker.analyzed) == 2
+
+    def test_grids_shared_with_hints_are_decoded_again_without(
+        self, client: TestClient, settings: Settings, fake_beat_tracker: FakeBeatTracker
+    ) -> None:
+        download(client)
+        wait_for_beats(client, VIDEO_ID)
+        fixed = client.post(GRID_URL, json={"beatsPerBar": 3}).json()
+        (settings.library_dir / VIDEO_ID / "analysis.json").write_text(json.dumps(fixed))
+        assert client.get(f"/api/library/{VIDEO_ID}/beats").json()["status"] == "not_started"
+        client.post(f"/api/library/{VIDEO_ID}/beats")
+        assert wait_for_beats(client, VIDEO_ID)["analysis"]["beatsPerBar"] == 4
+        assert len(fake_beat_tracker.analyzed) == 1
 
     def test_invalid_hints_are_rejected(self, client: TestClient) -> None:
         download(client)
         wait_for_beats(client, VIDEO_ID)
         for hints in ({"beatsPerBar": 1}, {"tempoBpm": 1000}, {"barStarts": [-1]}):
-            response = client.post(f"/api/library/{VIDEO_ID}/beats", json=hints)
+            response = client.post(GRID_URL, json=hints)
             assert response.status_code == 422, hints
 
     def test_grids_of_the_old_method_are_detected_again(

@@ -128,7 +128,7 @@ function CredentialsForm({
         {submitLabel}
       </button>
       <p className={styles.note}>
-        Songs, loops and settings you saved as a guest in this browser move into the account.
+        Songs, presets and settings you saved as a guest in this browser move into the account.
       </p>
       <p className={styles.footer}>{footer}</p>
     </form>

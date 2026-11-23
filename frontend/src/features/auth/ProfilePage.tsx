@@ -96,7 +96,7 @@ function DeleteAccount() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault()
-    if (!window.confirm('Delete your account, your library and your saved loops for good?')) {
+    if (!window.confirm('Delete your account, your library and your presets for good?')) {
       return
     }
     setError(null)
@@ -114,7 +114,7 @@ function DeleteAccount() {
     <form className={styles.card} onSubmit={(event) => void submit(event)}>
       <h2>Delete account</h2>
       <p className={styles.note}>
-        Your library and saved loops are deleted. Songs nobody else has are deleted from the server.
+        Your library and presets are deleted. Songs nobody else has are deleted from the server.
       </p>
       <label className={styles.field}>
         <span>Password</span>

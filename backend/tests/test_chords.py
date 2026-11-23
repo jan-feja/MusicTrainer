@@ -126,15 +126,23 @@ class TestChordsApi:
         wait_for_chords(client, VIDEO_ID)
         assert len(fake_chord_detector.calls) == 2
 
-    def test_a_new_beat_grid_detects_them_again(self, client: TestClient) -> None:
+    def test_each_beat_grid_has_its_chords(
+        self, client: TestClient, fake_chord_detector: FakeChordDetector
+    ) -> None:
         download_with_beats(client)
         client.post(CHORDS_URL)
-        wait_for_chords(client, VIDEO_ID)
+        detected = wait_for_chords(client, VIDEO_ID)
         # half the tempo: every other beat (a new meter alone keeps the beats and the chords)
         hints = {"beatsPerBar": None, "tempoBpm": 60, "barStarts": [], "steadyTempo": False}
-        client.post(f"/api/library/{VIDEO_ID}/beats", json=hints)
-        wait_for_beats(client, VIDEO_ID)
-        assert client.get(CHORDS_URL).json()["status"] == "not_started"
+        state = client.post(CHORDS_URL, json=hints).json()
+        assert state["grid"] != detected["grid"]
+        mine = wait_for_chords(client, VIDEO_ID, grid=state["grid"])
+        assert mine["status"] == "completed"
+        assert len(fake_chord_detector.calls[-1][2]) < len(FAKE_BEATS.beats)  # its own beats
+        # the chords of the detected grid are still there for everyone else
+        assert client.get(CHORDS_URL).json() == detected
+        assert client.post(CHORDS_URL, json={"beatsPerBar": 3}).json() == detected
+        assert len(fake_chord_detector.calls) == 2
 
     def test_stems_are_used_once_separated(
         self,
@@ -171,3 +179,4 @@ class TestChordsApi:
         assert client.get(CHORDS_URL).status_code == 404
         assert client.post(CHORDS_URL).status_code == 404
         assert client.get("/api/library/not-an-id/chords").status_code == 422
+        assert client.get(CHORDS_URL, params={"grid": "../x"}).status_code == 422

@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext value={value}>{children}</AuthContext>
 }
 
-/** The guest's songs, loops and settings go to the account; kept here if that fails. */
+/** The guest's songs, presets and settings go to the account; kept here if that fails. */
 async function moveGuestLibraryInto(): Promise<void> {
   const entries = guestStorage.importEntries()
   if (entries.length === 0) return

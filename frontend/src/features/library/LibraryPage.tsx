@@ -22,7 +22,7 @@ export function LibraryPage() {
   useDocumentTitle('Library')
 
   const removeVideo = async (videoId: string, title: string) => {
-    if (!window.confirm(`Remove “${title}” and its saved loops from your library?`)) return
+    if (!window.confirm(`Remove “${title}” and its presets from your library?`)) return
     try {
       await library.remove(videoId)
       forgetDownload(videoId)

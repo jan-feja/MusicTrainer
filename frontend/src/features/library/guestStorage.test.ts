@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import type { PlayerSettings, SavedLoop } from '../../api/types'
+import type { PlayerSettings, Preset } from '../../api/types'
 import { GuestStorage, type KeyValueStorage } from './guestStorage'
 
 const A = 'jNQXAC9IVRw'
 const B = 'dQw4w9WgXcQ'
-const LOOP: SavedLoop = {
+const LOOP: Preset = {
   id: 'l1',
   name: 'Verse',
   start: 1,
@@ -32,15 +32,15 @@ describe('GuestStorage', () => {
     expect(guest.videoIds()).toEqual([B, A])
   })
 
-  it('removes a song with its loops and settings', () => {
+  it('removes a song with its presets and settings', () => {
     const storage = memoryStorage()
     const guest = new GuestStorage(storage)
     guest.add(A)
-    guest.saveLoops(A, [LOOP])
+    guest.savePresets(A, [LOOP])
     guest.saveSettings(A, { volume: 0.5 } as PlayerSettings)
     guest.remove(A)
     expect(guest.videoIds()).toEqual([])
-    expect(guest.loops(A)).toEqual([])
+    expect(guest.presets(A)).toEqual([])
     expect(guest.settings(A)).toBeNull()
   })
 
@@ -49,11 +49,11 @@ describe('GuestStorage', () => {
     const guest = new GuestStorage(storage)
     guest.add(A, 1)
     guest.add(B, 2)
-    guest.saveLoops(A, [LOOP])
+    guest.savePresets(A, [LOOP])
     guest.saveSettings(B, { volume: 0.5 } as PlayerSettings)
     expect(guest.importEntries()).toEqual([
       { videoId: B, settings: { volume: 0.5 } },
-      { videoId: A, loops: [LOOP] },
+      { videoId: A, presets: [LOOP] },
     ])
     guest.clear()
     expect(storage.data.size).toBe(0)
@@ -69,11 +69,16 @@ describe('GuestStorage', () => {
       JSON.stringify([{ videoId: '../x', addedAt: 1 }, { videoId: A, addedAt: 2 }, 'nope']),
     )
     expect(guest.videoIds()).toEqual([A])
+    // saved loops from before presets are presets too
     storage.setItem(
       `musicTrainer.guest.loops.${A}`,
-      JSON.stringify([LOOP, { ...LOOP, end: 0 }, null]),
+      JSON.stringify([LOOP, { ...LOOP, end: 0 }, { ...LOOP, end: null }, null]),
     )
-    expect(guest.loops(A)).toEqual([LOOP])
+    expect(guest.presets(A)).toEqual([LOOP])
+    const wholeSong = { ...LOOP, id: 'l2', start: null, end: null }
+    guest.savePresets(A, [wholeSong])
+    expect(guest.presets(A)).toEqual([wholeSong])
+    expect(storage.data.has(`musicTrainer.guest.loops.${A}`)).toBe(false)
   })
 
   it('works without storage, and when it throws', () => {

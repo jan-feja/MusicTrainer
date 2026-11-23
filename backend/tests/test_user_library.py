@@ -22,7 +22,16 @@ from tests.fakes import (
     wait_for_download,
 )
 
-LOOP = {"id": "l1", "name": "Verse", "start": 10, "end": 20, "snapMode": "off", "playbackRate": 1}
+PRESET = {
+    "id": "l1",
+    "name": "Verse",
+    "start": 10,
+    "end": 20,
+    "snapMode": "off",
+    "playbackRate": 1,
+    "mixer": None,
+    "metronome": None,
+}
 
 
 def download(client: TestClient, video_id: str = VIDEO_ID) -> None:
@@ -49,7 +58,7 @@ class TestOwnLibrary:
         download(client)
         assert my_library(client) == [VIDEO_ID]
         assert my_library(bob) == []
-        assert bob.get(f"/api/me/library/{VIDEO_ID}/loops").status_code == 404
+        assert bob.get(f"/api/me/library/{VIDEO_ID}/presets").status_code == 404
         # the song itself is open to everyone who knows it
         assert bob.get(f"/api/library/{VIDEO_ID}").status_code == 200
 
@@ -65,15 +74,15 @@ class TestOwnLibrary:
         assert my_library(bob) == [VIDEO_ID]
         assert bob.put(f"/api/me/library/{OTHER_VIDEO_ID}").status_code == 404
 
-    def test_loops_and_settings_are_per_user(self, client: TestClient, bob: TestClient) -> None:
+    def test_presets_and_settings_are_per_user(self, client: TestClient, bob: TestClient) -> None:
         download(client)
         bob.put(f"/api/me/library/{VIDEO_ID}")
-        client.put(f"/api/me/library/{VIDEO_ID}/loops", json=[LOOP])
+        client.put(f"/api/me/library/{VIDEO_ID}/presets", json=[PRESET])
         client.put(f"/api/me/library/{VIDEO_ID}/settings", json={"volume": 0.25})
 
-        assert bob.get(f"/api/me/library/{VIDEO_ID}/loops").json() == []
+        assert bob.get(f"/api/me/library/{VIDEO_ID}/presets").json() == []
         assert bob.get(f"/api/me/library/{VIDEO_ID}/settings").json()["volume"] == 1.0
-        assert client.get(f"/api/me/library/{VIDEO_ID}/loops").json() == [LOOP]
+        assert client.get(f"/api/me/library/{VIDEO_ID}/presets").json() == [PRESET]
         assert client.get(f"/api/me/library/{VIDEO_ID}/settings").json()["volume"] == 0.25
 
     def test_settings_keep_the_mixer(self, client: TestClient) -> None:
@@ -86,7 +95,7 @@ class TestOwnLibrary:
     def test_needs_login(self, guest_client: TestClient) -> None:
         assert guest_client.get("/api/me/library").status_code == 401
         assert guest_client.put(f"/api/me/library/{VIDEO_ID}").status_code == 401
-        assert guest_client.get(f"/api/me/library/{VIDEO_ID}/loops").status_code == 401
+        assert guest_client.get(f"/api/me/library/{VIDEO_ID}/presets").status_code == 401
 
 
 class TestRemovingSongs:
@@ -104,12 +113,12 @@ class TestRemovingSongs:
         assert not (library_dir / VIDEO_ID).exists()
         assert bob.delete(f"/api/me/library/{VIDEO_ID}").status_code == 404
 
-    def test_removing_drops_the_loops(self, client: TestClient) -> None:
+    def test_removing_drops_the_presets(self, client: TestClient) -> None:
         download(client)
-        client.put(f"/api/me/library/{VIDEO_ID}/loops", json=[LOOP])
+        client.put(f"/api/me/library/{VIDEO_ID}/presets", json=[PRESET])
         client.delete(f"/api/me/library/{VIDEO_ID}")
         download(client)
-        assert client.get(f"/api/me/library/{VIDEO_ID}/loops").json() == []
+        assert client.get(f"/api/me/library/{VIDEO_ID}/presets").json() == []
 
     def test_song_removed_while_downloading_is_deleted_when_done(
         self, client: TestClient, fake_youtube: FakeYouTubeClient, library_dir: Path
@@ -175,23 +184,27 @@ class TestGuests:
         with TestClient(make_app()):
             assert not (library_dir / VIDEO_ID).exists()
 
-    def test_guests_cannot_change_shared_analysis(self, guest_client: TestClient) -> None:
+    def test_guests_cannot_redo_shared_analysis(self, guest_client: TestClient) -> None:
         download(guest_client)
         assert wait_for_beats(guest_client, VIDEO_ID)["status"] == "completed"
         base = f"/api/library/{VIDEO_ID}"
         forced = guest_client.post(f"{base}/beats?force=true")
         assert forced.status_code == 401
         assert "Log in" in forced.json()["detail"]
-        assert guest_client.post(f"{base}/beats", json={"beatsPerBar": 3}).status_code == 401
         assert guest_client.post(f"{base}/stems?force=true").status_code == 401
         assert guest_client.post(f"{base}/chords?force=true").status_code == 401
         assert guest_client.post(f"{base}/beats").status_code == 202  # no change: allowed
 
-    def test_accounts_can_fix_the_beat_grid(self, client: TestClient) -> None:
+    def test_beat_grid_fixes_are_each_users_own(
+        self, client: TestClient, guest_client: TestClient
+    ) -> None:
         download(client)
         wait_for_beats(client, VIDEO_ID)
-        hints = {"beatsPerBar": 3}
-        assert client.post(f"/api/library/{VIDEO_ID}/beats", json=hints).status_code == 202
+        url = f"/api/library/{VIDEO_ID}/beats/grid"
+        # anyone (guests too) gets their own grid; the detected one does not change
+        assert guest_client.post(url, json={"beatsPerBar": 3}).json()["beatsPerBar"] == 3
+        assert client.post(url, json={"beatsPerBar": 2}).json()["beatsPerBar"] == 2
+        assert wait_for_beats(client, VIDEO_ID)["analysis"]["beatsPerBar"] == 4
 
     def test_download_list_shows_only_my_songs(
         self, client: TestClient, bob: TestClient, guest_client: TestClient
@@ -212,18 +225,18 @@ class TestImport:
         download(guest_client)
         download(guest_client, OTHER_VIDEO_ID)
         client.put(f"/api/me/library/{OTHER_VIDEO_ID}")
-        mine = {**LOOP, "name": "Mine"}
-        client.put(f"/api/me/library/{OTHER_VIDEO_ID}/loops", json=[mine])
+        mine = {**PRESET, "name": "Mine"}
+        client.put(f"/api/me/library/{OTHER_VIDEO_ID}/presets", json=[mine])
 
         entries = [
-            {"videoId": VIDEO_ID, "loops": [LOOP], "settings": {"volume": 0.5}},
-            {"videoId": OTHER_VIDEO_ID, "loops": [LOOP]},
+            {"videoId": VIDEO_ID, "presets": [PRESET], "settings": {"volume": 0.5}},
+            {"videoId": OTHER_VIDEO_ID, "presets": [PRESET]},
             {"videoId": "9bZkp7q19f0"},  # cleaned up meanwhile: skipped
         ]
         assert client.post("/api/me/library/import", json=entries).status_code == 204
 
         assert sorted(my_library(client)) == sorted([VIDEO_ID, OTHER_VIDEO_ID])
-        assert client.get(f"/api/me/library/{VIDEO_ID}/loops").json() == [LOOP]
+        assert client.get(f"/api/me/library/{VIDEO_ID}/presets").json() == [PRESET]
         assert client.get(f"/api/me/library/{VIDEO_ID}/settings").json()["volume"] == 0.5
-        # the account's own loops win
-        assert client.get(f"/api/me/library/{OTHER_VIDEO_ID}/loops").json() == [mine]
+        # the account's own presets win
+        assert client.get(f"/api/me/library/{OTHER_VIDEO_ID}/presets").json() == [mine]

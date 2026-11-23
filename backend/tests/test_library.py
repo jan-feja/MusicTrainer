@@ -6,7 +6,7 @@ import pytest
 from music_trainer.models import (
     BeatAnalysis,
     MixerSettings,
-    SavedLoop,
+    Preset,
     VideoMetadata,
 )
 from music_trainer.services.beat_decoding import BeatActivations
@@ -145,6 +145,9 @@ def test_mixer_rejects_odd_stem_names() -> None:
         MixerSettings(muted=["../video"])
 
 
-def test_loop_must_end_after_it_starts() -> None:
+def test_preset_loop_must_end_after_it_starts() -> None:
     with pytest.raises(ValueError, match="end must be after start"):
-        SavedLoop(id="x", name="Bad", start=5, end=5)
+        Preset(id="x", name="Bad", start=5, end=5)
+    with pytest.raises(ValueError, match="both start and end"):
+        Preset(id="x", name="Bad", start=5)
+    assert Preset(id="x", name="Whole song").start is None

@@ -80,15 +80,28 @@ export interface BeatTrackingState {
 /** What loop points snap to. */
 export type LoopSnapMode = 'off' | 'beat' | 'bar'
 
-/** A practice loop saved with a video (the video's loops.json). */
-export interface SavedLoop {
+export interface MetronomeSettings {
+  enabled: boolean
+  /** 0–1 */
+  volume: number
+}
+
+/**
+ * A named way to practice a song: its loop, speed, stem mix and metronome.
+ * Choosing it sets the player that way; what it does not hold is left as it is.
+ */
+export interface Preset {
   id: string
   name: string
-  start: number
-  end: number
+  /** The loop in seconds; null (both): the whole song, no loop. */
+  start: number | null
+  end: number | null
   snapMode: LoopSnapMode
-  /** The speed the loop is practiced at. */
   playbackRate: number
+  /** null or missing: the stems are left as they are. */
+  mixer?: MixerSettings | null
+  /** null or missing: the metronome is left as it is. */
+  metronome?: MetronomeSettings | null
 }
 
 /** How the player was left for a video (its player.json); restored when it is opened. */
@@ -102,10 +115,13 @@ export interface PlayerSettings {
   loopStart: number | null
   loopEnd: number | null
   loopEnabled: boolean
-  /** The saved loop being played and edited. */
-  activeLoopId: string | null
+  /** The preset chosen last. */
+  activePresetId: string | null
   /** The stem mixer; null or missing: stems were never turned on for this video. */
   mixer?: MixerSettings | null
+  metronome?: MetronomeSettings | null
+  /** The user's fixes of the beat grid; null or missing: the detected grid as it is. */
+  gridHints?: BeatGridHints | null
 }
 
 /** One separated instrument track, e.g. 'drums', 'bass', 'vocals', 'guitar', 'piano', 'other'. */
@@ -158,6 +174,8 @@ export interface ChordAnalysis {
 
 export interface ChordDetectionState {
   videoId: string
+  /** The beat grid the chords are on; poll with it. null: no beat grid yet. */
+  grid: string | null
   status: AnalysisStatus
   /** Set once the status is 'completed'. */
   analysis: ChordAnalysis | null
@@ -183,6 +201,6 @@ export interface User {
 /** A song from a guest's library in the browser, moved into the account on login. */
 export interface GuestImportEntry {
   videoId: string
-  loops?: SavedLoop[]
+  presets?: Preset[]
   settings?: PlayerSettings
 }

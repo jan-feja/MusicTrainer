@@ -4,7 +4,7 @@
  */
 import { useMemo } from 'react'
 import { api, isNotFoundError } from '../../api/client'
-import type { LibraryVideo, PlayerSettings, SavedLoop, User } from '../../api/types'
+import type { LibraryVideo, PlayerSettings, Preset, User } from '../../api/types'
 import { useAuth } from '../auth/authContext'
 import { guestStorage } from './guestStorage'
 
@@ -15,7 +15,7 @@ export interface LibraryListing {
 }
 
 export interface PracticeData {
-  loops: SavedLoop[]
+  presets: Preset[]
   /** null: the song was never opened (the player starts from its defaults). */
   settings: PlayerSettings | null
 }
@@ -31,9 +31,9 @@ export interface MyLibrary {
   downloadStarted: (videoId: string) => void
   /** The songs whose downloads to follow; undefined: the server knows them. */
   downloadIds: () => string[] | undefined
-  /** Add the song (if needed) and load its loops and player settings. */
+  /** Add the song (if needed) and load its presets and player settings. */
   openSong: (videoId: string, signal?: AbortSignal) => Promise<PracticeData>
-  saveLoops: (videoId: string, loops: SavedLoop[], keepalive: boolean) => Promise<unknown>
+  savePresets: (videoId: string, presets: Preset[], keepalive: boolean) => Promise<unknown>
   saveSettings: (videoId: string, settings: PlayerSettings, keepalive: boolean) => Promise<unknown>
 }
 
@@ -52,13 +52,13 @@ function accountLibrary(_user: User): MyLibrary {
     downloadIds: () => undefined,
     openSong: async (videoId, signal) => {
       await api.addToMyLibrary(videoId)
-      const [loops, settings] = await Promise.all([
-        api.getLoops(videoId, signal),
+      const [presets, settings] = await Promise.all([
+        api.getPresets(videoId, signal),
         api.getPlayerSettings(videoId, signal),
       ])
-      return { loops, settings }
+      return { presets, settings }
     },
-    saveLoops: (videoId, loops, keepalive) => api.saveLoops(videoId, loops, keepalive),
+    savePresets: (videoId, presets, keepalive) => api.savePresets(videoId, presets, keepalive),
     saveSettings: (videoId, settings, keepalive) =>
       api.savePlayerSettings(videoId, settings, keepalive),
   }
@@ -94,8 +94,8 @@ const GUEST_LIBRARY: MyLibrary = {
   downloadIds: () => guestStorage.videoIds(),
   openSong: async (videoId) => {
     guestStorage.add(videoId)
-    return { loops: guestStorage.loops(videoId), settings: guestStorage.settings(videoId) }
+    return { presets: guestStorage.presets(videoId), settings: guestStorage.settings(videoId) }
   },
-  saveLoops: async (videoId, loops) => guestStorage.saveLoops(videoId, loops),
+  savePresets: async (videoId, presets) => guestStorage.savePresets(videoId, presets),
   saveSettings: async (videoId, settings) => guestStorage.saveSettings(videoId, settings),
 }

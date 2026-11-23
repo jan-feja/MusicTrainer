@@ -1,10 +1,7 @@
 import type { BeatAnalysis, BeatGridHints } from '../../api/types'
-import { useAuth } from '../auth/authContext'
 import { SNAP_MODES, type SnapMode } from './beatGrid'
 import type { BeatTracking } from './useBeatTracking'
 import styles from './BeatSnapControls.module.css'
-
-const LOG_IN_TO_FIX = 'Log in to fix the beat grid (it is shared by everyone who has the song)'
 
 const MODE_LABELS: Record<SnapMode, string> = { off: 'Off', beat: 'Beats', bar: 'Bars' }
 const BEATS_PER_BAR_CHOICES = [2, 3, 4, 5, 6, 7, 8, 9, 12]
@@ -19,7 +16,7 @@ interface BeatSnapControlsProps {
   onResetBarStarts: () => void
 }
 
-/** Beat detection status, the loop snap setting and fixes for the beat grid. */
+/** Beat detection status, the loop snap setting and the user's fixes of their beat grid. */
 export function BeatSnapControls(props: BeatSnapControlsProps) {
   return (
     <div className={styles.group} role="group" aria-label="Beat grid">
@@ -37,7 +34,6 @@ function BeatStatus({
   onResetBarStarts,
 }: BeatSnapControlsProps) {
   const { state, analysis, updating, requestError, retry, setHints } = tracking
-  const canFix = useAuth().user !== null
 
   if (requestError) {
     return <Problem message={`Could not load the beats: ${requestError}`} onRetry={retry} />
@@ -60,20 +56,16 @@ function BeatStatus({
   return (
     <>
       <SnapModeSwitch analysis={analysis} mode={snapMode} onChange={onSnapModeChange} />
-      <GridHints analysis={analysis} onChange={setHints} disabled={updating} canFix={canFix} />
+      <GridHints analysis={analysis} onChange={setHints} disabled={updating} />
       {snapMode === 'bar' && (
         <span className={styles.barShift} role="group" aria-label="Bar starts">
           <button
             type="button"
             className="icon-button icon-button-small"
             onClick={() => onMoveBarStarts(-1)}
-            disabled={updating || !canFix}
+            disabled={updating}
             aria-label="Move bar starts from here on one beat earlier"
-            title={
-              canFix
-                ? 'Bar starts on the wrong beat from here on? Move them one beat earlier'
-                : LOG_IN_TO_FIX
-            }
+            title="Bar starts on the wrong beat from here on? Move them one beat earlier"
           >
             ‹
           </button>
@@ -82,13 +74,9 @@ function BeatStatus({
             type="button"
             className="icon-button icon-button-small"
             onClick={() => onMoveBarStarts(1)}
-            disabled={updating || !canFix}
+            disabled={updating}
             aria-label="Move bar starts from here on one beat later"
-            title={
-              canFix
-                ? 'Bar starts on the wrong beat from here on? Move them one beat later'
-                : LOG_IN_TO_FIX
-            }
+            title="Bar starts on the wrong beat from here on? Move them one beat later"
           >
             ›
           </button>
@@ -97,9 +85,9 @@ function BeatStatus({
               type="button"
               className={styles.small}
               onClick={onResetBarStarts}
-              disabled={updating || !canFix}
+              disabled={updating}
               aria-label="Use the detected bar starts"
-              title={canFix ? 'Use the detected bar starts again' : LOG_IN_TO_FIX}
+              title="Use the detected bar starts again"
             >
               ↺
             </button>
@@ -144,18 +132,13 @@ function SnapModeSwitch({
 function GridHints({
   analysis,
   onChange,
-  disabled: updating,
-  canFix,
+  disabled,
 }: {
   analysis: BeatAnalysis
   onChange: (hints: BeatGridHints) => void
   disabled: boolean
-  /** Guests cannot change the grid: it is shared. */
-  canFix: boolean
 }) {
   const { hints, bpm, beatsPerBar } = analysis
-  const disabled = updating || !canFix
-  const lockedTitle = canFix ? undefined : LOG_IN_TO_FIX
   // a new tempo or meter makes new beats: bar starts the user placed no longer fit
   const setTempo = (tempoBpm: number | null) => onChange({ ...hints, tempoBpm, barStarts: [] })
   return (
@@ -169,7 +152,7 @@ function GridHints({
             onClick={() => setTempo(Math.round(bpm / 2))}
             disabled={disabled || bpm / 2 < 30}
             aria-label="Half the tempo"
-            title={lockedTitle ?? 'Beats detected twice too fast? Detect them at half the tempo'}
+            title="Beats detected twice too fast? Detect them at half the tempo"
           >
             ½×
           </button>
@@ -179,7 +162,7 @@ function GridHints({
             onClick={() => setTempo(Math.round(bpm * 2))}
             disabled={disabled || bpm * 2 > 300}
             aria-label="Double the tempo"
-            title={lockedTitle ?? 'Beats detected half too slow? Detect them at double the tempo'}
+            title="Beats detected half too slow? Detect them at double the tempo"
           >
             2×
           </button>
@@ -190,7 +173,7 @@ function GridHints({
               onClick={() => setTempo(null)}
               disabled={disabled}
               aria-label="Detect the tempo automatically"
-              title={lockedTitle ?? 'Detect the tempo automatically'}
+              title="Detect the tempo automatically"
             >
               ↺
             </button>
@@ -201,10 +184,7 @@ function GridHints({
             onClick={() => onChange({ ...hints, steadyTempo: !hints.steadyTempo })}
             disabled={disabled}
             aria-pressed={hints.steadyTempo}
-            title={
-              lockedTitle ??
-              'Played to a click? Space all beats exactly evenly, so every bar has the same length'
-            }
+            title="Played to a click? Space all beats exactly evenly, so every bar has the same length"
           >
             Steady
           </button>
@@ -221,7 +201,7 @@ function GridHints({
             onChange({ ...hints, beatsPerBar, barStarts: [] })
           }}
           aria-label="Beats per bar"
-          title={lockedTitle ?? 'Beats per bar: detected, or set it if the bars come out wrong'}
+          title="Beats per bar: detected, or set it if the bars come out wrong"
         >
           <option value="auto">
             {hints.beatsPerBar === null && beatsPerBar !== null ? `Auto (${beatsPerBar})` : 'Auto'}

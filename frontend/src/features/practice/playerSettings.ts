@@ -3,7 +3,7 @@
  * be stored (player.json).
  */
 import { type RefObject, useEffect, useRef, useState } from 'react'
-import type { PlayerSettings, SavedLoop } from '../../api/types'
+import type { PlayerSettings } from '../../api/types'
 import { useLatest } from '../../lib/useLatest'
 import { SNAP_LEAD_SECONDS } from '../beats/beatGrid'
 import { EMPTY_LOOP, type LoopState, MIN_LOOP_LENGTH } from '../player/loop'
@@ -12,14 +12,8 @@ import { normalizePlaybackRate } from '../player/playbackRate'
 /** While playing without a loop, the stored position moves in steps this long (fewer saves). */
 export const POSITION_STEP_SECONDS = 5
 
-/** The loop to start with: the active saved loop, else the loop that was set. */
-export function initialLoopState(
-  settings: PlayerSettings | null,
-  activeLoop: SavedLoop | null,
-): LoopState {
-  if (activeLoop) {
-    return { start: activeLoop.start, end: activeLoop.end, enabled: settings?.loopEnabled ?? true }
-  }
+/** The loop to start with: the loop that was set. */
+export function initialLoopState(settings: PlayerSettings | null): LoopState {
   if (!settings) return EMPTY_LOOP
   const { loopStart: start, loopEnd: end } = settings
   if (start !== null && end !== null && end - start < MIN_LOOP_LENGTH) {
@@ -53,18 +47,17 @@ interface Restore {
 export function useRestorePlayerSettings(
   videoRef: RefObject<HTMLVideoElement | null>,
   settings: PlayerSettings | null,
-  activeLoop: SavedLoop | null,
   loop: LoopState,
 ): void {
   const [restore] = useState<Restore | null>(() => {
     if (!settings) return null
-    const snapMode = activeLoop?.snapMode ?? settings.snapMode
+    const { snapMode } = settings
     const lead = snapMode && snapMode !== 'off' ? SNAP_LEAD_SECONDS : 0
     const looping = loop.enabled && loop.start !== null && loop.end !== null
     return {
       volume: settings.volume,
       muted: settings.muted,
-      playbackRate: normalizePlaybackRate(activeLoop?.playbackRate ?? settings.playbackRate),
+      playbackRate: normalizePlaybackRate(settings.playbackRate),
       position: looping && loop.start !== null ? Math.max(0, loop.start - lead) : settings.position,
     }
   })

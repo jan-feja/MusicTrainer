@@ -1,20 +1,29 @@
 """The SQLite database: user accounts, their sessions, and who has which song.
 
 Songs and their analysis stay on disk (see services/library.py). The database
-holds each user's library: the songs in it, with the user's own saved loops and
+holds each user's library: the songs in it, with the user's own presets and
 player settings for each. Guests have no rows; their library lives in the browser.
 
     users            accounts (username + argon2 password hash)
     sessions         logged-in browsers: the hash of the cookie's token
-    library_entries  (user, song): the user's loops and player settings for it
+    library_entries  (user, song): the user's presets and player settings for it
     songs            per song: when a guest last used it (songs nobody has are deleted)
 """
 
 from datetime import UTC, datetime
 from pathlib import Path
 
-from sqlalchemy import DateTime, ForeignKey, String, Text, create_engine, event
-from sqlalchemy.engine import Dialect
+from sqlalchemy import (
+    DateTime,
+    ForeignKey,
+    String,
+    Text,
+    create_engine,
+    event,
+    inspect,
+    text,
+)
+from sqlalchemy.engine import Dialect, Engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 from sqlalchemy.types import TypeDecorator
 
@@ -70,8 +79,8 @@ class LibraryEntryRow(Base):
     )
     video_id: Mapped[str] = mapped_column(String(20), primary_key=True, index=True)
     added_at: Mapped[datetime]
-    loops_json: Mapped[str | None] = mapped_column(Text)
-    """The user's saved loops (a list of SavedLoop); None: none saved yet."""
+    presets_json: Mapped[str | None] = mapped_column(Text)
+    """The user's presets (a list of Preset); None: none saved yet."""
     settings_json: Mapped[str | None] = mapped_column(Text)
     """How the user left the player (PlayerSettings); None: never opened."""
 
@@ -93,6 +102,7 @@ class Database:
         self._engine = create_engine(f"sqlite:///{path}", connect_args={"check_same_thread": False})
         event.listen(self._engine, "connect", _configure_connection)
         Base.metadata.create_all(self._engine)
+        _migrate(self._engine)
         self._sessions = sessionmaker(self._engine, expire_on_commit=False)
 
     def session(self) -> Session:
@@ -101,6 +111,16 @@ class Database:
 
     def close(self) -> None:
         self._engine.dispose()
+
+
+def _migrate(engine: Engine) -> None:
+    """Changes to tables made before (create_all only adds missing tables)."""
+    columns = {column["name"] for column in inspect(engine).get_columns("library_entries")}
+    if "loops_json" in columns:  # saved loops became presets (a saved loop is a valid preset)
+        with engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE library_entries RENAME COLUMN loops_json TO presets_json")
+            )
 
 
 def _configure_connection(connection: object, _record: object) -> None:
