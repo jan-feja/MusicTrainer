@@ -242,6 +242,29 @@ Also tried ([test_chords.py](../experiments/test_chords.py)):
 
 **Imported notation**: synctoolbox alignment, then snap the aligned beats to the app's beat grid: ~76 % of beats within 100 ms on real songs. The rest needs a manual sync editor: drag a bar line to where it is heard; alphaTab's Media Sync Editor is a model. Lakh MIDI files exist for only ~7 % of songs and vary in quality; the user's own Guitar Pro / MusicXML files remain the main source.
 
+## How it would fit into the app
+
+The app already runs heavy models as background jobs (beats, stems in a worker process, chords) and stores results per song. The new parts follow the same pattern:
+
+| Job | Runs after | Model / cost | Stored as | Shown as |
+|---|---|---|---|---|
+| sections | beats | SongFormer (patched), GPU ~1–2 min; decided at the app's bar starts | `sections.json` (start, end, label, edited by user) | a lane of coloured, named blocks; rename / move by a bar / split / merge; click to loop a section |
+| tuning | download | librosa, seconds | `analysis.json` (cents) | "30 cents flat"; transcription resamples first |
+| key | stems | madmom CNN, seconds | `analysis.json` (two best keys) | key with a "or …" switch |
+| chords | beats + stems | madmom CNN + CRF, seconds | `chords.json` (as now) | the existing chord lane |
+| notes | stems + tuning + checked beat grid | Basic Pitch (bass, guitar), YourMT3+ (keys, leads), ADTOF (drums); ~1 min | `notes/<instrument>.mid` | – |
+| notation | notes | quantize + fingering search (+ string network) → Guitar Pro 5 | `notation.gp5` | alphaTab: one track per instrument, tab for guitar and bass, cursor following the recording |
+
+Things to build on the frontend: the section lane, an alphaTab view synced to the player (the beat grid gives the sync points), and editing (sections, chords, wrong notes).
+
+## What is still open
+- **MuScriptor**: the strongest published transcription model (2026); test it as soon as a Hugging Face token is available (weights gated, non-commercial).
+- **Piano / keys separation**: the bottleneck for keys (YourMT3+ gets 0.73 from a clean keys stem, < 0.1 from separated ones).
+- **String network**: train on more guitars and players (EGDB, IDMT, GuitarSet); check it on Demucs guitar stems from band mixes.
+- **All-In-One on the GPU**: needs NATTEN built with CUDA (the CUDA toolkit in WSL); here it ran on the CPU with one model of its 8-model ensemble.
+- **Real-recording ground truth for transcription**: the Lakh-based check is rough. A few hand-checked transcriptions of real songs would make the numbers trustworthy.
+- **Notation polish**: voices (melody vs accompaniment), key signatures, triplet feel / swing, repeats; slurs and bends for guitar.
+
 ## Sources
 - Chang et al., [YourMT3+](https://arxiv.org/abs/2407.04822), MLSP 2024; [Hugging Face Space](https://huggingface.co/spaces/mimbres/YourMT3)
 - [MuScriptor paper](https://huggingface.co/papers/2607.08168) and [model card](https://huggingface.co/MuScriptor/muscriptor-large)
