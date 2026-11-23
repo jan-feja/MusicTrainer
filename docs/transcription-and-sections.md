@@ -114,6 +114,7 @@ The absolute numbers mostly measure the answer key. The comparison holds, though
 
 - Both transcribers saw parts of GuitarSet in training, so their note scores are optimistic. The string choice is not learned by either.
 - **The string is the bottleneck**: [tablature.py](../experiments/tablature.py) chooses strings by a fingering search (hand span, position, movement between chords; Viterbi), tuned on guitarists 00–04: 58 % on guitarist 05 vs 33 % for "lowest fret". Many "wrong" strings are equally playable alternatives; a guitarist would accept them, the metric does not.
+
 **Hearing the string** ([test_string_model.py](../experiments/test_string_model.py)): the same pitch sounds different on different strings. A small TabCNN-style network (CQT frames → for each string, which fret or silence; trained on guitarists 00–04; about an hour on the CPU including feature extraction) gives each candidate string/fret a probability; the fingering search adds it to its playability costs.
 
 | Guitarist 05 (held out) | Right string (true notes) | Tab F from Basic Pitch notes | Tab F from YourMT3+ notes |
@@ -139,7 +140,7 @@ The absolute numbers mostly measure the answer key. The comparison holds, though
   | network trained on GuitarSet only | 0.65 | 0.43 | 0.89 |
   | **network trained on several guitars** | **0.83** | **0.52** | **0.89** |
 
-  Variety in training closes most of the gap without losing anything on GuitarSet. Caveat: the same licks, played by the same person on the other guitars, were in the training data, so part of the gain may be his fingering habits rather than the guitar's sound. A cleaner test needs a second player (EGDB).
+  Variety in training closes most of the gap without losing anything on GuitarSet. Caveat: the same licks, played by the same person on the other guitars, were in the training data, so part of the gain may be the player's fingering habits rather than the guitar's sound. A cleaner test needs a second player (EGDB).
 - Still to check: Demucs guitar stems from band mixes (separation artifacts, distortion, several guitars).
 
 ### Notation
@@ -166,7 +167,7 @@ The rhythm figures come out right; whole-bar positions break where the grid itse
 ### Imported notation on real recordings
 Nine downloaded Harmonix songs have MIDI files in the [Lakh MIDI Dataset](https://colinraffel.com/projects/lmd/) (fan-made, 1–4 versions each). Aligned to the YouTube recording, the MIDI's own beats should land on the annotated beats ([test_import_alignment.py](../experiments/test_import_alignment.py); 5 songs left out because their annotations do not line up with the YouTube audio):
 
-| Song | Beats within 100 ms (synctoolbox) | + snapped to the app's beats |
+| Song | Beats within 100 ms (synctoolbox) | + snapped to detected beats (Beat This!) |
 |---|---|---|
 | Blackened (3 files) | 0.76 | 0.79 |
 | Dead & Bloated (2 files) | 0.88 | 0.94 |
