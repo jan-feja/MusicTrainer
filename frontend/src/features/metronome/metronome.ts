@@ -72,9 +72,12 @@ export function planMetronomeClicks(
   return clicks.sort((a, b) => a.offset - b.offset)
 }
 
-/** Distance on the song clock, treating the two sides of a loop boundary as adjacent. */
+/**
+ * How far `actual` is ahead of `expected` on the song clock (negative: behind),
+ * treating the two sides of a loop boundary as adjacent.
+ */
 export function metronomeDrift(actual: number, expected: number, loop: LoopRegion | null): number {
-  const distance = Math.abs(actual - expected)
+  const drift = actual - expected
   if (
     !loop ||
     actual < loop.start ||
@@ -82,7 +85,10 @@ export function metronomeDrift(actual: number, expected: number, loop: LoopRegio
     expected < loop.start ||
     expected >= loop.end
   ) {
-    return distance
+    return drift
   }
-  return Math.min(distance, loop.end - loop.start - distance)
+  const length = loop.end - loop.start
+  if (drift > length / 2) return drift - length
+  if (drift < -length / 2) return drift + length
+  return drift
 }

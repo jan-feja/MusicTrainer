@@ -76,6 +76,9 @@ describe('metronome click planning', () => {
     const loop = { start: 1, end: 2 }
     expect(metronomePosition(1.95, 0.1, loop)).toBeCloseTo(1.05)
     expect(metronomeDrift(1.01, 1.99, loop)).toBeCloseTo(0.02)
+    expect(metronomeDrift(1.99, 1.01, loop)).toBeCloseTo(-0.02)
+    expect(metronomeDrift(1.5, 1.53, loop)).toBeCloseTo(-0.03)
     expect(metronomeDrift(3, 1.99, loop)).toBeCloseTo(1.01)
+    expect(metronomeDrift(0.5, 1.99, loop)).toBeCloseTo(-1.49)
   })
 })

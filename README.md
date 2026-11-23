@@ -157,7 +157,12 @@ Environment variables, or a `.env` file in the folder you start the backend from
 - **Saved loops and settings:** the player loads them with the video (`GET /api/library/<id>/loops` and `/settings`) and stores changes a moment later (`PUT`, the whole list or settings at once; whatever is pending is sent when the page is left).
 - **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`.
 - **Metronome:** synthesized Web Audio clicks are scheduled ahead on the audio clock using the
-  detected beat and bar times. It follows the gapless loop's sound clock when that takes over.
+  detected beat and bar times: every 25 ms, the clicks of the next 0.2 s. It follows the gapless
+  loop's sound clock when that takes over. Chrome moves `video.currentTime` in uneven steps
+  (±5 ms) and holds it still for ~40 ms after playback starts, so the clicks are planned from a
+  fixed song position whose audio-clock time is averaged over about half a second, and each beat
+  falls into exactly one plan. Planned from the raw reading, about one beat in ten got two clicks or
+  none and the spacing varied by ±4 ms; now none, ±0.3 ms (measured in Chrome on a song at 1×).
   No sound samples are downloaded. It requires a detected beat grid and a browser with Web Audio;
   its timing depends on the accuracy of the detected grid and may be affected by browser audio or
   background-tab scheduling.

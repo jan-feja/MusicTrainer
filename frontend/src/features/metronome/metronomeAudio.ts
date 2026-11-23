@@ -5,9 +5,33 @@ import { metronomeDrift, metronomePosition, planMetronomeClicks } from './metron
 
 const LOOKAHEAD_SECONDS = 0.2
 const INTERVAL_MS = 25
+/** A jump this large on the song clock is a seek: the planned clicks are dropped. */
 const MAX_DRIFT_SECONDS = 0.12
+/** A drift this large on two ticks in a row is followed at once instead of gradually. */
+const RESYNC_SECONDS = 0.025
+/** The song clock is averaged over about this many ticks. */
+const SMOOTHING_TICKS = 20
 
-/** Schedules short synthesized clicks on the audio clock while following the player. */
+interface Anchor {
+  /** Audio-clock time at which `position` is heard; corrected as the clocks are compared. */
+  at: number
+  /** Song position the clicks are planned from; fixed until the next reset. */
+  readonly position: number
+}
+
+/**
+ * Schedules short synthesized clicks on the audio clock while following the player.
+ *
+ * The player's position is read on every tick, but `video.currentTime` moves
+ * in uneven steps (about ±5 ms in Chrome). Planning each tick's clicks from
+ * the raw reading moved the boundary between ticks with it, so beats near it
+ * were scheduled twice or not at all. Instead, clicks are planned from a fixed
+ * anchor, and how far ahead they are planned is kept relative to it, so each
+ * beat falls in exactly one tick. Only the anchor's time follows the player:
+ * averaged against small jitter, at once for a lasting offset, and from
+ * scratch after a seek. A new anchor waits until the player's clock runs:
+ * Chrome holds `currentTime` still for ~40 ms after playback starts.
+ */
 export class MetronomeAudio {
   private readonly context: AudioContext
   private readonly video: HTMLVideoElement
@@ -18,8 +42,16 @@ export class MetronomeAudio {
   private readonly gain: GainNode
   private readonly pending = new Set<OscillatorNode>()
   private timer: number | null = null
+  private anchor: Anchor | null = null
+  /** Clicks are planned up to this many audio-clock seconds after the anchor. */
   private through = 0
-  private anchor: { at: number; position: number } | null = null
+  /** Readings averaged into the anchor's time since it was set or moved. */
+  private samples = 0
+  /** Ticks in a row whose drift exceeded RESYNC_SECONDS. */
+  private outliers = 0
+  /** Without an anchor: the position read on the last tick, and on how many ticks in a row it moved. */
+  private lastPosition: number | null = null
+  private moves = 0
   private waiting = false
 
   constructor(
@@ -75,8 +107,9 @@ export class MetronomeAudio {
   private readonly reset = () => {
     for (const oscillator of this.pending) oscillator.stop()
     this.pending.clear()
-    this.through = 0
     this.anchor = null
+    this.lastPosition = null
+    this.moves = 0
   }
 
   private readonly onPlaying = () => {
@@ -114,23 +147,57 @@ export class MetronomeAudio {
     if (this.waiting || this.video.paused || this.context.state !== 'running') return
     const now = this.context.currentTime
     const heard = Math.min(now, heardTime(this.context))
-    const position = this.position()
     const rate = this.video.playbackRate
-    if (this.anchor) {
-      const expected = metronomePosition(
-        this.anchor.position,
-        (heard - this.anchor.at) * rate,
-        this.loop,
-      )
-      if (metronomeDrift(position, expected, this.loop) > MAX_DRIFT_SECONDS) this.reset()
+    const anchor = this.follow(heard, this.position(), rate)
+    if (!anchor) return
+    // offsets from the anchor: a beat's offset stays the same while the anchor's time is corrected
+    const from = Math.max(this.through, now - anchor.at)
+    const to = now + LOOKAHEAD_SECONDS - anchor.at
+    const clicks = planMetronomeClicks(this.grid, anchor.position, rate, from, to, this.loop)
+    for (const click of clicks) this.click(Math.max(now, anchor.at + click.offset), click.accent)
+    this.through = Math.max(this.through, to)
+  }
+
+  /**
+   * Compare the player's position with the anchor's and correct the anchor's time.
+   * Null when no clicks should be planned from this reading.
+   */
+  private follow(heard: number, position: number, rate: number): Anchor | null {
+    const { anchor } = this
+    if (anchor) {
+      const expected = metronomePosition(anchor.position, (heard - anchor.at) * rate, this.loop)
+      const drift = metronomeDrift(position, expected, this.loop)
+      if (Math.abs(drift) <= RESYNC_SECONDS) {
+        // the running mean of the readings, then a moving average over SMOOTHING_TICKS
+        this.outliers = 0
+        this.samples = Math.min(this.samples + 1, SMOOTHING_TICKS)
+        anchor.at -= drift / rate / this.samples
+        return anchor
+      }
+      if (Math.abs(drift) <= MAX_DRIFT_SECONDS) {
+        // an odd reading: plan nothing until the next one shows whether the offset lasts
+        // (another clock took over) and is to be followed
+        this.outliers += 1
+        if (this.outliers < 2) return null
+        anchor.at -= drift / rate
+        this.samples = 1
+        this.outliers = 0
+        return anchor
+      }
+      this.reset()
     }
-    this.anchor = { at: heard, position }
-    const from = Math.max(0, this.through - heard, now - heard)
-    const to = now + LOOKAHEAD_SECONDS - heard
-    for (const click of planMetronomeClicks(this.grid, position, rate, from, to, this.loop)) {
-      this.click(heard + click.offset, click.accent)
-    }
-    this.through = Math.max(this.through, now + LOOKAHEAD_SECONDS)
+    // after starting or seeking, the position read may jump and then stand still until the
+    // sound starts (Chrome: ~40 ms): anchor once it has moved on two ticks in a row
+    const moved = this.lastPosition !== null && position !== this.lastPosition
+    this.moves = moved ? this.moves + 1 : 0
+    this.lastPosition = position
+    if (this.moves < 2) return null
+    const fresh = { at: heard, position }
+    this.anchor = fresh
+    this.through = 0
+    this.samples = 1
+    this.outliers = 0
+    return fresh
   }
 
   private click(at: number, accent: boolean): void {
