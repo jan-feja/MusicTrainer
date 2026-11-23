@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import type { PlayerSettings, SavedLoop } from '../../api/types'
 import { ExitFullscreenIcon, FullscreenIcon, PauseIcon, PlayIcon } from '../../components/icons'
-import { formatTime } from '../../lib/format'
+import { errorMessage, formatTime } from '../../lib/format'
 import { useLatest } from '../../lib/useLatest'
 import { BeatSnapControls } from '../beats/BeatSnapControls'
 import { BeatTicks } from '../beats/BeatTicks'
@@ -32,8 +32,10 @@ import { SavedLoops } from '../practice/SavedLoops'
 import { createLoop, describeLoop } from '../practice/loopList'
 import { useSavedLoops } from '../practice/useSavedLoops'
 import { LoopControls } from './LoopControls'
+import { GaplessLoop } from './gaplessLoop'
 import { LOOP_NUDGE_SECONDS, getLoopRegion, loopJumpTarget, loopReducer } from './loop'
 import { normalizePlaybackRate, stepPlaybackRate } from './playbackRate'
+import { PitchControl } from './PitchControl'
 import { SeekBar } from './SeekBar'
 import { ShortcutHelp } from './ShortcutHelp'
 import { SpeedControl } from './SpeedControl'
@@ -135,7 +137,34 @@ export function VideoPlayer({
       ? { start: Math.max(0, region.start - lead), end: region.end - lead }
       : null
   const expectedStart = loop.start !== null && loop.end === null ? loop.start - lead : null
-  const gaplessLoop = useGaplessLoop(videoRef, audioUrl, playedRegion, expectedStart)
+  const [pitch, setPitch] = useState(0)
+  const [pitchBusy, setPitchBusy] = useState(false)
+  const [pitchError, setPitchError] = useState<string | null>(null)
+  const gaplessLoop = useGaplessLoop(videoRef, audioUrl, playedRegion, expectedStart, (error) =>
+    setPitchError(`Could not resume player audio: ${errorMessage(error)}`),
+  )
+  const pitchAvailable = Boolean(audioUrl) && GaplessLoop.isSupported()
+  const changePitch = (next: number) => {
+    const player = gaplessLoop.current
+    if (!player) {
+      setPitchError('Pitch shift is not ready yet.')
+      return
+    }
+    setPitchError(null)
+    setPitchBusy(true)
+    void player.setPitch(next).then(
+      () => {
+        if (gaplessLoop.current !== player) return
+        setPitch(next)
+        setPitchBusy(false)
+      },
+      (error: unknown) => {
+        if (gaplessLoop.current !== player) return
+        setPitchError(`Could not change pitch: ${errorMessage(error)}`)
+        setPitchBusy(false)
+      },
+    )
+  }
 
   const playback = useVideoPlayback(videoRef, {
     onFrame: (video) => {
@@ -450,6 +479,15 @@ export function VideoPlayer({
               lengthLabel={lengthLabel}
             />
             <ZoomControls zoom={zoom} region={region} />
+          </div>
+          <div className={controlStyles.row}>
+            <PitchControl
+              semitones={pitch}
+              busy={pitchBusy}
+              available={pitchAvailable}
+              error={pitchError}
+              onChange={changePitch}
+            />
           </div>
           {practice && (
             <div className={controlStyles.row}>

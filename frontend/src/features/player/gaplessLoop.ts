@@ -16,6 +16,7 @@
 import type { StretchNode } from 'signalsmith-stretch'
 import { clamp } from '../../lib/math'
 import type { LoopRegion } from './loop'
+import { PitchShift } from './pitchShift'
 import {
   type AudioWindow,
   type LoopSchedule,
@@ -51,6 +52,9 @@ interface ElementAudio {
   context: AudioContext
   /** The video's own sound, once routed through the context. */
   gain: GainNode | null
+  /** The video and loop voices share this bus, before the optional pitch effect. */
+  input: GainNode
+  dry: GainNode
 }
 
 // a media element can be routed into one AudioContext only, ever: one per element
@@ -59,7 +63,11 @@ const elementAudio = new WeakMap<HTMLMediaElement, ElementAudio>()
 function elementAudioFor(video: HTMLMediaElement): ElementAudio {
   let audio = elementAudio.get(video)
   if (!audio) {
-    audio = { context: new AudioContext({ latencyHint: 'interactive' }), gain: null }
+    const context = new AudioContext({ latencyHint: 'interactive' })
+    const input = context.createGain()
+    const dry = context.createGain()
+    input.connect(dry).connect(context.destination)
+    audio = { context, gain: null, input, dry }
     elementAudio.set(video, audio)
   }
   return audio
@@ -102,10 +110,12 @@ export class GaplessLoop {
 
   private readonly video: HTMLVideoElement
   private readonly audioUrl: string
+  private readonly onAudioError: ((error: unknown) => void) | undefined
   private readonly removeListeners: () => void
   private audio: ElementAudio | null = null
   private node: StretchNode | null = null
   private loopGain: GainNode | null = null
+  private pitch: PitchShift | null = null
   /** How far ahead the takeover is scheduled: the stretcher's latency and a margin. */
   private ahead = 0.2
   /** The audio the stretcher holds. */
@@ -130,9 +140,10 @@ export class GaplessLoop {
   /** Give the video its sound back once our seek is done. */
   private unmuteAfterSeek = false
 
-  constructor(video: HTMLVideoElement, audioUrl: string) {
+  constructor(video: HTMLVideoElement, audioUrl: string, onAudioError?: (error: unknown) => void) {
     this.video = video
     this.audioUrl = audioUrl
+    this.onAudioError = onAudioError
     const listeners: [string, () => void][] = [
       ['pause', this.onPause],
       ['play', this.onPlay],
@@ -149,6 +160,28 @@ export class GaplessLoop {
   /** True while the loop, not the video, plays the sound. */
   get active(): boolean {
     return this.schedule !== null
+  }
+
+  /** Apply a pitch shift in semitones to both the video and the loop. */
+  async setPitch(semitones: number): Promise<void> {
+    if (this.disposed) throw new Error('The player has been closed')
+    if (semitones === 0 && !this.pitch) return
+    this.audio ??= elementAudioFor(this.video)
+    const audio = this.audio
+    if (audio.context.state !== 'running') await audio.context.resume()
+    if (audio.context.state !== 'running') throw new Error('The browser did not start audio')
+    if (this.disposed) throw new Error('The player has been closed')
+    if (!this.pitch) {
+      const pitch = await PitchShift.create(audio.context, audio.input, audio.dry)
+      if (this.disposed) {
+        pitch.dispose()
+        throw new Error('The player has been closed')
+      }
+      this.pitch = pitch
+    }
+    await this.pitch.set(semitones)
+    if (this.disposed) throw new Error('The player has been closed')
+    if (!audio.gain) this.routeVideo(audio)
   }
 
   /** The loop to play (shifted by any lead), or null when looping is off. */
@@ -199,7 +232,8 @@ export class GaplessLoop {
   position(): number | null {
     const { schedule, audio } = this
     if (!schedule || !audio) return null
-    const now = heardTime(audio.context)
+    const heard = heardTime(audio.context)
+    const now = heard - (this.pitch?.delayAt(heard) ?? 0)
     if (now >= schedule.at) return scheduledPosition(schedule, now)
     return this.previous ? scheduledPosition(this.previous, now) : null
   }
@@ -209,6 +243,7 @@ export class GaplessLoop {
     this.unmuteVideo()
     this.disposed = true
     this.removeListeners()
+    this.pitch?.dispose()
     this.node?.disconnect()
     this.loopGain?.disconnect()
     void this.node?.dropBuffers()
@@ -247,9 +282,10 @@ export class GaplessLoop {
 
   private async fill(window: AudioWindow): Promise<void> {
     this.audio ??= elementAudioFor(this.video)
-    const { context } = this.audio
+    const audio = this.audio
+    const { context } = audio
     const [node, buffer] = await Promise.all([
-      this.stretchNode(context),
+      this.stretchNode(audio),
       fetchAudio(this.audioUrl, window, context),
     ])
     if (this.disposed) return
@@ -268,13 +304,14 @@ export class GaplessLoop {
     this.window = { start: window.start, end: window.start + buffer.duration }
   }
 
-  private async stretchNode(context: AudioContext): Promise<StretchNode> {
+  private async stretchNode(audio: ElementAudio): Promise<StretchNode> {
     if (this.node) return this.node
+    const { context } = audio
     const { default: SignalsmithStretch } = await import('signalsmith-stretch')
     const node = await SignalsmithStretch(context)
     const gain = context.createGain()
     gain.gain.value = 0
-    node.connect(gain).connect(context.destination)
+    node.connect(gain).connect(audio.input)
     this.ahead = (await node.latency()) + SCHEDULE_MARGIN
     this.node = node
     this.loopGain = gain
@@ -283,10 +320,7 @@ export class GaplessLoop {
 
   private routeVideo(audio: ElementAudio): void {
     const gain = audio.context.createGain()
-    audio.context
-      .createMediaElementSource(this.video)
-      .connect(gain)
-      .connect(audio.context.destination)
+    audio.context.createMediaElementSource(this.video).connect(gain).connect(audio.input)
     audio.gain = gain
   }
 
@@ -371,7 +405,9 @@ export class GaplessLoop {
     if (drift <= MAX_VIDEO_DRIFT) return
     if (drift < LARGE_DRIFT && performance.now() - this.lastSeekDoneAt < RESEEK_PAUSE_MS) return
     // the video shows the new frame only once it has seeked: send it where the sound will be then
-    this.seekVideo(scheduledPosition(schedule, heardTime(audio.context) + this.seekLatency))
+    const heard = heardTime(audio.context)
+    const pitchDelay = this.pitch?.delayAt(heard) ?? 0
+    this.seekVideo(scheduledPosition(schedule, heard - pitchDelay + this.seekLatency))
   }
 
   private seekVideo(time: number): void {
@@ -436,7 +472,12 @@ export class GaplessLoop {
   }
 
   private readonly onPlay = () => {
-    if (this.audio?.context.state === 'suspended') void this.audio.context.resume()
+    if (this.audio && this.audio.context.state !== 'running') {
+      void this.audio.context.resume().catch((error: unknown) => {
+        console.error('Could not resume player audio:', error)
+        this.onAudioError?.(error)
+      })
+    }
   }
 
   private readonly onRateChange = () => {

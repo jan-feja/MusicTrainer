@@ -15,15 +15,17 @@ export function useGaplessLoop(
   audioUrl: string | undefined,
   region: LoopRegion | null,
   expectedStart: number | null,
+  onAudioError?: (error: unknown) => void,
 ): RefObject<GaplessLoop | null> {
   const loopRef = useRef<GaplessLoop | null>(null)
   const regionRef = useLatest(region)
   const expectedStartRef = useLatest(expectedStart)
+  const onAudioErrorRef = useLatest(onAudioError)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video || !audioUrl || !GaplessLoop.isSupported()) return
-    const loop = new GaplessLoop(video, audioUrl)
+    const loop = new GaplessLoop(video, audioUrl, (error) => onAudioErrorRef.current?.(error))
     loop.setRegion(regionRef.current)
     loop.expectLoopAt(expectedStartRef.current)
     loopRef.current = loop
@@ -31,7 +33,7 @@ export function useGaplessLoop(
       loopRef.current = null
       loop.dispose()
     }
-  }, [videoRef, audioUrl, regionRef, expectedStartRef])
+  }, [videoRef, audioUrl, regionRef, expectedStartRef, onAudioErrorRef])
 
   const start = region?.start ?? null
   const end = region?.end ?? null

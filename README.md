@@ -8,6 +8,9 @@ An app for practising music with songs. The idea and planned features are in [do
 - **Download** videos into a local library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
 - **Play** from the library:
   - speed 0.25–2× in steps of 0.05, keeping the pitch
+  - **pitch shift**: raise or lower the song by up to 12 semitones, independently of speed;
+    **Reset** returns to the original pitch. It also works in loops. The setting starts at zero
+    each time a video is opened.
   - an **A–B loop**: set A / B at the playhead, drag the handles on the timeline, nudge each point by 50 ms, turn it on or off. The jump back to A has no gap, at any speed
   - **beat-synced loops**:
     - beats and bar starts are detected automatically after each download; every bar has the same number of beats
@@ -152,6 +155,11 @@ Environment variables, or a `.env` file in the folder you start the backend from
 - **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left). Later features (stems) belong in the same folder; see [docs/functionalities.md](docs/functionalities.md).
 - **Saved loops and settings:** the player loads them with the video (`GET /api/library/<id>/loops` and `/settings`) and stores changes a moment later (`PUT`, the whole list or settings at once; whatever is pending is sent when the page is left).
 - **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`.
+- **Pitch shift:** when enabled, the video's sound and gapless-loop audio pass through a shared
+  Signalsmith Stretch Web Audio node in live-input mode. This adds audio latency, so the video can
+  lead the sound slightly. At zero pitch the effect is bypassed. It requires AudioWorklet and
+  WebAssembly; failures are shown in the player. The separate stems on the stems feature branch
+  will need their own integration when that branch is merged.
 - **Gapless loops** (`frontend/src/features/player/gaplessLoop.ts`): seeking the `<video>` back to A silences it while the browser's media pipeline restarts, 5–190 ms per jump on the library songs. So the loop's sound comes from Web Audio instead:
   1. When A is set, the browser fetches the audio around it once (`GET /api/library/<id>/audio?start=&end=`, a WAV cut sample-exactly by ffmpeg, about 0.2 s for 40 s of audio).
   2. When the video reaches B, a [Signalsmith Stretch](https://github.com/Signalsmith-Audio/signalsmith-stretch) node (MIT, WebAssembly in an AudioWorklet) takes over the sound, exactly at B. It loops the audio sample-exactly and keeps the pitch at any speed.

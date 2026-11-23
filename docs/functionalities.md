@@ -17,7 +17,8 @@ Additional functionality:
 - record the user attempts at the playing the parts and compare it to the track / notes
     - record, sync and compare by ear
     - automatic score (do not know if this is done / how)
-- pitch shift / transpose (detuned recordings, Eb tuning, other key)
+- pitch shift / transpose (detuned recordings, Eb tuning, other key): implemented for the video
+  mix and gapless loops; integration with the in-progress stem player remains
 - auto-detect song sections (do not know if it is being done)
 - progress and practice plan
 
