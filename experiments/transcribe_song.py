@@ -41,7 +41,7 @@ def main() -> None:
         if len(notes) < MIN_NOTES:
             continue
         q = notation.quantize(notes, beats, monophonic=fam in ("bass", "lead"))
-        tracks.append({"name": fam.capitalize(), "kind": "keys" if fam == "lead" else fam, "notes": q, "program": GM[fam]})
+        tracks.append({"name": {"lead": "Lead / voice"}.get(fam, fam.capitalize()), "kind": "keys" if fam == "lead" else fam, "notes": q, "program": GM[fam]})
     notation.write_gp5(out, tracks, beats, downbeats, title=Path(audio).stem)
     summary = {t["name"]: len(t["notes"]) for t in tracks}
     print(json.dumps({"bpm": round(60 / float(np.median(np.diff(beats))), 1), "bars": len(downbeats), "notes": summary}))

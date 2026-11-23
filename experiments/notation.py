@@ -151,6 +151,9 @@ def write_gp5(path: str, parts: list[dict], beats: np.ndarray, downbeats: np.nda
                                  instrument=part.get("program", 0))
         track = gm.Track(song, number=t + 1, name=part["name"], isPercussionTrack=kind == "drums", channel=channel,
                          fretCount=24 if kind != "keys" else 40)
+        if kind == "keys":  # keyboards, leads, voice: standard notation only
+            track.settings.tablature = False
+            track.settings.notation = True
         tuning = tunings[kind]
         track.strings = [gm.GuitarString(i + 1, v) for i, v in enumerate(sorted(tuning, reverse=True))]
         notes = part["notes"]
