@@ -190,3 +190,92 @@ class PlayerSettings(ApiModel):
     loop_enabled: bool = False
     active_loop_id: str | None = Field(default=None, pattern=LOOP_ID_PATTERN)
     """The saved loop being played and edited, if any."""
+    mixer: "MixerSettings | None" = None
+    """The stem mixer; None: stems were never turned on for this video."""
+
+
+STEM_NAME_PATTERN = r"^[a-z][a-z0-9_]{0,30}$"
+StemName = Annotated[str, Field(pattern=STEM_NAME_PATTERN)]
+
+
+class StemInfo(ApiModel):
+    """One separated instrument track of a song, as listed in its stems/stems.json."""
+
+    name: StemName
+    """'drums', 'bass', 'vocals', 'guitar', 'piano' or 'other' (whatever the model makes)."""
+    file: str
+    """File name inside stems/, a FLAC file."""
+    rms: float = Field(ge=0)
+    """Loudness (root mean square, 0-1); near 0: the instrument is not in the song."""
+
+
+class StemSet(ApiModel):
+    """The separated tracks of a song (its stems/stems.json).
+
+    Every stem has the same sample rate and length and starts at time 0 of the video.
+    """
+
+    model: str
+    """Which separator made them, e.g. 'demucs:htdemucs_6s'."""
+    sample_rate: int = Field(gt=0)
+    duration: float = Field(ge=0)
+    """Seconds."""
+    stems: list[StemInfo]
+
+
+class StemSeparationState(ApiModel):
+    """Where separating a video into stems stands, with the stems once it is done."""
+
+    video_id: str
+    status: AnalysisStatus
+    progress: float | None = Field(default=None, ge=0, le=1)
+    """Share of the song separated while the status is 'analyzing'; None if unknown."""
+    queue_position: int | None = Field(default=None, ge=0)
+    """While 'queued': how many songs are separated before this one."""
+    stems: StemSet | None = None
+    error: str | None = None
+
+
+class Chord(ApiModel):
+    start: float = Field(ge=0)
+    end: float = Field(gt=0)
+    label: str
+    """Root and quality as in mir_eval, e.g. 'A:min', 'C:maj'; 'N' for no chord."""
+
+
+class ChordAnalysis(ApiModel):
+    """The chords of a song, changing only on beats (its chords.json)."""
+
+    method: str
+    """How they were found, e.g. 'chroma-templates+beats'."""
+    chords: list[Chord]
+    """In time order, without gaps between neighbours."""
+    grid: str | None = None
+    """The beat grid the chords were found on (see chords.beat_grid_key); other grids
+    detect them again."""
+    from_stems: bool = False
+    """Found on the pitched stems (no drums or vocals) rather than the whole mix."""
+
+
+class ChordDetectionState(ApiModel):
+    """Where chord detection of a video stands, with the chords once it is done."""
+
+    video_id: str
+    status: AnalysisStatus
+    analysis: ChordAnalysis | None = None
+    error: str | None = None
+
+
+class MixerSettings(ApiModel):
+    """The stem mixer of a video, part of its player.json."""
+
+    enabled: bool = False
+    """Play the stems instead of the video's own sound."""
+    volumes: dict[StemName, Annotated[float, Field(ge=0, le=1)]] = Field(default_factory=dict)
+    """Per stem; a stem not listed plays at 1."""
+    muted: list[StemName] = Field(default_factory=list)
+    solo: list[StemName] = Field(default_factory=list)
+    """When not empty, only these stems are heard."""
+
+
+PlayerSettings.model_rebuild()

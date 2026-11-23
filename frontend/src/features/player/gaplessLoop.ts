@@ -15,7 +15,14 @@
  */
 import type { StretchNode } from 'signalsmith-stretch'
 import { clamp } from '../../lib/math'
-import { heardTime } from './audioClock'
+import {
+  type ElementAudio,
+  elementAudioFor,
+  fadeTo,
+  heardTime,
+  releaseElementAudio,
+  routeElement,
+} from './elementAudio'
 import type { LoopRegion } from './loop'
 import {
   type AudioWindow,
@@ -47,30 +54,6 @@ const HANDBACK_TOLERANCE = 0.03
 const MAX_WINDOW_SECONDS = 900
 /** With only the loop start set, audio this far past it is fetched ahead. */
 const EXPECTED_LOOP_SECONDS = 20
-
-interface ElementAudio {
-  context: AudioContext
-  /** The video's own sound, once routed through the context. */
-  gain: GainNode | null
-}
-
-// a media element can be routed into one AudioContext only, ever: one per element
-const elementAudio = new WeakMap<HTMLMediaElement, ElementAudio>()
-
-function elementAudioFor(video: HTMLMediaElement): ElementAudio {
-  let audio = elementAudio.get(video)
-  if (!audio) {
-    audio = { context: new AudioContext({ latencyHint: 'interactive' }), gain: null }
-    elementAudio.set(video, audio)
-  }
-  return audio
-}
-
-function fadeTo(gain: GainNode, value: number, at: number): void {
-  const start = Math.max(gain.context.currentTime, at - FADE)
-  gain.gain.cancelScheduledValues(start)
-  gain.gain.setTargetAtTime(value, start, FADE / 4)
-}
 
 async function fetchAudio(
   url: string,
@@ -171,7 +154,7 @@ export class GaplessLoop {
     const { region, audio, node, video } = this
     if (!region || !audio || !node || !this.covers(region)) return false
     if (audio.context.state !== 'running') return false
-    if (!audio.gain) this.routeVideo(audio)
+    if (!audio.gain) routeElement(this.video, audio)
     if (this.schedule) {
       this.followSound()
       return true
@@ -205,12 +188,7 @@ export class GaplessLoop {
     this.node?.disconnect()
     this.loopGain?.disconnect()
     void this.node?.dropBuffers()
-    const { audio } = this
-    // a routed video keeps its context while it is on the page (React may mount it again)
-    if (audio && (!audio.gain || !this.video.isConnected)) {
-      void audio.context.close()
-      elementAudio.delete(this.video)
-    }
+    if (this.audio) releaseElementAudio(this.video)
   }
 
   private covers(region: LoopRegion): boolean {
@@ -272,15 +250,6 @@ export class GaplessLoop {
     this.node = node
     this.loopGain = gain
     return node
-  }
-
-  private routeVideo(audio: ElementAudio): void {
-    const gain = audio.context.createGain()
-    audio.context
-      .createMediaElementSource(this.video)
-      .connect(gain)
-      .connect(audio.context.destination)
-    audio.gain = gain
   }
 
   private takeOver(at: number): void {

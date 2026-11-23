@@ -124,6 +124,7 @@ function PracticePlayer({
       <VideoPlayer
         // loaded later (after a retry), the saved state starts the player over
         key={`${video.videoId}:${practice ? 'saved' : 'unsaved'}`}
+        videoId={video.videoId}
         src={video.mediaUrl}
         audioUrl={video.audioUrl}
         poster={video.thumbnailUrl ?? undefined}

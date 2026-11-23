@@ -1,5 +1,6 @@
 """Test doubles and helpers shared by the tests."""
 
+import itertools
 import threading
 import time
 from pathlib import Path
@@ -7,9 +8,12 @@ from pathlib import Path
 import numpy as np
 from fastapi.testclient import TestClient
 
-from music_trainer.models import SearchResult, VideoMetadata
+from music_trainer.models import Chord, SearchResult, StemInfo, StemSet, VideoMetadata
 from music_trainer.services.beat_decoding import FRAMES_PER_SECOND, BeatActivations
 from music_trainer.services.beats import BeatTrackingError, analyze_activations
+from music_trainer.services.chords import ChordDetectionError
+from music_trainer.services.stems import ProgressCallback as StemProgressCallback
+from music_trainer.services.stems import StemSeparationError
 from music_trainer.services.youtube import DownloadProgress, ProgressCallback, YouTubeError
 from music_trainer.video_ids import watch_url
 
@@ -115,6 +119,71 @@ class FakeBeatTracker:
         return FAKE_ACTIVATIONS
 
 
+FAKE_STEM_NAMES = ("drums", "bass", "vocals", "other")
+FAKE_FLAC = b"fLaC" + bytes(100)
+
+
+class FakeStemSeparator:
+    """Stands in for DemucsSeparator: no model, instant result."""
+
+    def __init__(self) -> None:
+        self.model = "fake"
+        self.separated: list[Path] = []
+        self.error: str | None = None
+        """When set, separate() raises StemSeparationError with this message."""
+        self.release = threading.Event()
+        """separate() waits for this event after reporting half done; set by default."""
+        self.release.set()
+        self.started = threading.Event()
+        """Set when separate() has reported half done."""
+        self.stopped = 0
+
+    def separate(
+        self, media_path: Path, out_dir: Path, on_progress: StemProgressCallback
+    ) -> StemSet:
+        self.separated.append(media_path)
+        (out_dir / f"{FAKE_STEM_NAMES[0]}.flac").write_bytes(FAKE_FLAC)
+        on_progress(0.5)
+        self.started.set()
+        self.release.wait(timeout=10)
+        if self.error:
+            raise StemSeparationError(self.error)
+        for name in FAKE_STEM_NAMES[1:]:
+            (out_dir / f"{name}.flac").write_bytes(FAKE_FLAC)
+        return StemSet(
+            model=self.model,
+            sample_rate=44100,
+            duration=19,
+            stems=[StemInfo(name=n, file=f"{n}.flac", rms=0.1) for n in FAKE_STEM_NAMES],
+        )
+
+    def stop(self) -> None:
+        self.stopped += 1
+        self.release.set()
+        self.error = self.error or "Separation was stopped"
+
+
+class FakeChordDetector:
+    """Stands in for LibrosaChordDetector: C and G alternating every 4 beats."""
+
+    method = "fake"
+
+    def __init__(self) -> None:
+        self.calls: list[tuple[Path, list[Path], list[float]]] = []
+        self.error: str | None = None
+        """When set, detect() raises ChordDetectionError with this message."""
+
+    def detect(self, media_path: Path, stem_paths, beats) -> list[Chord]:
+        self.calls.append((media_path, list(stem_paths), list(beats)))
+        if self.error:
+            raise ChordDetectionError(self.error)
+        bounds = [0.0, *beats[4::4], beats[-1] + 0.5]
+        return [
+            Chord(start=start, end=end, label="C:maj" if i % 2 == 0 else "G:maj")
+            for i, (start, end) in enumerate(itertools.pairwise(bounds))
+        ]
+
+
 def wait_for_download(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:
     """Poll the download until it is no longer active; return the final job."""
     deadline = time.monotonic() + timeout
@@ -135,3 +204,25 @@ def wait_for_beats(client: TestClient, video_id: str, timeout: float = 5.0) -> d
             return state
         time.sleep(0.02)
     raise AssertionError(f"beat detection of {video_id} did not finish within {timeout} s")
+
+
+def wait_for_chords(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:
+    """Poll chord detection until it is no longer queued or running; return the final state."""
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        state = client.get(f"/api/library/{video_id}/chords").json()
+        if state["status"] not in ("queued", "analyzing"):
+            return state
+        time.sleep(0.02)
+    raise AssertionError(f"chord detection of {video_id} did not finish within {timeout} s")
+
+
+def wait_for_stems(client: TestClient, video_id: str, timeout: float = 5.0) -> dict:
+    """Poll stem separation until it is no longer queued or running; return the final state."""
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        state = client.get(f"/api/library/{video_id}/stems").json()
+        if state["status"] not in ("queued", "analyzing"):
+            return state
+        time.sleep(0.02)
+    raise AssertionError(f"stem separation of {video_id} did not finish within {timeout} s")

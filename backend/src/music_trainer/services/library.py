@@ -6,16 +6,20 @@
     <library>/<video_id>/analysis.json   BeatAnalysis (beats and bar starts), once detected
     <library>/<video_id>/beat_activations.npz  beat network output, to decode again with new hints
     <library>/<video_id>/loops.json      the user's saved loops (list of SavedLoop)
-    <library>/<video_id>/player.json     how the player was left (PlayerSettings)
+    <library>/<video_id>/player.json     how the player was left (PlayerSettings, with the mixer)
+    <library>/<video_id>/stems/          separated instruments: stems.json (StemSet), one FLAC each
+    <library>/<video_id>/chords.json     ChordAnalysis (chords on the beat grid), once detected
     <library>/.staging/<video_id>/       downloads in progress, moved into place when done
 
-Later features (stems, ...) belong in the same folder.
+Stems are FLAC, lossless: AAC or Opus would shift them in time against each
+other. They are written to stems.partial/ and renamed to stems/ when complete.
 """
 
 import logging
 import shutil
 import threading
 import time
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TypeVar
@@ -23,7 +27,14 @@ from typing import TypeVar
 import numpy as np
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from music_trainer.models import BeatAnalysis, PlayerSettings, SavedLoop, VideoMetadata
+from music_trainer.models import (
+    BeatAnalysis,
+    ChordAnalysis,
+    PlayerSettings,
+    SavedLoop,
+    StemSet,
+    VideoMetadata,
+)
 from music_trainer.services.beat_decoding import BeatActivations
 from music_trainer.video_ids import require_valid_video_id
 
@@ -50,6 +61,10 @@ class Library:
     ACTIVATIONS_FILE = "beat_activations.npz"
     LOOPS_FILE = "loops.json"
     SETTINGS_FILE = "player.json"
+    STEMS_DIR = "stems"
+    STEMS_STAGING_DIR = "stems.partial"
+    STEMS_FILE = "stems.json"
+    CHORDS_FILE = "chords.json"
     STAGING_DIR = ".staging"
 
     def __init__(self, root: Path) -> None:
@@ -146,6 +161,61 @@ class Library:
             )
         partial.replace(target)
 
+    def read_chords(self, video_id: str) -> ChordAnalysis | None:
+        return self._read_json(self._video_dir(video_id) / self.CHORDS_FILE, ChordAnalysis)
+
+    def write_chords(self, video_id: str, chords: ChordAnalysis) -> None:
+        self._write_text(video_id, self.CHORDS_FILE, chords.model_dump_json())
+
+    def stem_paths(self, video_id: str, names: Sequence[str]) -> list[Path]:
+        """The audio files of those of the named stems that were separated."""
+        paths = (self.stem_path(video_id, name) for name in names)
+        return [path for path in paths if path is not None]
+
+    def read_stems(self, video_id: str) -> StemSet | None:
+        """The separated stems, or None if there are none (or a file is missing)."""
+        folder = self._video_dir(video_id) / self.STEMS_DIR
+        stems = self._read_json(folder / self.STEMS_FILE, StemSet)
+        if stems is None:
+            return None
+        if not all(self._file_in(folder, stem.file) for stem in stems.stems):
+            logger.warning("Ignoring stems of %s: a file is missing", video_id)
+            return None
+        return stems
+
+    def stem_path(self, video_id: str, name: str) -> Path | None:
+        """The audio file of one stem, or None if there is no such stem."""
+        stems = self.read_stems(video_id)
+        stem = next((s for s in stems.stems if s.name == name), None) if stems else None
+        if stem is None:
+            return None
+        return self._file_in(self._video_dir(video_id) / self.STEMS_DIR, stem.file)
+
+    def create_stems_staging_dir(self, video_id: str) -> Path:
+        """An empty folder in the video's folder to separate the stems into."""
+        if not self.contains(video_id):
+            raise VideoNotInLibraryError(video_id)
+        folder = self._video_dir(video_id) / self.STEMS_STAGING_DIR
+        shutil.rmtree(folder, ignore_errors=True)
+        folder.mkdir()
+        return folder
+
+    def commit_stems(self, video_id: str, stems: StemSet) -> None:
+        """Replace the video's stems with the ones in its staging folder."""
+        if not self.contains(video_id):
+            raise VideoNotInLibraryError(video_id)
+        folder = self._video_dir(video_id)
+        staging = folder / self.STEMS_STAGING_DIR
+        (staging / self.STEMS_FILE).write_text(stems.model_dump_json(indent=2), encoding="utf-8")
+        with self._lock:
+            target = folder / self.STEMS_DIR
+            if target.exists():
+                shutil.rmtree(target)
+            staging.rename(target)
+
+    def discard_stems_staging(self, video_id: str) -> None:
+        shutil.rmtree(self._video_dir(video_id) / self.STEMS_STAGING_DIR, ignore_errors=True)
+
     def delete_video(self, video_id: str) -> bool:
         """Delete the video's folder. Returns False if there was nothing to delete."""
         folder = self._video_dir(video_id)
@@ -207,9 +277,12 @@ class Library:
         return self._root / self.STAGING_DIR / require_valid_video_id(video_id)
 
     def _file_in_video_dir(self, video_id: str, file_name: str) -> Path | None:
-        folder = self._video_dir(video_id)
+        return self._file_in(self._video_dir(video_id), file_name)
+
+    @staticmethod
+    def _file_in(folder: Path, file_name: str) -> Path | None:
         path = folder / file_name
-        # file names come from meta.json; never let them point outside the folder
+        # file names come from JSON files; never let them point outside the folder
         if path.parent != folder or not path.is_file():
             return None
         return path

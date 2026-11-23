@@ -53,6 +53,14 @@ describe('api client', () => {
     })
   })
 
+  it('starts stem separation and points at the stem files', async () => {
+    const fetchMock = mockFetch(Response.json({ status: 'queued' }, { status: 202 }))
+    await api.separateStems('jNQXAC9IVRw', { force: true })
+    expect(fetchMock.mock.calls[0][0]).toBe('/api/library/jNQXAC9IVRw/stems?force=true')
+    expect(fetchMock.mock.calls[0][1].method).toBe('POST')
+    expect(api.stemUrl('jNQXAC9IVRw', 'drums')).toBe('/api/library/jNQXAC9IVRw/stems/drums')
+  })
+
   it('returns nothing for 204 responses', async () => {
     mockFetch(new Response(null, { status: 204 }))
     await expect(api.deleteVideo('jNQXAC9IVRw')).resolves.toBeUndefined()

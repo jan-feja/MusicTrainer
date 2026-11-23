@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "music-trainer"
 version = "0.1.0"
-description = "Backend of the music practice app: YouTube search, downloads, the local video library and beat detection."
+description = "Backend of the music practice app: YouTube search, downloads, the local video library, beat detection and stem separation."
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",
@@ -17,6 +17,10 @@ dependencies = [
     # beat and downbeat detection (brings PyTorch; on Windows and macOS PyPI ships the CPU build)
     "beat-this>=1.1",
     "numpy>=1.24",
+    # separating songs into instruments (drums, bass, vocals, guitar, piano, other)
+    "demucs>=4.1",
+    # chords: chroma (constant-Q transform) of the song
+    "librosa>=0.10",
 ]
 
 [project.optional-dependencies]
