@@ -32,3 +32,10 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}

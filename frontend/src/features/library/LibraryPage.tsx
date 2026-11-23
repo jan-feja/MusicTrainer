@@ -10,6 +10,7 @@ import { useAsync } from '../../lib/useAsync'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
 import { useOnChange } from '../../lib/useOnChange'
 import { useDownloads } from '../downloads/downloadsContext'
+import { StarButton } from '../profile/StarButton'
 import { DownloadingCard } from './DownloadingCard'
 import { useMyLibrary } from './myLibrary'
 import styles from './LibraryPage.module.css'
@@ -95,14 +96,23 @@ export function LibraryPage() {
               durationSeconds={video.durationSeconds}
               thumbnailUrl={video.thumbnailUrl}
               actions={
-                <button
-                  type="button"
-                  className="button button-small button-ghost"
-                  onClick={() => void removeVideo(video.videoId, video.title)}
-                  aria-label={`Remove ${video.title} from your library`}
-                >
-                  <DeleteIcon /> Remove
-                </button>
+                <>
+                  {video.starred !== undefined && (
+                    <StarButton
+                      videoId={video.videoId}
+                      title={video.title}
+                      starred={video.starred}
+                    />
+                  )}
+                  <button
+                    type="button"
+                    className="button button-small button-ghost"
+                    onClick={() => void removeVideo(video.videoId, video.title)}
+                    aria-label={`Remove ${video.title} from your library`}
+                  >
+                    <DeleteIcon /> Remove
+                  </button>
+                </>
               }
             />
           ))}

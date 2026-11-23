@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { formatDate, formatTime, formatTimePrecise, formatViewCount } from './format'
+import {
+  formatDate,
+  formatDay,
+  formatDuration,
+  formatTime,
+  formatTimeAgo,
+  formatTimePrecise,
+  formatViewCount,
+} from './format'
 
 describe('formatTime', () => {
   it.each([
@@ -36,5 +44,38 @@ describe('formatViewCount', () => {
 describe('formatDate', () => {
   it('formats ISO dates without shifting the day', () => {
     expect(formatDate('2005-04-24')).toBe('Apr 24, 2005')
+  })
+})
+
+describe('formatDuration', () => {
+  it.each([
+    [45, '45 s'],
+    [60, '1 min'],
+    [749, '12 min'],
+    [3600, '1 h'],
+    [3900, '1 h 5 min'],
+  ])('%s s -> %s', (seconds, expected) => {
+    expect(formatDuration(seconds)).toBe(expected)
+  })
+})
+
+describe('formatTimeAgo / formatDay', () => {
+  const now = Date.parse('2026-03-10T12:00:00Z')
+
+  it.each([
+    ['2026-03-10T11:59:30Z', 'just now'],
+    ['2026-03-10T11:55:00Z', '5 min ago'],
+    ['2026-03-10T09:00:00Z', '3 h ago'],
+    ['2026-03-09T09:00:00Z', 'yesterday'],
+    ['2026-03-01T09:00:00Z', 'Mar 1'],
+    ['2025-12-24T09:00:00Z', 'Dec 24, 2025'],
+  ])('%s -> %s', (iso, expected) => {
+    expect(formatTimeAgo(iso, now)).toBe(expected)
+  })
+
+  it('names the days', () => {
+    expect(formatDay('2026-03-10', now)).toBe('Today')
+    expect(formatDay('2026-03-09', now)).toBe('Yesterday')
+    expect(formatDay('2026-03-04', now)).toBe('Wed, Mar 4')
   })
 })

@@ -1,25 +1,118 @@
 import { type FormEvent, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router'
+import { Link, Navigate, useNavigate } from 'react-router'
 import { api } from '../../api/client'
+import type { ProfileSettings } from '../../api/types'
 import { paths } from '../../app/paths'
+import { StatusMessage } from '../../components/StatusMessage'
 import { errorMessage } from '../../lib/format'
+import { useAsync } from '../../lib/useAsync'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
 import { MIN_PASSWORD_LENGTH } from './AuthPages'
 import { useAuth } from './authContext'
 import styles from './auth.module.css'
 
-export function ProfilePage() {
-  useDocumentTitle('Profile')
+export const MAX_DESCRIPTION_LENGTH = 300
+
+/** The account's settings: profile description and privacy, password, deleting it. */
+export function SettingsPage() {
+  useDocumentTitle('Settings')
   const { user } = useAuth()
   if (!user) {
     return <Navigate to={paths.login} replace />
   }
   return (
     <div className={styles.stack}>
-      <h1 className={styles.title}>{user.username}</h1>
+      <div className={styles.titleRow}>
+        <h1 className={styles.title}>Settings</h1>
+        <Link to={paths.profile(user.username)}>Your profile</Link>
+      </div>
+      <ProfileForm />
       <ChangePassword />
       <DeleteAccount />
     </div>
+  )
+}
+
+function ProfileForm() {
+  const loaded = useAsync((signal) => api.getProfileSettings(signal), 'profile-settings')
+  if (loaded.status === 'loading') return <StatusMessage kind="loading">Loading…</StatusMessage>
+  if (loaded.status === 'error') {
+    return (
+      <StatusMessage kind="error" onRetry={loaded.reload}>
+        {errorMessage(loaded.error)}
+      </StatusMessage>
+    )
+  }
+  return <ProfileFields initial={loaded.data} />
+}
+
+function ProfileFields({ initial }: { initial: ProfileSettings }) {
+  const [description, setDescription] = useState(initial.description)
+  const [isPrivate, setIsPrivate] = useState(initial.isPrivate)
+  const [saved, setSaved] = useState(initial)
+  const [message, setMessage] = useState<{ kind: 'error' | 'success'; text: string } | null>(null)
+  const [busy, setBusy] = useState(false)
+  const changed = description.trim() !== saved.description || isPrivate !== saved.isPrivate
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault()
+    setMessage(null)
+    setBusy(true)
+    try {
+      const next = await api.saveProfileSettings({ description, isPrivate })
+      setSaved(next)
+      setDescription(next.description)
+      setMessage({ kind: 'success', text: 'Profile saved.' })
+    } catch (error) {
+      setMessage({ kind: 'error', text: errorMessage(error) })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <form className={styles.card} onSubmit={(event) => void submit(event)}>
+      <h2>Profile</h2>
+      <label className={styles.field}>
+        <span>Description</span>
+        <textarea
+          className={`${styles.input} ${styles.textarea}`}
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+          maxLength={MAX_DESCRIPTION_LENGTH}
+          rows={3}
+          placeholder="What do you play? What are you practicing?"
+        />
+        <small className={styles.help}>
+          {description.length} / {MAX_DESCRIPTION_LENGTH}
+        </small>
+      </label>
+      <label className={styles.check}>
+        <input
+          type="checkbox"
+          checked={isPrivate}
+          onChange={(event) => setIsPrivate(event.target.checked)}
+        />
+        <span>
+          <strong>Private profile</strong>
+          <small className={styles.help}>
+            Only followers you accept see your songs and practice; you are left out of the everyone
+            feed. Making it public again accepts the waiting requests.
+          </small>
+        </span>
+      </label>
+      {message && (
+        <p
+          className={message.kind === 'error' ? styles.error : styles.success}
+          role={message.kind === 'error' ? 'alert' : 'status'}
+        >
+          {message.text}
+        </p>
+      )}
+      <button type="submit" className="button button-primary" disabled={busy || !changed}>
+        Save profile
+      </button>
+    </form>
   )
 }
 

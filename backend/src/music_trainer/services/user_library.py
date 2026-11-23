@@ -9,10 +9,10 @@ from collections.abc import Callable, Iterable
 from datetime import datetime, timedelta
 
 from pydantic import TypeAdapter, ValidationError
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 
 from music_trainer.db import Database, LibraryEntryRow, SongRow
-from music_trainer.models import GuestImportEntry, PlayerSettings, Preset
+from music_trainer.models import GuestImportEntry, MyLibraryEntry, PlayerSettings, Preset
 from music_trainer.services.accounts import utc_now
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class UserLibrary:
         self._db = db
         self._clock = clock
 
-    def video_ids(self, user_id: int) -> list[str]:
+    def video_ids(self, user_id: int, limit: int | None = None) -> list[str]:
         """The songs in the user's library, most recently added first."""
         with self._db.session() as session:
             return list(
@@ -35,8 +35,49 @@ class UserLibrary:
                     select(LibraryEntryRow.video_id)
                     .where(LibraryEntryRow.user_id == user_id)
                     .order_by(LibraryEntryRow.added_at.desc())
+                    .limit(limit)
                 )
             )
+
+    def count(self, user_id: int) -> int:
+        with self._db.session() as session:
+            return (
+                session.scalar(select(func.count()).where(LibraryEntryRow.user_id == user_id)) or 0
+            )
+
+    def starred_ids(self, user_id: int) -> list[str]:
+        """The user's starred songs, most recently starred first."""
+        with self._db.session() as session:
+            return list(
+                session.scalars(
+                    select(LibraryEntryRow.video_id)
+                    .where(
+                        LibraryEntryRow.user_id == user_id, LibraryEntryRow.starred_at.is_not(None)
+                    )
+                    .order_by(LibraryEntryRow.starred_at.desc())
+                )
+            )
+
+    def entry(self, user_id: int, video_id: str) -> MyLibraryEntry | None:
+        with self._db.session() as session:
+            row = session.get(LibraryEntryRow, (user_id, video_id))
+            if row is None:
+                return None
+            return MyLibraryEntry(
+                video_id=video_id, added_at=row.added_at, starred=row.starred_at is not None
+            )
+
+    def set_starred(self, user_id: int, video_id: str, starred: bool) -> bool:
+        """Star or unstar a song; returns False if it is not in the library."""
+        with self._db.session() as session, session.begin():
+            row = session.get(LibraryEntryRow, (user_id, video_id))
+            if row is None:
+                return False
+            if starred and row.starred_at is None:
+                row.starred_at = self._clock()
+            elif not starred:
+                row.starred_at = None
+            return True
 
     def contains(self, user_id: int, video_id: str) -> bool:
         with self._db.session() as session:
@@ -151,5 +192,10 @@ class UserLibrary:
 
 def _new_entry(user_id: int, video_id: str, now: datetime) -> LibraryEntryRow:
     return LibraryEntryRow(
-        user_id=user_id, video_id=video_id, added_at=now, presets_json=None, settings_json=None
+        user_id=user_id,
+        video_id=video_id,
+        added_at=now,
+        presets_json=None,
+        settings_json=None,
+        starred_at=None,
     )

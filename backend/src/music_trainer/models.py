@@ -346,3 +346,107 @@ class GuestImportEntry(ApiModel):
     video_id: str = Field(pattern=VIDEO_ID_PATTERN)
     presets: list[Preset] | None = Field(default=None, max_length=MAX_PRESETS)
     settings: PlayerSettings | None = None
+
+
+MAX_DESCRIPTION_LENGTH = 300
+MAX_PRACTICE_REPORT_SECONDS = 600
+"""The player reports practice time at least this often."""
+
+FollowState = Literal["none", "requested", "following", "self"]
+"""How the viewer relates to a profile: 'requested' waits for a private profile's owner."""
+
+
+class MyLibraryVideo(LibraryVideo):
+    """A song in the logged-in user's library."""
+
+    starred: bool = False
+
+
+class MyLibraryEntry(ApiModel):
+    video_id: str
+    added_at: datetime
+    starred: bool
+
+
+class StarRequest(ApiModel):
+    starred: bool
+
+
+class UserSummary(ApiModel):
+    """A user in a list (followers, requests)."""
+
+    username: str
+    description: str = ""
+
+
+class Profile(ApiModel):
+    """A user's profile as the viewer may see it."""
+
+    username: str
+    description: str
+    is_private: bool
+    joined_at: datetime
+    followers: int
+    following: int
+    follow_state: FollowState
+    can_view: bool
+    """The viewer may see the songs and history: the profile is public, the viewer's own,
+    or the viewer is an accepted follower."""
+    library_count: int | None = None
+    """None when the viewer may not see it (also below)."""
+    practice_seconds: int | None = None
+    """Practice time in all."""
+
+
+class ProfileSettings(ApiModel):
+    description: str = Field(default="", max_length=MAX_DESCRIPTION_LENGTH)
+    is_private: bool = False
+
+
+class PracticeEntry(ApiModel):
+    """How long a user practiced a song on one day (UTC)."""
+
+    video_id: str
+    title: str
+    day: date
+    last_at: datetime
+    """When the song was last played that day."""
+    seconds: int
+
+
+class FeedEntry(PracticeEntry):
+    username: str
+
+
+class PracticeReport(ApiModel):
+    """The player's report: the music played this many more seconds."""
+
+    video_id: str = Field(pattern=VIDEO_ID_PATTERN)
+    seconds: int = Field(ge=1, le=MAX_PRACTICE_REPORT_SECONDS)
+
+
+class ProfileLibrary(ApiModel):
+    """The first songs of a user's library, most recently added first."""
+
+    videos: list[LibraryVideo]
+    total: int
+
+
+NotificationKind = Literal["follow_request", "new_follower", "request_accepted"]
+"""Someone asks to follow the user / started following them / accepted the user's request."""
+
+
+class Notification(ApiModel):
+    kind: NotificationKind
+    username: str
+    """The other user."""
+    at: datetime
+    unread: bool
+    """Newer than when the user last opened the notifications."""
+    follow_state: FollowState
+    """How the user relates to the other user (e.g. whether they follow back)."""
+
+
+class Notifications(ApiModel):
+    items: list[Notification]
+    unread: int

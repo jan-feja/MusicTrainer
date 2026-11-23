@@ -42,6 +42,7 @@ import {
   presetLoop,
   presetTags,
 } from '../practice/presets'
+import { usePracticeTime } from '../practice/usePracticeTime'
 import { usePresets } from '../practice/usePresets'
 import {
   mixerGains,
@@ -99,6 +100,8 @@ export interface PlayerPractice {
   onSettingsChange: (settings: PlayerSettings) => void
   /** The last save failed with this message. */
   saveError: string | null
+  /** The music played `seconds` more (the practice history). */
+  onPracticed?: (seconds: number, keepalive: boolean) => void
 }
 
 interface VideoPlayerProps {
@@ -214,6 +217,7 @@ export function VideoPlayer({
     videoFollowsOtherSound,
     initialSettings?.metronome?.volume,
   )
+  usePracticeTime(playback.isPlaying, practice?.onPracticed)
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
   const recovery = useVideoRecovery(videoRef, src)
   const duration = playback.duration

@@ -22,7 +22,9 @@
 }
 
 .nav {
+  display: flex;
   flex-shrink: 0;
+  gap: 4px;
 }
 
 .account {

@@ -19,9 +19,11 @@ from music_trainer.api.library import to_library_video
 from music_trainer.models import (
     MAX_PRESETS,
     GuestImportEntry,
-    LibraryVideo,
+    MyLibraryEntry,
+    MyLibraryVideo,
     PlayerSettings,
     Preset,
+    StarRequest,
 )
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
@@ -43,13 +45,42 @@ def _song_available(video_id: str, library: Library, downloads: DownloadManager)
     return job is not None and job.status.is_active
 
 
-@router.get("", response_model=list[LibraryVideo])
+@router.get("", response_model=list[MyLibraryVideo])
 def list_my_videos(
     user: RequiredUser, user_library: UserLibraryDependency, library: LibraryDependency
-) -> list[LibraryVideo]:
+) -> list[MyLibraryVideo]:
     """The songs in the library, most recently added first (not those still downloading)."""
+    starred = set(user_library.starred_ids(user.id))
     videos = (library.get_video(video_id) for video_id in user_library.video_ids(user.id))
-    return [to_library_video(video) for video in videos if video is not None]
+    return [
+        MyLibraryVideo(**to_library_video(video).model_dump(), starred=video.video_id in starred)
+        for video in videos
+        if video is not None
+    ]
+
+
+@router.get("/{video_id}", response_model=MyLibraryEntry)
+def get_entry(
+    video_id: VideoIdParameter, user: RequiredUser, user_library: UserLibraryDependency
+) -> MyLibraryEntry:
+    """The song's place in the library: when it was added, starred or not."""
+    entry = user_library.entry(user.id, video_id)
+    if entry is None:
+        raise _not_in_library(video_id)
+    return entry
+
+
+@router.put("/{video_id}/star", status_code=status.HTTP_204_NO_CONTENT)
+def star_video(
+    video_id: VideoIdParameter,
+    body: StarRequest,
+    user: RequiredUser,
+    user_library: UserLibraryDependency,
+) -> Response:
+    """Star or unstar a song of the library (starred songs show on the profile)."""
+    if not user_library.set_starred(user.id, video_id, body.starred):
+        raise _not_in_library(video_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.put("/{video_id}", status_code=status.HTTP_204_NO_CONTENT)

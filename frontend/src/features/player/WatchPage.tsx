@@ -13,7 +13,9 @@ import { isValidVideoId } from '../../lib/youtube'
 import { useBeatTracking } from '../beats/useBeatTracking'
 import { useDownloadJob, useDownloads } from '../downloads/downloadsContext'
 import { DownloadPanel } from './DownloadPanel'
+import { useMyLibrary } from '../library/myLibrary'
 import { usePracticeStorage } from '../practice/usePracticeStorage'
+import { StarButton } from '../profile/StarButton'
 import { VideoDetails } from './VideoDetails'
 import { type PlayerPractice, VideoPlayer } from './VideoPlayer'
 import styles from './WatchPage.module.css'
@@ -56,7 +58,6 @@ function WatchVideo({ videoId }: { videoId: string }) {
     return (
       <article className={styles.page}>
         <PracticePlayer video={video.data} />
-        <VideoDetails video={video.data} />
       </article>
     )
   }
@@ -93,6 +94,7 @@ function WatchVideo({ videoId }: { videoId: string }) {
 /** The player, with the user's presets and settings for the video loaded first. */
 function PracticePlayer({ video }: { video: LibraryVideo }) {
   const storage = usePracticeStorage(video.videoId)
+  const { reportPractice } = useMyLibrary()
   const { data } = storage
   if (data.status === 'loading') {
     return <StatusMessage kind="loading">Loading…</StatusMessage>
@@ -105,6 +107,9 @@ function PracticePlayer({ video }: { video: LibraryVideo }) {
           onPresetsChange: storage.savePresets,
           onSettingsChange: storage.saveSettings,
           saveError: storage.saveError,
+          onPracticed:
+            reportPractice &&
+            ((seconds, keepalive) => reportPractice(video.videoId, seconds, keepalive)),
         }
       : undefined
   return (
@@ -119,6 +124,20 @@ function PracticePlayer({ video }: { video: LibraryVideo }) {
         key={practice ? 'saved' : 'unsaved'}
         video={video}
         practice={practice}
+      />
+      <VideoDetails
+        video={video}
+        actions={
+          data.status === 'success' &&
+          data.data.starred !== undefined && (
+            <StarButton
+              videoId={video.videoId}
+              title={video.title}
+              starred={data.data.starred}
+              labelled
+            />
+          )
+        }
       />
     </>
   )

@@ -4,16 +4,19 @@ Songs and their analysis stay on disk (see services/library.py). The database
 holds each user's library: the songs in it, with the user's own presets and
 player settings for each. Guests have no rows; their library lives in the browser.
 
-    users            accounts (username + argon2 password hash)
+    users            accounts (username + argon2 password hash, profile description, privacy)
     sessions         logged-in browsers: the hash of the cookie's token
-    library_entries  (user, song): the user's presets and player settings for it
+    library_entries  (user, song): the user's presets and player settings for it, starred or not
     songs            per song: when a guest last used it (songs nobody has are deleted)
+    follows          (follower, followed user): accepted, or a request to a private profile
+    practice_days    (user, song, day): how long the user practiced the song that day
 """
 
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from sqlalchemy import (
+    Boolean,
     DateTime,
     ForeignKey,
     String,
@@ -59,6 +62,12 @@ class UserRow(Base):
     """Lower case: usernames are unique regardless of case."""
     password_hash: Mapped[str] = mapped_column(String(200))
     created_at: Mapped[datetime]
+    description: Mapped[str] = mapped_column(Text, default="", server_default="")
+    """Shown on the profile."""
+    is_private: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
+    """Only accepted followers see the profile's songs and history."""
+    notifications_seen_at: Mapped[datetime | None] = mapped_column(default=None)
+    """When the user last opened their notifications; newer ones are unread."""
 
 
 class SessionRow(Base):
@@ -83,6 +92,8 @@ class LibraryEntryRow(Base):
     """The user's presets (a list of Preset); None: none saved yet."""
     settings_json: Mapped[str | None] = mapped_column(Text)
     """How the user left the player (PlayerSettings); None: never opened."""
+    starred_at: Mapped[datetime | None]
+    """When the user starred the song; None: not starred."""
 
 
 class SongRow(Base):
@@ -91,6 +102,41 @@ class SongRow(Base):
     video_id: Mapped[str] = mapped_column(String(20), primary_key=True)
     last_guest_use_at: Mapped[datetime | None]
     """When a guest last downloaded or opened the song."""
+
+
+class FollowRow(Base):
+    __tablename__ = "follows"
+
+    follower_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    followed_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, index=True
+    )
+    accepted: Mapped[bool] = mapped_column(Boolean)
+    """False: a request to a private profile, waiting for its owner."""
+    created_at: Mapped[datetime]
+    """When the user followed, or asked to."""
+    accepted_at: Mapped[datetime | None] = mapped_column(default=None)
+    """When the follow took effect: `created_at` for a public profile, later for a request."""
+
+
+class PracticeDayRow(Base):
+    """One row per user, song and day (UTC): opening a song ten times is one entry."""
+
+    __tablename__ = "practice_days"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    video_id: Mapped[str] = mapped_column(String(20), primary_key=True)
+    day: Mapped[date] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(500))
+    """Kept here: the history outlives the song's files."""
+    last_at: Mapped[datetime] = mapped_column(index=True)
+    """When the song was last played that day."""
+    seconds: Mapped[int]
+    """How long the music played."""
 
 
 class Database:
@@ -115,12 +161,28 @@ class Database:
 
 def _migrate(engine: Engine) -> None:
     """Changes to tables made before (create_all only adds missing tables)."""
-    columns = {column["name"] for column in inspect(engine).get_columns("library_entries")}
-    if "loops_json" in columns:  # saved loops became presets (a saved loop is a valid preset)
+    inspector = inspect(engine)
+    users = {column["name"] for column in inspector.get_columns("users")}
+    entries = {column["name"] for column in inspector.get_columns("library_entries")}
+    changes = []
+    if "loops_json" in entries:  # saved loops became presets (a saved loop is a valid preset)
+        changes.append("ALTER TABLE library_entries RENAME COLUMN loops_json TO presets_json")
+    if "starred_at" not in entries:
+        changes.append("ALTER TABLE library_entries ADD COLUMN starred_at DATETIME")
+    if "description" not in users:
+        changes.append("ALTER TABLE users ADD COLUMN description TEXT NOT NULL DEFAULT ''")
+    if "is_private" not in users:
+        changes.append("ALTER TABLE users ADD COLUMN is_private BOOLEAN NOT NULL DEFAULT 0")
+    if "notifications_seen_at" not in users:
+        changes.append("ALTER TABLE users ADD COLUMN notifications_seen_at DATETIME")
+    follows = {column["name"] for column in inspector.get_columns("follows")}
+    if "accepted_at" not in follows:
+        changes.append("ALTER TABLE follows ADD COLUMN accepted_at DATETIME")
+        changes.append("UPDATE follows SET accepted_at = created_at WHERE accepted")
+    if changes:
         with engine.begin() as connection:
-            connection.execute(
-                text("ALTER TABLE library_entries RENAME COLUMN loops_json TO presets_json")
-            )
+            for change in changes:
+                connection.execute(text(change))
 
 
 def _configure_connection(connection: object, _record: object) -> None:

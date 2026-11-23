@@ -9,7 +9,8 @@ import { useAuth } from '../auth/authContext'
 import { guestStorage } from './guestStorage'
 
 export interface LibraryListing {
-  videos: LibraryVideo[]
+  /** `starred` only for an account (guests cannot star). */
+  videos: (LibraryVideo & { starred?: boolean })[]
   /** A guest's songs that are gone from the server (nobody used them for a while). */
   removedCount: number
 }
@@ -18,6 +19,8 @@ export interface PracticeData {
   presets: Preset[]
   /** null: the song was never opened (the player starts from its defaults). */
   settings: PlayerSettings | null
+  /** Only for an account (guests cannot star). */
+  starred?: boolean
 }
 
 export interface MyLibrary {
@@ -35,6 +38,8 @@ export interface MyLibrary {
   openSong: (videoId: string, signal?: AbortSignal) => Promise<PracticeData>
   savePresets: (videoId: string, presets: Preset[], keepalive: boolean) => Promise<unknown>
   saveSettings: (videoId: string, settings: PlayerSettings, keepalive: boolean) => Promise<unknown>
+  /** The music played `seconds` more: the account's practice history (guests have none). */
+  reportPractice?: (videoId: string, seconds: number, keepalive: boolean) => void
 }
 
 export function useMyLibrary(): MyLibrary {
@@ -52,15 +57,19 @@ function accountLibrary(_user: User): MyLibrary {
     downloadIds: () => undefined,
     openSong: async (videoId, signal) => {
       await api.addToMyLibrary(videoId)
-      const [presets, settings] = await Promise.all([
+      const [presets, settings, entry] = await Promise.all([
         api.getPresets(videoId, signal),
         api.getPlayerSettings(videoId, signal),
+        api.getMyEntry(videoId, signal),
       ])
-      return { presets, settings }
+      return { presets, settings, starred: entry.starred }
     },
     savePresets: (videoId, presets, keepalive) => api.savePresets(videoId, presets, keepalive),
     saveSettings: (videoId, settings, keepalive) =>
       api.savePlayerSettings(videoId, settings, keepalive),
+    // the history is not worth bothering the user about
+    reportPractice: (videoId, seconds, keepalive) =>
+      void api.reportPractice(videoId, seconds, keepalive).catch(() => {}),
   }
 }
 

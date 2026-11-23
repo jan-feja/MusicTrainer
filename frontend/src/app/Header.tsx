@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router'
 import { useAuth } from '../features/auth/authContext'
 import { useActiveDownloadCount } from '../features/downloads/downloadsContext'
+import { NotificationsButton } from '../features/profile/NotificationsButton'
 import { SearchBox } from '../features/search/SearchBox'
 import { paths } from './paths'
 import styles from './Header.module.css'
@@ -33,11 +34,19 @@ export function Header() {
             </span>
           )}
         </NavLink>
+        <NavLink to={paths.feed} className={styles.navLink}>
+          Feed
+        </NavLink>
       </nav>
       <nav className={styles.account} aria-label="Account">
         {user ? (
           <>
-            <NavLink to={paths.profile} className={styles.navLink} title="Your profile">
+            <NotificationsButton />
+            <NavLink
+              to={paths.profile(user.username)}
+              className={styles.navLink}
+              title="Your profile"
+            >
               {user.username}
             </NavLink>
             <button type="button" className="button button-small button-ghost" onClick={logOut}>

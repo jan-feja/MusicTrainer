@@ -4,13 +4,24 @@ import type {
   BeatTrackingState,
   ChordDetectionState,
   DownloadJob,
+  FeedEntry,
+  FeedScope,
+  FollowState,
   GuestImportEntry,
   LibraryVideo,
+  MyLibraryEntry,
+  MyLibraryVideo,
+  Notifications,
   PlayerSettings,
+  PracticeEntry,
+  Profile,
+  ProfileLibrary,
+  ProfileSettings,
   Preset,
   SearchResult,
   StemSeparationState,
   User,
+  UserSummary,
 } from './types'
 
 const API_BASE = '/api'
@@ -69,6 +80,10 @@ function videoPath(videoId: string): string {
 }
 
 /** A song in the logged-in user's own library. */
+function userPath(username: string): string {
+  return `/users/${encodeURIComponent(username)}`
+}
+
 function myVideoPath(videoId: string): string {
   return `/me/library/${encodeURIComponent(videoId)}`
 }
@@ -113,8 +128,95 @@ export const api = {
   },
 
   /** The logged-in user's library, most recently added first. */
-  listMyVideos(signal?: AbortSignal): Promise<LibraryVideo[]> {
+  listMyVideos(signal?: AbortSignal): Promise<MyLibraryVideo[]> {
     return request('/me/library', { signal })
+  },
+
+  /** A song's place in the user's library (404: not in it). */
+  getMyEntry(videoId: string, signal?: AbortSignal): Promise<MyLibraryEntry> {
+    return request(myVideoPath(videoId), { signal })
+  },
+
+  setStarred(videoId: string, starred: boolean): Promise<void> {
+    return request(`${myVideoPath(videoId)}/star`, sendJson('PUT', { starred }))
+  },
+
+  /** The music of a song in the library played `seconds` more (the practice history). */
+  reportPractice(videoId: string, seconds: number, keepalive = false): Promise<void> {
+    return request('/me/practice', { ...sendJson('POST', { videoId, seconds }), keepalive })
+  },
+
+  getProfileSettings(signal?: AbortSignal): Promise<ProfileSettings> {
+    return request('/me/profile', { signal })
+  },
+
+  saveProfileSettings(settings: ProfileSettings): Promise<ProfileSettings> {
+    return request('/me/profile', sendJson('PUT', settings))
+  },
+
+  getNotifications(signal?: AbortSignal): Promise<Notifications> {
+    return request('/me/notifications', { signal })
+  },
+
+  /** The user opened the notifications: none of them is unread any more. */
+  markNotificationsSeen(): Promise<void> {
+    return request('/me/notifications/seen', { method: 'POST' })
+  },
+
+  acceptFollower(username: string): Promise<void> {
+    return request(`/me/followers/${encodeURIComponent(username)}`, { method: 'PUT' })
+  },
+
+  /** Decline a follow request, or remove a follower. */
+  removeFollower(username: string): Promise<void> {
+    return request(`/me/followers/${encodeURIComponent(username)}`, { method: 'DELETE' })
+  },
+
+  getProfile(username: string, signal?: AbortSignal): Promise<Profile> {
+    return request(userPath(username), { signal })
+  },
+
+  /** 403 for a private profile the viewer may not see (also below). */
+  getUserStarred(username: string, signal?: AbortSignal): Promise<LibraryVideo[]> {
+    return request(`${userPath(username)}/starred`, { signal })
+  },
+
+  getUserLibrary(username: string, limit: number, signal?: AbortSignal): Promise<ProfileLibrary> {
+    return request(`${userPath(username)}/library?limit=${limit}`, { signal })
+  },
+
+  /** `before`: the `lastAt` of the last entry of the previous page. */
+  getUserHistory(
+    username: string,
+    before?: string,
+    signal?: AbortSignal,
+  ): Promise<PracticeEntry[]> {
+    const query = before ? `?${new URLSearchParams({ before })}` : ''
+    return request(`${userPath(username)}/history${query}`, { signal })
+  },
+
+  getFollowers(username: string, signal?: AbortSignal): Promise<UserSummary[]> {
+    return request(`${userPath(username)}/followers`, { signal })
+  },
+
+  getFollowing(username: string, signal?: AbortSignal): Promise<UserSummary[]> {
+    return request(`${userPath(username)}/following`, { signal })
+  },
+
+  /** Follow, or ask to follow a private profile ('requested'). */
+  follow(username: string): Promise<FollowState> {
+    return request(`${userPath(username)}/follow`, { method: 'PUT' })
+  },
+
+  /** Stop following, or take back the request. */
+  unfollow(username: string): Promise<void> {
+    return request(`${userPath(username)}/follow`, { method: 'DELETE' })
+  },
+
+  /** `before`: the `lastAt` of the last entry of the previous page. */
+  getFeed(scope: FeedScope, before?: string, signal?: AbortSignal): Promise<FeedEntry[]> {
+    const query = new URLSearchParams({ scope, ...(before && { before }) })
+    return request(`/feed?${query}`, { signal })
   },
 
   addToMyLibrary(videoId: string): Promise<void> {

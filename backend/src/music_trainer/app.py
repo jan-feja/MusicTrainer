@@ -13,7 +13,19 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from music_trainer import __version__
-from music_trainer.api import auth, beats, chords, downloads, library, me, search, stems
+from music_trainer.api import (
+    auth,
+    beats,
+    chords,
+    downloads,
+    feed,
+    library,
+    me,
+    me_profile,
+    search,
+    stems,
+    users,
+)
 from music_trainer.api.dependencies import Services
 from music_trainer.config import Settings
 from music_trainer.db import Database
@@ -25,6 +37,8 @@ from music_trainer.services.chord_detection import ChordDetectionManager
 from music_trainer.services.chords import ChordDetector, LibrosaChordDetector
 from music_trainer.services.downloads import DownloadManager
 from music_trainer.services.library import Library
+from music_trainer.services.practice_history import PracticeHistory
+from music_trainer.services.profiles import Profiles
 from music_trainer.services.song_cleanup import SongCleanup
 from music_trainer.services.stem_separation import StemSeparationManager
 from music_trainer.services.stems import DemucsSeparator, StemSeparator
@@ -50,6 +64,8 @@ def create_app(
     database = Database(settings.database_path)
     accounts = Accounts(database, timedelta(days=settings.session_days), hasher=password_hasher)
     user_library = UserLibrary(database)
+    profiles = Profiles(database)
+    practice_history = PracticeHistory(database)
     if youtube is None:
         _warn_about_missing_tools(settings)
         youtube = YtDlpClient(settings.max_video_height, settings.deno_path, settings.ffmpeg_path)
@@ -117,6 +133,8 @@ def create_app(
         accounts,
         user_library,
         song_cleanup,
+        profiles,
+        practice_history,
     )
 
     @app.get("/api/health", tags=["health"])
@@ -125,6 +143,9 @@ def create_app(
 
     app.include_router(auth.router)
     app.include_router(me.router)
+    app.include_router(me_profile.router)
+    app.include_router(users.router)
+    app.include_router(feed.router)
     app.include_router(search.router)
     app.include_router(library.router)
     app.include_router(downloads.router)

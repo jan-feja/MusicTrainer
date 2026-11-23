@@ -4,11 +4,16 @@ An app for practising music with songs. The idea and planned features are in [do
 
 **Current state:** a small YouTube client in the spirit of NewPipe, with practice loops that snap to the beat, songs separated into instruments, and chords.
 
-- **Accounts**: register with a username and password, log in and out; the profile page changes the password or deletes the account.
+- **Accounts**: register with a username and password, log in and out; *Settings* change the profile description, privacy and password, or delete the account.
   - each account has **its own library**, with its own presets, player settings and beat grid fixes per song; one downloaded song serves everyone who has it
   - **guests** (not logged in) can do everything too; their library, presets and settings are saved in the browser and move into the account on login or registration
   - the detected beat grid is shared; each user's fixes of it are their own
   - a song is deleted from the server once nobody has it: when the last account removes it, unless a guest opened it in the last 7 days (checked at startup and every hour)
+- **Profiles** (`/u/<username>`): the description, followers and following, total practice time, **starred** songs (star them in the library or the player), the first songs of the library, and the **history**
+  - the history keeps one entry per song and day with the time the music played (opening a song ten times a day is one entry; under 30 s is not shown)
+  - **follow** other users; a **private** profile shows its songs and history only to followers its owner accepted (following it sends a request)
+- **Notifications** (the bell in the header): follow requests to accept or decline, new followers (with *Follow back*), and accepted requests; the count shows what is new since you last opened them
+- **Feed**: what people practiced lately, from everyone with a public profile or only from the people you follow
 - **Search** YouTube, or paste a video link.
 - **Download** videos into your library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
 - **Play** from the library:
@@ -55,15 +60,18 @@ Opening a video adds it to your library; one that isn't downloaded yet is downlo
 ```
 backend/        Python server: REST API, YouTube access, video library, beats, stems, chords (FastAPI + yt-dlp + Beat This! + Demucs + librosa)
   src/music_trainer/
-    api/          HTTP routes: /api/auth, /api/me/library (the user's songs, presets, settings), /api/search,
+    api/          HTTP routes: /api/auth, /api/me/library (the user's songs, presets, settings, stars),
+                  /api/me (profile settings, notifications, followers, practice reports), /api/users/{name}
+                  (profiles, following), /api/feed, /api/search,
                   /api/library/{id} (a song: /media, /audio, /beats, /stems, /chords), /api/downloads
     services/     accounts.py (users, passwords, login sessions), user_library.py (who has which song),
+                  profiles.py (description, privacy, follows), practice_history.py (history, feed),
                   song_cleanup.py (deletes songs nobody has), youtube.py (search, download), library.py (videos on disk), downloads.py (background jobs),
                   beats.py + beat_analysis.py (beat detection and its background job),
                   beat_decoding.py (beat grid from the network output), audio.py (ffmpeg decoding),
                   stems.py + stem_worker.py + stem_separation.py (Demucs in its own process, queue),
                   chords.py + chord_detection.py (chords on the beat grid and their background job)
-    db.py         the SQLite database (SQLAlchemy): users, sessions, library entries
+    db.py         the SQLite database (SQLAlchemy): users, sessions, library entries, follows, practice days
     config.py     settings, read from MUSIC_TRAINER_* environment variables
     models.py     data models shared by services and API
   tests/          pytest; tests/integration use the real YouTube and beat model (opt-in)
@@ -72,7 +80,7 @@ frontend/       Browser UI (React + TypeScript + Vite)
     api/          typed client for the backend API
     app/          app shell: routes, header
     components/   shared UI pieces (video card, grid, progress bar, ...)
-    features/     auth/ (login, register, profile), search/, library/ (your library; a guest's is in
+    features/     auth/ (login, register, settings), profile/ (profiles, stars, feed), search/, library/ (your library; a guest's is in
                   localStorage), downloads/, player/ (player, A–B loop, gapless loop audio, speed, zoom),
                   beats/ (beat grid, snapping), metronome/ (beat-synced clicks),
                   practice/ (presets, player settings kept with the song),

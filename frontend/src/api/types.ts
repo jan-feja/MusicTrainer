@@ -204,3 +204,87 @@ export interface GuestImportEntry {
   presets?: Preset[]
   settings?: PlayerSettings
 }
+
+/** A song in the logged-in user's library. */
+export interface MyLibraryVideo extends LibraryVideo {
+  starred: boolean
+}
+
+export interface MyLibraryEntry {
+  videoId: string
+  addedAt: string
+  starred: boolean
+}
+
+/** How the viewer relates to a profile: 'requested' waits for a private profile's owner. */
+export type FollowState = 'none' | 'requested' | 'following' | 'self'
+
+/** A user in a list (followers, requests). */
+export interface UserSummary {
+  username: string
+  description: string
+}
+
+/** A user's profile as the viewer may see it. */
+export interface Profile {
+  username: string
+  description: string
+  isPrivate: boolean
+  joinedAt: string
+  followers: number
+  following: number
+  followState: FollowState
+  /** The viewer may see the songs and history (public, their own, or an accepted follower). */
+  canView: boolean
+  /** null when the viewer may not see it (also below). */
+  libraryCount: number | null
+  practiceSeconds: number | null
+}
+
+export interface ProfileSettings {
+  description: string
+  isPrivate: boolean
+}
+
+/** How long a user practiced a song on one day (UTC). */
+export interface PracticeEntry {
+  videoId: string
+  title: string
+  /** YYYY-MM-DD */
+  day: string
+  /** When the song was last played that day. */
+  lastAt: string
+  seconds: number
+}
+
+export interface FeedEntry extends PracticeEntry {
+  username: string
+}
+
+export type FeedScope = 'everyone' | 'following'
+
+/** The first songs of a user's library, and how many there are in all. */
+export interface ProfileLibrary {
+  videos: LibraryVideo[]
+  total: number
+}
+
+/** Someone asks to follow the user / started following them / accepted the user's request. */
+export type NotificationKind = 'follow_request' | 'new_follower' | 'request_accepted'
+
+export interface Notification {
+  kind: NotificationKind
+  /** The other user. */
+  username: string
+  at: string
+  /** Newer than when the user last opened the notifications. */
+  unread: boolean
+  /** How the user relates to the other user (e.g. whether they follow back). */
+  followState: FollowState
+}
+
+export interface Notifications {
+  /** Follow requests first, then the rest, newest first. */
+  items: Notification[]
+  unread: number
+}
