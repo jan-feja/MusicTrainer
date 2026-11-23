@@ -244,3 +244,7 @@ Also tried ([test_chords.py](../experiments/test_chords.py)):
 - Korzeniowski & Widmer, [Genre-agnostic key classification with CNNs](https://arxiv.org/abs/1808.05340), ISMIR 2018
 - [GTZAN key annotations](https://github.com/alexanderlerch/gtzan_key)
 - Hamberger et al., [Fretting-Transformer](https://arxiv.org/html/2506.14223v1), 2025; [TART](https://arxiv.org/html/2510.02597v1), 2025
+- [MuQ model card](https://huggingface.co/OpenMuQ/MuQ-large-msd-iter) (weights CC BY-NC 4.0, code MIT); [madmom](https://github.com/cpjku/madmom) (model files CC BY-NC-SA 4.0); [madmom-onnx](https://pypi.org/project/madmom-onnx/)
+- Wiggins & Kim, Guitar tablature estimation with a CNN (TabCNN), ISMIR 2019 ([ISMIR anthology](https://ir.webis.de/anthology/people/a/andrew+wiggins/))
+- Datasets: [GuitarSet](https://guitarset.weebly.com/), [IDMT-SMT-Guitar](https://zenodo.org/records/7544110), [SALAMI annotations](https://github.com/DDMAL/salami-data-public), [Harmonix Set](https://github.com/urinieto/harmonixset), [Lakh MIDI Dataset](https://colinraffel.com/projects/lmd/)
+- [Basic Pitch](https://github.com/spotify/basic-pitch); [alphaTab](https://alphatab.net); [synctoolbox](https://github.com/meinardmueller/synctoolbox)
