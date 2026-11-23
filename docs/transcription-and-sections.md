@@ -10,7 +10,7 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 |---|---|---|---|---|
 | Song sections | none | SongFormer (2025), decided at the app's bar starts (written here) | unseen live recordings: 56 % of section starts within 0.5 s, labels right 60 % of the time; two human experts agree on 64 % / 70 % | use it, editable; GPU recommended |
 | Notes per instrument | none | YourMT3+ (one model, all instruments) and Demucs + Basic Pitch + ADTOF, combined per instrument | note F on full mixes: bass 0.47, guitar 0.49 (Demucs + Basic Pitch), keys 0.32, leads 0.23 (YourMT3+), drums 0.95 (ADTOF) | combine; present as a draft to correct; test MuScriptor |
-| Tabs (strings and frets) | none | fingering search + a network that hears the string (written here) | real guitar: 89 % of notes on the guitarist's string (search alone 58 %, lowest fret 33 %); tab F 0.82 from YourMT3+ notes | use both; check the network on other guitars first |
+| Tabs (strings and frets) | none | fingering search + a network that hears the string (written here) | real guitar: 89 % of notes on the guitarist's string (search alone 58 %, lowest fret 33 %); tab F 0.82 from YourMT3+ notes; a held-out electric guitar: 83 % when trained on several guitars | use both; train the network on many guitars |
 | Notation (bars, rhythm) | none | beat-grid quantization → Guitar Pro 5 → alphaTab (written here) | correctly found notes: 87–100 % at the exact score position with the true beats; rhythm within the beat right for 89–100 % with the app's own grid | use it, after the user has checked the grid |
 | Chords | chroma templates | madmom CNN + CRF | real guitar recordings: 58 % → 76 % of the time right | switch |
 | Key | none | madmom CNN | real recordings: 64 % exact, 78 % among the best two (librosa templates: 49 % / 70 %) | madmom; show the two best keys |
@@ -39,7 +39,7 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 | Set | What | Answers | Used for |
 |---|---|---|---|
 | **SALAMI, Internet Archive part** (147 songs, ~6 min each) | live recordings, many genres, freely downloadable ([SALAMI](https://ddmal.music.mcgill.ca/research/salami)) | section functions by 1–2 annotators | sections; **no tested model was trained on it** |
-| **Harmonix** (49 songs) | pop / rock, YouTube audio aligned to the annotations | sections, beats | sections; in SongFormer's and All-In-One's training data, so optimistic |
+| **Harmonix** (49 songs) | pop / rock, YouTube audio aligned to the annotations | sections, beats | sections; in SongFormer's and All-In-One's training data (in practice little advantage was visible) |
 | **Score songs with stems** (28 songs, 41 min) | the beat-tracking score songs rendered again with every instrument's stem and exact notes ([render_score_stems.py](../experiments/render_score_stems.py)): drums, bass, clean and distorted guitars, keys, leads | exact notes, bars, section starts | transcription per instrument, notation, sections |
 | **GuitarSet** (360 excerpts, 6 guitarists) | real acoustic guitar, microphone recording | notes with string and fret (hexaphonic pickup), chords, key | tabs, chords; guitarist 05 held out |
 | **GTZAN** (837 excerpts with a key) | real recordings, 9 genres | key ([Kraft, Lerch & Zölzer](https://github.com/alexanderlerch/gtzan_key)) | key |
