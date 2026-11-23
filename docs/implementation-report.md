@@ -271,6 +271,7 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
   - a manual sync editor (alphaTab's online Media Sync Editor shows what the UI could look like)
 
 ##### 16. Song sections (L, 🔬)
+- **Follow-up (23 November 2026):** measured in depth in [transcription-and-sections.md](transcription-and-sections.md).
 - **Tested:** librosa Laplacian segmentation on the Beat This! beat grid, on 8 real songs:
   - section starts found within 0.5 s: 10–14 %
   - section starts found within 3 s: 32 %
@@ -281,6 +282,7 @@ A native C++ app (e.g. JUCE) would give the lowest audio latency, but the ML mod
 - **Plan:** manual section markers first (snapped to bars), automatic detection later.
 
 ##### 17. Notes / tabs from audio (XL, 🔬)
+- **Follow-up (23 November 2026):** measured in depth in [transcription-and-sections.md](transcription-and-sections.md).
 - **Build:**
   1. Separate the song (feature 10).
   2. Transcribe the stem: [Basic Pitch](https://github.com/spotify/basic-pitch) (Apache-2.0) for pitched instruments, ADTOF (CC BY-NC-SA) for drums.
