@@ -167,7 +167,31 @@ Also tried ([test_chords.py](../experiments/test_chords.py)):
 - A "pick one of two" control would make the key right for ~4 of 5 songs with madmom.
 
 ## Recommendations
-*pending*
+
+**Song sections** — *numbers pending the full SongFormer and All-In-One runs.*
+- Run SongFormer as a background job after the beat analysis, in a worker process like the stem separation ([songformer_patch.py](../experiments/songformer_patch.py) makes it fit a 6 GB GPU: ~1–1.5 min per song).
+- Decide section starts at the app's bar starts from SongFormer's frame outputs (`songformer_bars`), so sections line up with loops.
+- Show them as a lane of named, coloured blocks the user can rename, move by a bar, split and merge; keep the user's edits. Even two experts agree on only 64 % of section starts, so editing is part of the feature, not a fallback.
+- Licence: SongFormer needs MuQ, whose weights are CC BY-NC 4.0 (fine for personal use). All-In-One (MIT) is the permissive alternative.
+
+**Notes and tabs**
+- Present transcription as a draft to correct by ear. On full mixes 40–60 % of the notes per instrument come out right (synthetic songs), drums ~95 %.
+- Pipeline:
+  1. Separate (already in the app).
+  2. Transcribe: Basic Pitch on the bass and guitar stems, YourMT3+ for keys and leads (it is the only one that gets them at all), ADTOF on the drum stem.
+  3. Quantize to the app's beat grid, after the user has checked the grid.
+  4. Strings and frets: the fingering search, plus the string network once it holds up on other guitars.
+  5. Write Guitar Pro 5 in the backend (pyguitarpro). Render and play with alphaTab in the frontend.
+- One tab per instrument, with a "show notation / tab" toggle and a loop-synced cursor (alphaTab's player follows the recording through sync points from the beat grid).
+- Test MuScriptor (Hugging Face token needed; CC BY-NC 4.0). Its reported multi-instrument scores are about twice YourMT3+'s.
+
+**Chords**: switch to madmom's CNN + CRF (76 % vs 58 % on real guitar). madmom needs a C compiler on Windows; check the [madmom-onnx](https://pypi.org/project/madmom-onnx/) package, or port the small network. Model licence CC BY-NC-SA. Keep chords editable.
+
+**Key**: madmom's CNN, showing the two best keys (right ~4 of 5 times). Without madmom: librosa chroma with drums removed and the EDMKey profile (49 % / 70 %).
+
+**Tuning**: keep librosa's estimate and show it ("this recording is 30 cents flat"). Whether to correct before transcribing: *pending*.
+
+**Imported notation**: synctoolbox alignment, then snap the aligned beats to the app's beat grid: ~76 % of beats within 100 ms on real songs. The rest needs a manual sync editor: drag a bar line to where it is heard; alphaTab's Media Sync Editor is a model. Lakh MIDI files exist for only ~7 % of songs and vary in quality; the user's own Guitar Pro / MusicXML files remain the main source.
 
 ## Sources
 - Chang et al., [YourMT3+](https://arxiv.org/abs/2407.04822), MLSP 2024; [Hugging Face Space](https://huggingface.co/spaces/mimbres/YourMT3)
