@@ -21,15 +21,42 @@ def ffmpeg_executable(configured: Path | None) -> str:
     return str(configured)
 
 
-def decode_audio(path: Path, sample_rate: int, ffmpeg: str = "ffmpeg") -> np.ndarray:
-    """Decode the audio of any media file to mono float32 samples at `sample_rate`."""
+def decode_audio(
+    path: Path, sample_rate: int, ffmpeg: str = "ffmpeg", channels: int = 1
+) -> np.ndarray:
+    """Decode the audio of any media file to float32 samples at `sample_rate`.
+
+    Mono gives shape (samples,); more channels give (samples, channels).
+    """
     output = _run_ffmpeg(
-        path, ffmpeg, ["-i", str(path), "-vn", "-ac", "1", "-ar", str(sample_rate), "-f", "f32le"]
+        path,
+        ffmpeg,
+        ["-i", str(path), "-vn", "-ac", str(channels), "-ar", str(sample_rate), "-f", "f32le"],
     )
     samples = np.frombuffer(output, dtype=np.float32)
     if samples.size == 0:
         raise AudioDecodeError(f"{path.name} contains no audio")
-    return samples
+    return samples if channels == 1 else samples.reshape(-1, channels)
+
+
+def write_flac(path: Path, samples: np.ndarray, sample_rate: int, ffmpeg: str = "ffmpeg") -> None:
+    """Write float samples, shape (samples, channels), as a 16-bit FLAC file."""
+    channels = 1 if samples.ndim == 1 else samples.shape[1]
+    pcm = np.clip(samples, -1, 1).astype("<f4").tobytes()
+    command = [
+        *(ffmpeg, "-v", "error", "-nostdin", "-y"),
+        *("-f", "f32le", "-ar", str(sample_rate), "-ac", str(channels), "-i", "-"),
+        *("-c:a", "flac", "-sample_fmt", "s16", str(path)),
+    ]
+    try:
+        subprocess.run(command, input=pcm, capture_output=True, check=True)
+    except FileNotFoundError as error:
+        raise AudioDecodeError(
+            f"ffmpeg not found ({ffmpeg}); install it or set its path"
+        ) from error
+    except subprocess.CalledProcessError as error:
+        detail = error.stderr.decode(errors="replace").strip()[-300:]
+        raise AudioDecodeError(f"ffmpeg could not write {path.name}: {detail}") from error
 
 
 def extract_wav(

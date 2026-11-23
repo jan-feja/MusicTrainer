@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import type { PlayerSettings, SavedLoop } from '../../api/types'
+import type { MixerSettings, PlayerSettings, SavedLoop } from '../../api/types'
 import { ExitFullscreenIcon, FullscreenIcon, PauseIcon, PlayIcon } from '../../components/icons'
 import { formatTime } from '../../lib/format'
 import { useLatest } from '../../lib/useLatest'
 import { BeatSnapControls } from '../beats/BeatSnapControls'
 import { BeatTicks } from '../beats/BeatTicks'
+import { useChords } from '../chords/useChords'
 import {
   type GridUnit,
   SNAP_LEAD_SECONDS,
@@ -28,6 +29,17 @@ import {
   useRestorePlayerSettings,
 } from '../practice/playerSettings'
 import { SavedLoopMarks } from '../practice/SavedLoopMarks'
+import {
+  mixerGains,
+  withLevel,
+  withMuteSwitched,
+  withSoloToggled,
+  withStemsEnabled,
+} from '../stems/mixer'
+import { StemsControls } from '../stems/StemsControls'
+import { TrackLanes } from '../stems/TrackLanes'
+import { useStemPlayer } from '../stems/useStemPlayer'
+import { useStems } from '../stems/useStems'
 import { SavedLoops } from '../practice/SavedLoops'
 import { createLoop, describeLoop } from '../practice/loopList'
 import { useSavedLoops } from '../practice/useSavedLoops'
@@ -40,6 +52,7 @@ import { SpeedControl } from './SpeedControl'
 import { TimelineOverview } from './TimelineOverview'
 import { followPlayhead, visibleRange } from './timelineView'
 import { useFullscreen } from './useFullscreen'
+import { useVideoRecovery } from './useVideoRecovery'
 import { usePlayerShortcuts } from './usePlayerShortcuts'
 import { useGaplessLoop } from './useGaplessLoop'
 import { useTimelineZoom } from './useTimelineZoom'
@@ -77,6 +90,8 @@ export interface PlayerPractice {
 }
 
 interface VideoPlayerProps {
+  /** The library video; offers its stems (instruments separated on the server). */
+  videoId?: string
   src: string
   /** Sections of the audio as WAV (`?start=&end=`); lets the loop play without a gap. */
   audioUrl?: string
@@ -94,6 +109,7 @@ interface VideoPlayerProps {
  * state starts over when the video changes.
  */
 export function VideoPlayer({
+  videoId,
   src,
   audioUrl,
   poster,
@@ -117,11 +133,26 @@ export function VideoPlayer({
   )
   useRestorePlayerSettings(videoRef, initialSettings, saved.active, loop)
 
+  const [mixer, setMixer] = useState<MixerSettings | null>(initialSettings?.mixer ?? null)
+  const stemsEnabled = mixer?.enabled ?? false
+  const stems = useStems(videoId, stemsEnabled)
+  const stemTracks = stems.status.kind === 'ready' ? stems.status.tracks : null
+  const visibleStemTracks = useMemo(
+    () => stemTracks?.filter((track) => !track.quiet) ?? [],
+    [stemTracks],
+  )
+  const stemGains = useMemo(
+    () => mixerGains(stemTracks?.map((track) => track.name) ?? [], mixer),
+    [stemTracks, mixer],
+  )
+
   const analysis = beatTracking?.analysis ?? null
   const grid = useMemo(
     () => (analysis && analysis.beats.length >= 2 ? createBeatGrid(analysis) : null),
     [analysis],
   )
+  // the chord lane is part of the stem lanes, and its chords come from the pitched stems
+  const chords = useChords(videoId ?? '', analysis, stemTracks !== null)
   const snapUnit: GridUnit | null = grid && snapMode !== 'off' ? snapMode : null
   const snapPoints = grid && snapUnit ? gridPoints(grid, snapUnit) : null
   // a loop snapped to the grid plays slightly early so the first note keeps its attack
@@ -135,10 +166,18 @@ export function VideoPlayer({
       ? { start: Math.max(0, region.start - lead), end: region.end - lead }
       : null
   const expectedStart = loop.start !== null && loop.end === null ? loop.start - lead : null
-  const gaplessLoop = useGaplessLoop(videoRef, audioUrl, playedRegion, expectedStart)
+  // the stems play loops gapless themselves
+  const stemPlayer = useStemPlayer(videoRef, stemTracks, stemGains, playedRegion)
+  const gaplessLoop = useGaplessLoop(
+    videoRef,
+    stemTracks ? undefined : audioUrl,
+    playedRegion,
+    expectedStart,
+  )
 
   const playback = useVideoPlayback(videoRef, {
     onFrame: (video) => {
+      if (stemPlayer.current?.tick()) return
       if (gaplessLoop.current?.tick()) return
       const target = loopJumpTarget(loopRef.current, video.currentTime, leadRef.current)
       if (target !== null) video.currentTime = target
@@ -146,14 +185,16 @@ export function VideoPlayer({
     // a loop that ends at the very end of the video: start over instead of stopping
     onEnded: (video) => {
       const region = getLoopRegion(loopRef.current)
-      if (loopRef.current.enabled && region && !gaplessLoop.current?.active) {
+      const playedElsewhere = gaplessLoop.current?.active || stemPlayer.current?.active
+      if (loopRef.current.enabled && region && !playedElsewhere) {
         video.currentTime = Math.max(0, region.start - leadRef.current)
         video.play().catch(() => {})
       }
     },
-    clock: () => gaplessLoop.current?.position() ?? null,
+    clock: () => stemPlayer.current?.position() ?? gaplessLoop.current?.position() ?? null,
   })
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef)
+  const recovery = useVideoRecovery(videoRef, src)
   const duration = playback.duration
   const zoom = useTimelineZoom(duration)
 
@@ -168,6 +209,7 @@ export function VideoPlayer({
       loopEnd: loop.end,
       loopEnabled: loop.enabled,
       activeLoopId: saved.activeId,
+      mixer,
     },
     duration > 0,
     initialSettings,
@@ -361,6 +403,14 @@ export function VideoPlayer({
           onClick={playback.togglePlay}
           onDoubleClick={toggleFullscreen}
         />
+        {recovery.error && (
+          <div className={styles.videoError} role="alert">
+            <span>Video could not be played: {recovery.error}</span>
+            <button type="button" className="button button-small" onClick={recovery.reload}>
+              Reload video
+            </button>
+          </div>
+        )}
         <div className={controlStyles.controls}>
           <SeekBar
             currentTime={playback.currentTime}
@@ -477,6 +527,38 @@ export function VideoPlayer({
                 onResetBarStarts={resetBarStarts}
               />
             </div>
+          )}
+          {videoId && (
+            <div className={controlStyles.row}>
+              <StemsControls
+                stems={stems}
+                enabled={stemsEnabled}
+                onToggle={() => setMixer((current) => withStemsEnabled(current, !stemsEnabled))}
+              />
+            </div>
+          )}
+          {stemTracks && (
+            <TrackLanes
+              // stems hardly in the song are not shown (they still play, as part of the mix)
+              tracks={visibleStemTracks}
+              chords={analysis ? chords : undefined}
+              mixer={mixer}
+              gains={stemGains}
+              duration={duration}
+              currentTime={playback.currentTime}
+              view={view}
+              loop={loop}
+              bars={grid?.bars}
+              beats={showBeatMarks ? grid?.beats : undefined}
+              onSeek={playback.seek}
+              onZoom={zoom.zoomBy}
+              onPan={zoom.pan}
+              onToggleMute={(name) => setMixer((current) => withMuteSwitched(current, name))}
+              onToggleSolo={(name) => setMixer((current) => withSoloToggled(current, name))}
+              onLevelChange={(name, level) =>
+                setMixer((current) => withLevel(current, name, level))
+              }
+            />
           )}
         </div>
       </div>

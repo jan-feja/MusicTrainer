@@ -2,7 +2,7 @@
 
 An app for practising music with songs. The idea and planned features are in [docs/use-cases.md](docs/use-cases.md) and [docs/functionalities.md](docs/functionalities.md).
 
-**Current state:** a small YouTube client in the spirit of NewPipe, with practice loops that snap to the beat.
+**Current state:** a small YouTube client in the spirit of NewPipe, with practice loops that snap to the beat, songs separated into instruments, and chords.
 
 - **Search** YouTube, or paste a video link.
 - **Download** videos into a local library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
@@ -30,7 +30,13 @@ An app for practising music with songs. The idea and planned features are in [do
     - a strip under the zoomed timeline shows the whole song: drag its window or click to move
     - zoomed in, the bars are numbered and the beats marked; while playing, the view moves on with the playhead
   - **reopening a video** brings the player back as it was left: volume, speed, snap, the loop (zoomed to it) and the position
-  - volume and full screen
+  - **stems**: each song is separated into drums, bass, vocals, guitar, piano and other
+    - starts by itself after a download (about 2 CPU minutes per song); the song open in the player goes first, and the player shows the progress or the place in the queue
+    - **On** plays the stems instead of the video's sound, at any speed and gapless in loops; **Off** frees their memory
+    - one lane per stem with its waveform, the beat grid, loop and playhead; click or drag to seek
+    - per stem: **M** (mute), **S** (solo; one stem at a time, S again ends it) and a volume slider; kept with the video
+  - **chords** in a lane under the timeline, changing on the beats; detected again when the beat grid is fixed, and on the stems once they exist
+  - volume and full screen; the video reloads by itself if the browser fails to decode it
   - keyboard shortcuts
 
 Opening a video that isn't downloaded yet starts the download and plays it when done.
@@ -38,12 +44,14 @@ Opening a video that isn't downloaded yet starts the download and plays it when 
 ## Project structure
 
 ```
-backend/        Python server: REST API, YouTube access, video library, beat detection (FastAPI + yt-dlp + Beat This!)
+backend/        Python server: REST API, YouTube access, video library, beats, stems, chords (FastAPI + yt-dlp + Beat This! + Demucs + librosa)
   src/music_trainer/
-    api/          HTTP routes: /api/search, /api/library (incl. /beats, /audio), /api/downloads
+    api/          HTTP routes: /api/search, /api/library (incl. /beats, /audio, /stems, /chords), /api/downloads
     services/     youtube.py (search, download), library.py (videos on disk), downloads.py (background jobs),
                   beats.py + beat_analysis.py (beat detection and its background job),
-                  beat_decoding.py (beat grid from the network output), audio.py (ffmpeg decoding)
+                  beat_decoding.py (beat grid from the network output), audio.py (ffmpeg decoding),
+                  stems.py + stem_worker.py + stem_separation.py (Demucs in its own process, queue),
+                  chords.py + chord_detection.py (chords on the beat grid and their background job)
     config.py     settings, read from MUSIC_TRAINER_* environment variables
     models.py     data models shared by services and API
   tests/          pytest; tests/integration use the real YouTube and beat model (opt-in)
@@ -53,7 +61,8 @@ frontend/       Browser UI (React + TypeScript + Vite)
     app/          app shell: routes, header
     components/   shared UI pieces (video card, grid, progress bar, ...)
     features/     search/, library/, downloads/, player/ (player, A–B loop, gapless loop audio, speed, zoom),
-                  beats/ (beat grid, snapping), practice/ (saved loops, player settings kept with the video)
+                  beats/ (beat grid, snapping), practice/ (saved loops, player settings kept with the video),
+                  stems/ (stem player, mixer, track lanes), chords/ (chord lane)
     lib/          small helpers and hooks
 docs/           planning documents, app survey, implementation report
 experiments/    feasibility tests from the research phase (independent of the app)
@@ -68,7 +77,8 @@ data/           downloaded videos and model weights (created at runtime, not in 
 - **Deno**, recommended: yt-dlp needs a JavaScript runtime for YouTube. Install it with `winget install DenoLand.Deno`, or point `MUSIC_TRAINER_DENO_PATH` at `deno.exe`. Without it, some videos may fail to download.
 - **Disk space for beat detection:**
   - PyTorch is installed with the backend: about 200 MB for the CPU build, which PyPI ships on Windows and macOS. On Linux, add `--extra-index-url https://download.pytorch.org/whl/cpu` to get it instead of the large CUDA build.
-  - The first analysis downloads the 78 MB Beat This! model into `data/models/` and checks its checksum.
+  - The first analysis downloads the 78 MB Beat This! model into `data/models/` and checks its checksum; the first separation downloads the ~80 MB Demucs model there too.
+  - Stems take 5–70 MB per song (FLAC).
 
 ## Setup
 
@@ -130,6 +140,9 @@ Environment variables, or a `.env` file in the folder you start the backend from
 | `MUSIC_TRAINER_BEAT_MODEL` | `final0` | Beat This! model: `final0` (78 MB) or `small0` (8 MB, ~40 % faster); `final0,final1,final2` averages three models: loops right ~2 % more often on real music, 3× the time (best with a GPU) |
 | `MUSIC_TRAINER_ANALYSIS_DEVICE` | `cpu` | `cuda` to run beat detection on an NVIDIA GPU |
 | `MUSIC_TRAINER_ANALYZE_BEATS_AFTER_DOWNLOAD` | `true` | detect beats right after each download; otherwise when a video is first opened |
+| `MUSIC_TRAINER_STEM_MODEL` | `htdemucs_6s` | Demucs model: `htdemucs_6s` (6 stems) or `htdemucs` (drums, bass, vocals, other; slightly cleaner) |
+| `MUSIC_TRAINER_SEPARATION_DEVICE` | `cpu` | `cuda` to separate on an NVIDIA GPU (~10× faster) |
+| `MUSIC_TRAINER_SEPARATE_STEMS_AFTER_DOWNLOAD` | `true` | separate right after each download; otherwise when a video is first opened |
 
 ## How it works
 
@@ -149,7 +162,12 @@ Environment variables, or a `.env` file in the folder you start the backend from
   The player asks for it and polls while detection runs. New hints only decode again (seconds; moving bar starts is instant), the old grid stays on screen meanwhile. Grids from the first version of the app are detected again when the video is opened.
 
   Accuracy: see [docs/beat-tracking.md](docs/beat-tracking.md). Detected beats sit 10-20 ms after sharp attacks, so a loop snapped to the grid jumps 30 ms early and keeps the first note's attack.
-- **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left). Later features (stems) belong in the same folder; see [docs/functionalities.md](docs/functionalities.md).
+- **Stems:**
+  1. A queue separates one song at a time: new downloads join its end, the song opened in the player moves to the front.
+  2. Demucs runs in its own process (`stem_worker.py`), so its 1–2 GB of memory is freed afterwards and deleting the video stops it. Stems are written to `stems.partial/` and moved to `stems/` when complete.
+  3. When turned on, the browser downloads and decodes all stems (~500 MB of memory for a 4-minute song) and plays them like the gapless loop: one buffer source and gain per stem (mute, solo, volume), one Signalsmith node for the speed. The muted video follows the sound.
+- **Chords** (`services/chords.py`): chroma from librosa, averaged between beats, matched with major and minor triads, and smoothed with a Viterbi pass, so a chord changes only on a beat. With stems, only the pitched ones are used (no drums or vocals). A few seconds per song.
+- **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, `stems/` (a FLAC per stem and `stems.json`), `chords.json`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left, incl. the mixer).
 - **Saved loops and settings:** the player loads them with the video (`GET /api/library/<id>/loops` and `/settings`) and stores changes a moment later (`PUT`, the whole list or settings at once; whatever is pending is sent when the page is left).
 - **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`.
 - **Gapless loops** (`frontend/src/features/player/gaplessLoop.ts`): seeking the `<video>` back to A silences it while the browser's media pipeline restarts, 5–190 ms per jump on the library songs. So the loop's sound comes from Web Audio instead:
@@ -158,7 +176,7 @@ Environment variables, or a `.env` file in the folder you start the backend from
   3. The video plays on muted and is moved back to A at each pass; it may lag the sound by up to ~0.1 s right after the jump.
   4. Pausing, seeking out of the loop or turning it off gives the sound back to the video. Without Web Audio support, or if the audio cannot be fetched, the loop seeks back as before.
 
-  Measured in Chrome on a 100 BPM metronome: the click spacing across the jump stays 600.0 ± 0.1 ms (before: 5–190 ms longer), and the first jump, where the stretcher takes over from the video, is 1–4 ms early. Per-instrument tracks ([docs/implementation-report.md](docs/implementation-report.md)) can later go through the same Web Audio path.
+  Measured in Chrome on a 100 BPM metronome: the click spacing across the jump stays 600.0 ± 0.1 ms (before: 5–190 ms longer), and the first jump, where the stretcher takes over from the video, is 1–4 ms early. The stems go through the same Web Audio path.
 
 ## Note
 
