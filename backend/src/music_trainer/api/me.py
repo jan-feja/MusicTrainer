@@ -10,6 +10,7 @@ from fastapi import APIRouter, Body, HTTPException, Response, status
 from music_trainer.api.dependencies import (
     DownloadsDependency,
     LibraryDependency,
+    PracticeHistoryDependency,
     RequiredUser,
     SongCleanupDependency,
     UserLibraryDependency,
@@ -18,6 +19,7 @@ from music_trainer.api.dependencies import (
 from music_trainer.api.library import to_library_video
 from music_trainer.models import (
     MAX_PRESETS,
+    FollowedPresets,
     GuestImportEntry,
     MyLibraryEntry,
     MyLibraryVideo,
@@ -127,14 +129,28 @@ def put_presets(
     video_id: VideoIdParameter,
     user: RequiredUser,
     user_library: UserLibraryDependency,
+    library: LibraryDependency,
+    history: PracticeHistoryDependency,
     presets: Annotated[list[Preset], Body(max_length=MAX_PRESETS)],
 ) -> list[Preset]:
-    """Replace the presets."""
+    """Replace the presets; new ones show in the user's history (and the feed)."""
     if len({preset.id for preset in presets}) != len(presets):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Preset ids must be unique")
-    if not user_library.write_presets(user.id, video_id, presets):
+    before = user_library.read_presets(user.id, video_id)
+    if before is None or not user_library.write_presets(user.id, video_id, presets):
         raise _not_in_library(video_id)
+    video = library.get_video(video_id)
+    if video is not None:
+        history.presets_changed(user.id, video_id, video.title, before, presets)
     return presets
+
+
+@router.get("/{video_id}/followed-presets", response_model=list[FollowedPresets])
+def get_followed_presets(
+    video_id: VideoIdParameter, user: RequiredUser, user_library: UserLibraryDependency
+) -> list[FollowedPresets]:
+    """The presets of the song made by the users the user follows (to copy, not to change)."""
+    return user_library.followed_presets(user.id, video_id)
 
 
 @router.get("/{video_id}/settings", response_model=PlayerSettings)

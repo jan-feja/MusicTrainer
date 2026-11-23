@@ -42,6 +42,8 @@ interface PresetsPanelProps {
   onDelete: (id: string) => void
   /** Saving to the library failed with this message. */
   saveError?: string | null
+  /** Shown below the user's presets (other people's presets). */
+  children?: ReactNode
 }
 
 /** The song's presets as cards: pick one to set the player that way, save, update, rename. */
@@ -59,6 +61,7 @@ export function PresetsPanel({
   onRename,
   onDelete,
   saveError,
+  children,
 }: PresetsPanelProps) {
   const [saving, setSaving] = useState(false)
   const [renaming, setRenaming] = useState<string | null>(null)
@@ -138,6 +141,8 @@ export function PresetsPanel({
           />
         ))}
       </ul>
+
+      {children}
 
       {saveError && (
         <p className={styles.error} role="alert">
@@ -240,7 +245,7 @@ function PresetCard({
   )
 }
 
-function TagList({ tags }: { tags: PresetTag[] }) {
+export function TagList({ tags }: { tags: PresetTag[] }) {
   return (
     <span className={styles.tags}>
       {tags.map((tag) => (

@@ -2,11 +2,12 @@ import { Link } from 'react-router'
 import type { FeedEntry, PracticeEntry } from '../../api/types'
 import { type WatchLocationState, paths } from '../../app/paths'
 import { formatDay, formatDuration, formatTimeAgo } from '../../lib/format'
+import { describeActivity } from './activity'
 import { youtubeThumbnailUrl } from '../../lib/youtube'
 import { UserAvatar } from './UserAvatar'
 import styles from './Profile.module.css'
 
-/** A user's history: the songs practiced, grouped by day, newest first. */
+/** A user's history: the songs practiced and the presets made, grouped by day, newest first. */
 export function PracticeHistory({ entries }: { entries: readonly PracticeEntry[] }) {
   const days: { day: string; entries: PracticeEntry[] }[] = []
   for (const entry of entries) {
@@ -17,20 +18,25 @@ export function PracticeHistory({ entries }: { entries: readonly PracticeEntry[]
   return (
     <div className={styles.days}>
       {days.map(({ day, entries: dayEntries }) => {
-        const total = dayEntries.reduce((sum, entry) => sum + entry.seconds, 0)
+        const practiced = dayEntries.filter((entry) => entry.kind === 'practice')
+        const total = practiced.reduce((sum, entry) => sum + entry.seconds, 0)
         return (
           <section key={day} className={styles.day}>
             <h3 className={styles.dayTitle}>
               {formatDay(day)}
-              {dayEntries.length > 1 && (
+              {practiced.length > 1 && (
                 <span className={styles.dayTotal}>{formatDuration(total)}</span>
               )}
             </h3>
             <ul className={styles.practiceList}>
               {dayEntries.map((entry) => (
-                <li key={entry.videoId} className={styles.practiceRow}>
+                <li key={entryKey(entry)} className={styles.practiceRow}>
                   <SongLink entry={entry} />
-                  <span className={styles.practiceMeta}>{formatDuration(entry.seconds)}</span>
+                  <span className={styles.practiceMeta}>
+                    {entry.kind === 'preset'
+                      ? `New preset “${entry.preset}”`
+                      : formatDuration(entry.seconds)}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -41,12 +47,12 @@ export function PracticeHistory({ entries }: { entries: readonly PracticeEntry[]
   )
 }
 
-/** What people practiced: who, which song, how long, when. */
+/** What people practiced and the presets they made: who, which song, how long, when. */
 export function FeedList({ entries }: { entries: readonly FeedEntry[] }) {
   return (
     <ul className={styles.practiceList}>
       {entries.map((entry) => (
-        <li key={`${entry.username}:${entry.videoId}:${entry.day}`} className={styles.feedRow}>
+        <li key={`${entry.username}:${entryKey(entry)}`} className={styles.feedRow}>
           <Link to={paths.profile(entry.username)} className={styles.feedUser}>
             <UserAvatar username={entry.username} size={36} />
           </Link>
@@ -55,7 +61,7 @@ export function FeedList({ entries }: { entries: readonly FeedEntry[] }) {
               <Link to={paths.profile(entry.username)} className={styles.userName}>
                 {entry.username}
               </Link>{' '}
-              practiced for {formatDuration(entry.seconds)}
+              {describeActivity(entry)}
               <span className={styles.practiceMeta}> · {formatTimeAgo(entry.lastAt)}</span>
             </p>
             <SongLink entry={entry} />
@@ -74,4 +80,8 @@ function SongLink({ entry }: { entry: PracticeEntry }) {
       <span className={styles.songTitle}>{entry.title}</span>
     </Link>
   )
+}
+
+function entryKey(entry: PracticeEntry): string {
+  return `${entry.kind}:${entry.videoId}:${entry.day}:${entry.lastAt}`
 }

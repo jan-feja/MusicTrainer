@@ -1,4 +1,5 @@
 import type {
+  FollowedPresets,
   BeatAnalysis,
   BeatGridHints,
   BeatTrackingState,
@@ -294,6 +295,11 @@ export const api = {
   /** The user's presets for a song in their library. */
   getPresets(videoId: string, signal?: AbortSignal): Promise<Preset[]> {
     return request(`${myVideoPath(videoId)}/presets`, { signal })
+  },
+
+  /** The presets of a song made by the users the user follows. */
+  getFollowedPresets(videoId: string, signal?: AbortSignal): Promise<FollowedPresets[]> {
+    return request(`${myVideoPath(videoId)}/followed-presets`, { signal })
   },
 
   /** `keepalive` lets the request finish while the page is being closed. */

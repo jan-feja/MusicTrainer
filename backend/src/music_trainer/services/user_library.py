@@ -11,8 +11,14 @@ from datetime import datetime, timedelta
 from pydantic import TypeAdapter, ValidationError
 from sqlalchemy import delete, func, select
 
-from music_trainer.db import Database, LibraryEntryRow, SongRow
-from music_trainer.models import GuestImportEntry, MyLibraryEntry, PlayerSettings, Preset
+from music_trainer.db import Database, FollowRow, LibraryEntryRow, SongRow, UserRow
+from music_trainer.models import (
+    FollowedPresets,
+    GuestImportEntry,
+    MyLibraryEntry,
+    PlayerSettings,
+    Preset,
+)
 from music_trainer.services.accounts import utc_now
 
 logger = logging.getLogger(__name__)
@@ -121,6 +127,31 @@ class UserLibrary:
                 return False
             entry.presets_json = _PRESET_LIST.dump_json(presets).decode()
             return True
+
+    def followed_presets(self, user_id: int, video_id: str) -> list[FollowedPresets]:
+        """The presets of the song made by the users the user follows, by username."""
+        with self._db.session() as session:
+            rows = session.execute(
+                select(UserRow.username, LibraryEntryRow.presets_json)
+                .join(UserRow, UserRow.id == LibraryEntryRow.user_id)
+                .join(FollowRow, FollowRow.followed_id == LibraryEntryRow.user_id)
+                .where(
+                    FollowRow.follower_id == user_id,
+                    FollowRow.accepted.is_(True),
+                    LibraryEntryRow.video_id == video_id,
+                    LibraryEntryRow.presets_json.is_not(None),
+                )
+                .order_by(UserRow.username_key)
+            ).all()
+        found = []
+        for username, presets_json in rows:
+            try:
+                presets = _PRESET_LIST.validate_json(presets_json)
+            except ValidationError:
+                continue
+            if presets:
+                found.append(FollowedPresets(username=username, presets=presets))
+        return found
 
     def read_settings(self, user_id: int, video_id: str) -> PlayerSettings | None:
         """How the user left the player (defaults if never opened); None if not in the library."""

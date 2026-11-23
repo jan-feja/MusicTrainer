@@ -10,7 +10,7 @@ An app for practising music with songs. The idea and planned features are in [do
   - the detected beat grid is shared; each user's fixes of it are their own
   - a song is deleted from the server once nobody has it: when the last account removes it, unless a guest opened it in the last 7 days (checked at startup and every hour)
 - **Profiles** (`/u/<username>`): the description, followers and following, total practice time, **starred** songs (star them in the library or the player), the first songs of the library, and the **history**
-  - the history keeps one entry per song and day with the time the music played (opening a song ten times a day is one entry; under 30 s is not shown)
+  - the history keeps one entry per song and day with the time the music played (opening a song ten times a day is one entry; under 30 s is not shown), and an entry for each preset made
   - **follow** other users; a **private** profile shows its songs and history only to followers its owner accepted (following it sends a request)
 - **Notifications** (the bell in the header): follow requests to accept or decline, new followers (with *Follow back*), and accepted requests; the count shows what is new since you last opened them
 - **Feed**: what people practiced lately, from everyone with a public profile or only from the people you follow
@@ -38,6 +38,7 @@ An app for practising music with songs. The idea and planned features are in [do
     - pick one (or press 1–9): the player is set that way, playback goes to the loop start and the timeline zooms to it
     - change something and the preset shows *Changed*: **Update preset** keeps the change, **Save as new** makes another
     - the timeline marks where the loops of the other presets are
+    - **from people you follow**: their presets of the song as small chips (one row, *+N more* for the rest); pick one to try it, **Add to my presets** copies it to yours
   - **zoom** the timeline to adjust a loop precisely:
     - **−** / **+**, **Fit loop** (the loop fills the timeline), **Whole song**; Z switches between the loop and the whole song
     - Ctrl + scroll (or pinch) on the timeline zooms around the pointer, Shift + scroll moves

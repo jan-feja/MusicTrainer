@@ -139,6 +139,22 @@ class PracticeDayRow(Base):
     """How long the music played."""
 
 
+class PresetMadeRow(Base):
+    """A preset a user made of a song: an entry of its own in the history and the feed."""
+
+    __tablename__ = "presets_made"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    video_id: Mapped[str] = mapped_column(String(20), primary_key=True)
+    preset_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    name: Mapped[str] = mapped_column(String(100))
+    """Follows renames of the preset."""
+    title: Mapped[str] = mapped_column(String(500))
+    created_at: Mapped[datetime] = mapped_column(index=True)
+
+
 class Database:
     """The database file; creates its tables when they are missing."""
 

@@ -94,7 +94,11 @@ function WatchVideo({ videoId }: { videoId: string }) {
 /** The player, with the user's presets and settings for the video loaded first. */
 function PracticePlayer({ video }: { video: LibraryVideo }) {
   const storage = usePracticeStorage(video.videoId)
-  const { reportPractice } = useMyLibrary()
+  const { reportPractice, followedPresets } = useMyLibrary()
+  const followed = useAsync(
+    (signal) => followedPresets?.(video.videoId, signal) ?? Promise.resolve([]),
+    video.videoId,
+  )
   const { data } = storage
   if (data.status === 'loading') {
     return <StatusMessage kind="loading">Loading…</StatusMessage>
@@ -107,6 +111,8 @@ function PracticePlayer({ video }: { video: LibraryVideo }) {
           onPresetsChange: storage.savePresets,
           onSettingsChange: storage.saveSettings,
           saveError: storage.saveError,
+          // not worth an error message: the user's own presets work without them
+          followedPresets: followed.status === 'success' ? followed.data : [],
           onPracticed:
             reportPractice &&
             ((seconds, keepalive) => reportPractice(video.videoId, seconds, keepalive)),

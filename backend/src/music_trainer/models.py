@@ -404,14 +404,18 @@ class ProfileSettings(ApiModel):
 
 
 class PracticeEntry(ApiModel):
-    """How long a user practiced a song on one day (UTC)."""
+    """How long a user practiced a song on one day (UTC), or a preset they made of it."""
 
+    kind: Literal["practice", "preset"] = "practice"
     video_id: str
     title: str
     day: date
     last_at: datetime
-    """When the song was last played that day."""
+    """When the song was last played that day, or when the preset was made."""
     seconds: int
+    """0 for a preset."""
+    preset: str | None = None
+    """The preset's name."""
 
 
 class FeedEntry(PracticeEntry):
@@ -423,6 +427,13 @@ class PracticeReport(ApiModel):
 
     video_id: str = Field(pattern=VIDEO_ID_PATTERN)
     seconds: int = Field(ge=1, le=MAX_PRACTICE_REPORT_SECONDS)
+
+
+class FollowedPresets(ApiModel):
+    """The presets someone the user follows made of a song."""
+
+    username: str
+    presets: list[Preset]
 
 
 class ProfileLibrary(ApiModel):

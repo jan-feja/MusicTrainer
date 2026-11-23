@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import type { MixerSettings, PlayerSettings, Preset } from '../../api/types'
+import type { FollowedPresets, MixerSettings, PlayerSettings, Preset } from '../../api/types'
 import { ExitFullscreenIcon, FullscreenIcon, PauseIcon, PlayIcon } from '../../components/icons'
 import { formatTime } from '../../lib/format'
 import { useLatest } from '../../lib/useLatest'
@@ -31,10 +31,12 @@ import {
   useRestorePlayerSettings,
 } from '../practice/playerSettings'
 import { PresetMarks } from '../practice/PresetMarks'
+import { FollowedPresetsList } from '../practice/FollowedPresetsList'
 import { PresetsPanel } from '../practice/PresetsPanel'
 import {
   type PracticeState,
   createPreset,
+  newPresetId,
   isDefaultState,
   nextPresetName,
   matchesPreset,
@@ -100,6 +102,8 @@ export interface PlayerPractice {
   onSettingsChange: (settings: PlayerSettings) => void
   /** The last save failed with this message. */
   saveError: string | null
+  /** What the users the user follows made of the song: to try and copy, not to change. */
+  followedPresets?: readonly FollowedPresets[]
   /** The music played `seconds` more (the practice history). */
   onPracticed?: (seconds: number, keepalive: boolean) => void
 }
@@ -140,6 +144,8 @@ export function VideoPlayer({
     initialSettings?.activePresetId ?? null,
     practice?.onPresetsChange,
   )
+  /** The followed user's preset being tried. */
+  const [tried, setTried] = useState<{ owner: string; id: string } | null>(null)
   const [loop, dispatchLoop] = useReducer(loopReducer, null, () =>
     initialLoopState(initialSettings),
   )
@@ -357,6 +363,11 @@ export function VideoPlayer({
           metronome: { ...practiceState.metronome, enabled: activeMetronome.enabled },
         }
       : practiceState
+  const triedPreset = practice?.followedPresets
+    ?.find((followed) => followed.username === tried?.owner)
+    ?.presets.find((preset) => preset.id === tried?.id)
+  // tried until the player is changed
+  const triedOn = triedPreset !== undefined && matchesPreset(triedPreset, practiceState)
   const presetModified = saved.active !== null && !matchesPreset(saved.active, comparedState)
 
   /** Set the player as the preset says: loop, snap, speed, stem mix, metronome. */
@@ -364,6 +375,22 @@ export function VideoPlayer({
     const chosen = saved.presets.find((candidate) => candidate.id === id)
     if (!chosen) return
     saved.setActiveId(id)
+    setTried(null)
+    applyPreset(chosen)
+  }
+  /** Try someone else's preset: the player is set that way, no preset of the user's is chosen. */
+  const tryPreset = (owner: string, preset: Preset) => {
+    saved.setActiveId(null)
+    setTried({ owner, id: preset.id })
+    applyPreset(preset)
+  }
+  /** Copy someone else's preset to the user's own (and choose it). */
+  const copyPreset = (preset: Preset) => {
+    setTried(null)
+    saved.add({ ...preset, id: newPresetId() })
+    applyPreset(preset)
+  }
+  const applyPreset = (chosen: Preset) => {
     setSnapMode(chosen.snapMode)
     playback.setPlaybackRate(chosen.playbackRate)
     if (chosen.mixer) setMixer(chosen.mixer)
@@ -385,6 +412,7 @@ export function VideoPlayer({
   /** The player as the song first opens: whole song, normal speed, stems and metronome off. */
   const selectDefault = () => {
     saved.setActiveId(null)
+    setTried(null)
     setSnapMode('off')
     playback.setPlaybackRate(1)
     if (mixer) setMixer(withStemsEnabled(null, false))
@@ -641,7 +669,17 @@ export function VideoPlayer({
           onRename={saved.rename}
           onDelete={deletePreset}
           saveError={practice.saveError}
-        />
+        >
+          {practice.followedPresets && practice.followedPresets.length > 0 && (
+            <FollowedPresetsList
+              followed={practice.followedPresets}
+              tried={triedOn ? tried : null}
+              tags={(preset) => presetTags(preset, grid)}
+              onTry={tryPreset}
+              onCopy={copyPreset}
+            />
+          )}
+        </PresetsPanel>
       )}
       <ShortcutHelp />
     </div>

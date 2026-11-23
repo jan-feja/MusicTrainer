@@ -248,13 +248,24 @@ export interface ProfileSettings {
 
 /** How long a user practiced a song on one day (UTC). */
 export interface PracticeEntry {
+  /** Time spent with a song that day, or a preset made of it. */
+  kind: 'practice' | 'preset'
   videoId: string
   title: string
   /** YYYY-MM-DD */
   day: string
-  /** When the song was last played that day. */
+  /** When the song was last played that day, or when the preset was made. */
   lastAt: string
+  /** 0 for a preset. */
   seconds: number
+  /** The preset's name. */
+  preset: string | null
+}
+
+/** The presets someone the user follows made of a song. */
+export interface FollowedPresets {
+  username: string
+  presets: Preset[]
 }
 
 export interface FeedEntry extends PracticeEntry {

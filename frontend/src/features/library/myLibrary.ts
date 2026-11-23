@@ -4,7 +4,7 @@
  */
 import { useMemo } from 'react'
 import { api, isNotFoundError } from '../../api/client'
-import type { LibraryVideo, PlayerSettings, Preset, User } from '../../api/types'
+import type { FollowedPresets, LibraryVideo, PlayerSettings, Preset, User } from '../../api/types'
 import { useAuth } from '../auth/authContext'
 import { guestStorage } from './guestStorage'
 
@@ -38,6 +38,8 @@ export interface MyLibrary {
   openSong: (videoId: string, signal?: AbortSignal) => Promise<PracticeData>
   savePresets: (videoId: string, presets: Preset[], keepalive: boolean) => Promise<unknown>
   saveSettings: (videoId: string, settings: PlayerSettings, keepalive: boolean) => Promise<unknown>
+  /** The presets of the song made by the users the account follows (guests follow nobody). */
+  followedPresets?: (videoId: string, signal?: AbortSignal) => Promise<FollowedPresets[]>
   /** The music played `seconds` more: the account's practice history (guests have none). */
   reportPractice?: (videoId: string, seconds: number, keepalive: boolean) => void
 }
@@ -67,6 +69,7 @@ function accountLibrary(_user: User): MyLibrary {
     savePresets: (videoId, presets, keepalive) => api.savePresets(videoId, presets, keepalive),
     saveSettings: (videoId, settings, keepalive) =>
       api.savePlayerSettings(videoId, settings, keepalive),
+    followedPresets: (videoId, signal) => api.getFollowedPresets(videoId, signal),
     // the history is not worth bothering the user about
     reportPractice: (videoId, seconds, keepalive) =>
       void api.reportPractice(videoId, seconds, keepalive).catch(() => {}),

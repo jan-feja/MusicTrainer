@@ -270,3 +270,71 @@ class TestFeed:
 
         assert guest_client.get("/api/feed", params={"scope": "following"}).status_code == 401
         assert len(guest_client.get("/api/feed", params={"limit": 1}).json()) == 1
+
+
+def save_presets(client: TestClient, *names: str, video_id: str = VIDEO_ID) -> None:
+    presets = [{"id": name.lower(), "name": name} for name in names]
+    response = client.put(f"/api/me/library/{video_id}/presets", json=presets)
+    assert response.status_code == 200, response.text
+
+
+class TestPresetsOfFollowed:
+    def test_presets_of_the_users_one_follows(
+        self, client: TestClient, bob: TestClient, app: FastAPI
+    ) -> None:
+        carol = TestClient(app)
+        register(carol, "carol")
+        for user in (client, bob, carol):
+            download(user)
+        save_presets(bob, "Verse", "Chorus")
+        save_presets(carol, "Solo")
+        url = f"/api/me/library/{VIDEO_ID}/followed-presets"
+        assert client.get(url).json() == []
+
+        client.put("/api/users/bob/follow")
+        make_private(carol)
+        client.put("/api/users/carol/follow")  # only a request
+        found = client.get(url).json()
+        assert [(f["username"], [p["name"] for p in f["presets"]]) for f in found] == [
+            ("bob", ["Verse", "Chorus"])
+        ]
+        carol.put("/api/me/followers/alice")
+        assert [f["username"] for f in client.get(url).json()] == ["bob", "carol"]
+
+    def test_needs_login(self, guest_client: TestClient) -> None:
+        url = f"/api/me/library/{VIDEO_ID}/followed-presets"
+        assert guest_client.get(url).status_code == 401
+
+
+def activity(entries: list[dict[str, object]]) -> list[tuple[object, ...]]:
+    return [(e["kind"], e["seconds"], e["preset"]) for e in entries]
+
+
+class TestPresetsInHistory:
+    def test_a_new_preset_is_an_entry_of_its_own(
+        self, client: TestClient, guest_client: TestClient
+    ) -> None:
+        download(client)
+        practice(client, 40)
+        save_presets(client, "Verse")
+        history = guest_client.get("/api/users/alice/history").json()
+        assert activity(history) == [("preset", 0, "Verse"), ("practice", 40, None)]
+        feed = guest_client.get("/api/feed").json()
+        assert (feed[0]["username"], feed[0]["preset"]) == ("alice", "Verse")
+        assert feed[0]["title"] == f"Video {VIDEO_ID}"
+
+        save_presets(client, "Verse", "Chorus")
+        presets = [{"id": "verse", "name": "Intro"}, {"id": "chorus", "name": "Chorus"}]
+        client.put(f"/api/me/library/{VIDEO_ID}/presets", json=presets)  # renamed
+        history = guest_client.get("/api/users/alice/history").json()
+        assert sorted(e["preset"] for e in history if e["kind"] == "preset") == ["Chorus", "Intro"]
+        assert len(guest_client.get("/api/users/alice/history", params={"limit": 2}).json()) == 2
+
+    def test_a_deleted_preset_leaves_the_history(
+        self, client: TestClient, guest_client: TestClient
+    ) -> None:
+        download(client)
+        save_presets(client, "Verse")
+        save_presets(client)
+        assert guest_client.get("/api/users/alice/history").json() == []
+        assert guest_client.get("/api/feed").json() == []
