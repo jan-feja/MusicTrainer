@@ -13,7 +13,9 @@ its playability costs.
 Metrics: string accuracy on the true notes (= test_tablature.py, which reached 0.577 without
 the network), and tab F from Basic Pitch / YourMT3+ notes (= test_guitar_tabs.py).
 
-Usage: python test_string_model.py      (writes results/string_model.json; GPU recommended)
+Usage: python test_string_model.py        (writes results/string_model.json; GPU recommended)
+       python test_string_model.py idmt   (the same network on IDMT-SMT-Guitar's electric guitars:
+                                           results/string_model_idmt.json)
 """
 
 import json
@@ -120,10 +122,26 @@ def train(names: list[str], epochs: int = 8) -> TabCNN:
     return model.eval()
 
 
-def log_probs(model: TabCNN, name: str) -> np.ndarray:
+MODEL = Path(DATA, "transcription", "tabcnn_guitarset_00-04.pt")
+
+
+def load_or_train(train_names: list[str]) -> TabCNN:
+    """The network trained on guitarists 00-04 (cached in MODEL)."""
+    if MODEL.exists():
+        state = torch.load(MODEL, map_location=DEVICE)
+        model = TabCNN().to(DEVICE)
+        model.load_state_dict(state["weights"])
+        model.norm = tuple(state["norm"])
+        return model.eval()
+    model = train(train_names)
+    torch.save({"weights": model.state_dict(), "norm": list(model.norm)}, MODEL)
+    return model
+
+
+def log_probs(model: TabCNN, name: str, feat: np.ndarray | None = None) -> np.ndarray:
     """(frames, 6, FRETS + 2) log-probabilities."""
     mean, std = model.norm
-    w = windows(features(name))
+    w = windows(features(name) if feat is None else feat)
     out = []
     with torch.no_grad():
         for i in range(0, len(w), 2048):
@@ -151,7 +169,7 @@ def main() -> None:
     names = sorted(p.stem for p in (ROOT / "annotation").glob("*.jams"))
     train_names = [n for n in names if not n.startswith("05")]
     test_names = [n for n in names if n.startswith("05")]
-    model = train(train_names)
+    model = load_or_train(train_names)
     lps = {n: log_probs(model, n) for n in names}
 
     def with_audio(weight, name):
@@ -196,5 +214,53 @@ def main() -> None:
     save_result("string_model", result)
 
 
+def idmt_notes(xml: Path) -> list[tuple[float, float, int, int]]:
+    """(onset, offset, pitch, string) of an IDMT-SMT-Guitar annotation (string 0 = low E)."""
+    import xml.etree.ElementTree as ET
+
+    out = []
+    for e in ET.parse(xml).getroot().iter("event"):
+        out.append((float(e.findtext("onsetSec")), float(e.findtext("offsetSec")), int(e.findtext("pitch")),
+                    int(e.findtext("stringNumber")) - 1))
+    return sorted(out)
+
+
+def idmt() -> None:
+    """Generalization: the network trained on GuitarSet (one acoustic guitar) on IDMT-SMT-Guitar's
+    electric guitars (dataset2: Aristides, Stratocaster, Les Paul; scales on every string up to
+    fret 20, licks played in several positions; dataset3: pieces on an Ibanez). Harmonics, muted
+    notes and vibrato studies are left out."""
+    tuned = json.loads(Path(__file__).with_name("results").joinpath("tablature.json").read_text())["tuned_costs"]
+    tab.MOVE_COST, tab.HEIGHT_COST, tab.OPEN_BONUS = tuned["move"], tuned["height"], tuned["open_bonus"]
+    weight = json.loads(Path(__file__).with_name("results").joinpath("string_model.json").read_text())["weight"]
+    names = sorted(p.stem for p in (ROOT / "annotation").glob("*.jams"))
+    model = load_or_train([n for n in names if not n.startswith("05")])
+    root = Path(DATA, "idmt", "IDMT-SMT-GUITAR_V2")
+    counts: dict[str, np.ndarray] = {}
+    for ds in ("dataset2", "dataset3"):
+        for xml in sorted((root / ds / "annotation").glob("*.xml")):
+            if any(k in xml.stem for k in ("NH_", "muted", "V_vibrato", "_DN", "dead")):
+                continue
+            wav = root / ds / "audio" / f"{xml.stem}.wav"
+            truth = idmt_notes(xml)
+            if not wav.exists() or len(truth) < 3:
+                continue
+            y, _ = librosa.load(str(wav), sr=SR)
+            cqt = np.abs(librosa.cqt(y, sr=SR, hop_length=HOP, fmin=librosa.note_to_hz("E2"), n_bins=BINS, bins_per_octave=PER_OCTAVE))
+            lp = log_probs(model, xml.stem, librosa.amplitude_to_db(cqt, ref=np.max).astype(np.float32).T)
+            kind = "scales" if "fret" in xml.stem else ("licks" if "Lick" in xml.stem else ds)
+            group = f"{kind}/{xml.stem.split('_')[0] if ds == 'dataset2' else 'Ibanez'}"
+            for method, cost in (("search_only", None), ("search_plus_network", audio_cost(lp, weight)), ("network_only", audio_cost(lp, 1000.0))):
+                acc = string_accuracy(lambda notes, c=cost: tab.assign_frets(notes, note_cost=c), [truth])
+                counts.setdefault(f"{group}/{method}", np.zeros(2))
+                counts[f"{group}/{method}"] += [acc * len(truth), len(truth)]
+    result = {k: {"right_string": round(v[0] / v[1], 3), "notes": int(v[1])} for k, v in sorted(counts.items())}
+    for k, v in result.items():
+        print(k, v)
+    save_result("string_model_idmt", result)
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+
+    idmt() if len(sys.argv) > 1 and sys.argv[1] == "idmt" else main()

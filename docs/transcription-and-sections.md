@@ -142,6 +142,10 @@ Nine downloaded Harmonix songs have MIDI files in the [Lakh MIDI Dataset](https:
 
 The app's detector was only ever tested on one synthetic song (98 %). On real playing with seventh chords and voicings it is right 58 % of the time; madmom's network is right 76 %.
 
+Also tried ([test_chords.py](../experiments/test_chords.py)):
+- **One chord per bar** (the app's detector on bars instead of beats): 0.33. These excerpts often change chords twice per bar.
+- **Chords from transcribed notes** (pitch classes sounding in each beat → the app's templates), guitarist 05 only: Basic Pitch notes 0.55, YourMT3+ notes 0.53, vs 0.52 for the app's audio detector and 0.66 for madmom on the same 30 excerpts. Transcription does not make a better chord detector.
+
 ### Tuning
 - 196 real recordings (Harmonix + SALAMI): median 4 cents from A440; 12 % are more than 15 cents off, 7 % more than 25 cents ([test_tuning.py](../experiments/test_tuning.py)).
 - librosa estimated synthetic detunings of ±25 / ±45 cents within 4 cents.

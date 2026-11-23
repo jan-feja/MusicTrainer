@@ -16,5 +16,29 @@
   "root": 0.802,
   "changes_ratio": 1.205,
   "excerpts": 180
+ },
+ "05/app": {
+  "majmin": 0.516,
+  "root": 0.537,
+  "changes_ratio": 0.83,
+  "excerpts": 30
+ },
+ "05/madmom": {
+  "majmin": 0.662,
+  "root": 0.687,
+  "changes_ratio": 1.344,
+  "excerpts": 30
+ },
+ "05/notes_bp": {
+  "majmin": 0.553,
+  "root": 0.558,
+  "changes_ratio": 1.41,
+  "excerpts": 30
+ },
+ "05/notes_ymt3": {
+  "majmin": 0.533,
+  "root": 0.527,
+  "changes_ratio": 1.417,
+  "excerpts": 30
  }
 }
