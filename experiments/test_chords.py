@@ -10,6 +10,9 @@ Methods:
              averaged per beat, Viterbi smoothing): the detector the app runs today
   app_bar    the same with one chord per bar at most (chords averaged over bars)
   madmom     madmom CNN chord features + CRF (major / minor), chords snapped to nothing
+  notes_bp, notes_ymt3   chords from transcribed notes (Basic Pitch / YourMT3+, as cached by
+             test_guitar_tabs.py; guitarist 05 only): per beat, how long each pitch class sounds,
+             then the app's templates and smoothing
 Metrics (mir_eval.chord, weighted by duration): majmin (root and major / minor right; sevenths
 count as their triad), root; changes ratio = detected chord changes / true chord changes (> 1:
 jumpier than the music).
@@ -28,7 +31,7 @@ import numpy as np
 from common import DATA, save_result
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend" / "src"))
-from music_trainer.services.chords import detect_chords  # noqa: E402
+from music_trainer.services.chords import detect_chords, label_segments, merge_segments, segment_bounds  # noqa: E402
 
 ROOT = Path(DATA, "guitarset")
 
@@ -59,6 +62,21 @@ def scores(ref: list, est: list) -> dict:
     return out
 
 
+def notes_chords(notes: list, beats: np.ndarray, duration: float) -> list:
+    """Chords from (onset, offset, pitch) notes: pitch-class durations per beat -> templates + Viterbi."""
+    bounds = segment_bounds(beats, duration)
+    chroma = np.zeros((len(bounds) - 1, 12))
+    for onset, offset, pitch in notes:
+        for i in range(np.searchsorted(bounds, onset, side="right") - 1, len(bounds) - 1):
+            a, b = max(onset, bounds[i]), min(offset, bounds[i + 1])
+            if a >= offset:
+                break
+            if b > a:
+                chroma[i, int(pitch) % 12] += b - a
+    loudness = chroma.sum(axis=1)
+    return [(c.start, c.end, c.label) for c in merge_segments(bounds, label_segments(chroma, loudness))]
+
+
 def main() -> None:
     from madmom.features.chords import CNNChordFeatureProcessor, CRFChordRecognitionProcessor
 
@@ -73,6 +91,16 @@ def main() -> None:
             rows.setdefault(method, []).append(scores(ref, est))
         est = [(float(a), float(b), str(l)) for a, b, l in crf(feat(str(ROOT / "audio_mono-mic" / f"{name}_mic.wav")))]
         rows.setdefault("madmom", []).append(scores(ref, est))
+        if name.startswith("05"):  # the same excerpts for every method in the notes comparison
+            from test_guitar_tabs import basic_pitch, yourmt3
+
+            for method, fn in (("app", None), ("madmom", None), ("notes_bp", basic_pitch), ("notes_ymt3", yourmt3)):
+                if fn is None:
+                    rows.setdefault(f"05/{method}", []).append(rows[method][-1])
+                    continue
+                notes = fn(name)
+                if notes is not None:
+                    rows.setdefault(f"05/{method}", []).append(scores(ref, notes_chords(notes, beats, len(y) / sr)))
     result = {m: {k: round(float(np.mean([r[k] for r in v])), 3) for k in v[0]} | {"excerpts": len(v)} for m, v in rows.items()}
     for m, r in result.items():
         print(m, r)

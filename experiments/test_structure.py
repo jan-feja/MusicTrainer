@@ -55,6 +55,28 @@ def compute_beats() -> None:
         print("beats", song.set, song.name, flush=True)
 
 
+APP_BEATS = Path(DATA, "structure", "beats_app")
+
+
+def compute_app_beats(sets=("score",)) -> None:
+    """The app's grid: Beat This! (final0) + the app's decoder (backend beat_decoding.py), on the CPU."""
+    import os
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend" / "src"))
+    from music_trainer.services.beats import BeatThisTracker, decode_grid
+
+    tracker = BeatThisTracker("final0", Path(BEAT_THIS_CKPT).parent, device=os.environ.get("APP_BEATS_DEVICE", "cpu"))
+    APP_BEATS.mkdir(parents=True, exist_ok=True)
+    for song in sc.load_manifest():
+        out = APP_BEATS / f"{song.set}__{song.name}.json"
+        if song.set not in sets or out.exists():
+            continue
+        grid = decode_grid(tracker.activations(Path(song.audio)))
+        out.write_text(json.dumps({"beats": grid.beats.tolist(), "downbeats": grid.downbeats.tolist(),
+                                   "beats_per_bar": grid.beats_per_bar}))
+        print("app beats", song.set, song.name, flush=True)
+
+
 def load_beats(song: sc.Song) -> tuple[np.ndarray, np.ndarray] | None:
     if not beat_file(song).exists():
         return None
@@ -244,6 +266,7 @@ def evaluate() -> None:
         if song.labels2:
             rows.setdefault("annotator2", {})[f"{song.set}/{song.name}"] = sc.evaluate(
                 (song.starts, song.labels, song.end), (song.starts2, song.labels2, song.end))
+    lags = {name: boundary_lag(name, songs) for name in rows if name in ("songformer", "allin1", "laplacian")}
     confusion = {name: label_confusion(name.split("+")[0], [s for s in songs if s.set == "salami"])
                  for name in rows if name in ("songformer", "allin1")}
     summary = {name: sc.summarize(r) for name, r in rows.items()}
@@ -253,7 +276,26 @@ def evaluate() -> None:
     for name, s in summary.items():
         print(f"{name:18s}", json.dumps(s))
     save_result("structure", {"summary": summary, "salami_two_annotators": summary_two,
-                              "salami_confusion": confusion, "per_song": rows})
+                              "salami_confusion": confusion, "median_lag_s": lags, "per_song": rows})
+    print("median lag (predicted - true section start, s):", lags)
+
+
+def boundary_lag(method: str, songs: list) -> dict:
+    """Per set: median of (nearest predicted section start - true start) within 4 s. Negative = early."""
+    out = {}
+    for set_name in sorted({s.set for s in songs}):
+        diffs = []
+        for song in (s for s in songs if s.set == set_name):
+            est = sc.read_output(method, song)
+            if est is None:
+                continue
+            pred = np.array(est[0][1:])
+            for t in song.starts[1:]:
+                if len(pred) and np.min(np.abs(pred - t)) <= 4:
+                    diffs.append(float(pred[np.argmin(np.abs(pred - t))] - t))
+        if diffs:
+            out[set_name] = round(float(np.median(diffs)), 2)
+    return out
 
 
 def label_confusion(method: str, songs: list) -> dict:
@@ -273,5 +315,5 @@ def label_confusion(method: str, songs: list) -> dict:
 
 
 if __name__ == "__main__":
-    {"beats": compute_beats, "laplacian": laplacian, "allin1": allin1, "songformer-bars": write_songformer_bars,
+    {"beats": compute_beats, "app-beats": compute_app_beats, "laplacian": laplacian, "allin1": allin1, "songformer-bars": write_songformer_bars,
      "evaluate": evaluate}[sys.argv[1]]()

@@ -11,6 +11,11 @@ Pipelines:
   ymt3_mix        YourMT3+ on the mix: one model names the instrument of every note
   ymt3_demucs     YourMT3+ on each htdemucs_6s stem, keeping the notes of that stem's family
   ymt3_clean      YourMT3+ on each true stem (best case for YourMT3+)
+  ymt3_relabel    YourMT3+ on the mix finds the notes; each note goes to the htdemucs_6s stem with
+                  the most energy at its pitch (and octave, fifth above) during its first 200 ms;
+                  drums from ADTOF on the Demucs drum stem (as bp_demucs)
+  ymt3_hybrid     YourMT3+'s instrument labels kept, drums from ADTOF on the Demucs drum stem, and
+                  notes below E3 moved to bass when the bass stem is the loudest at their pitch
 Stems map to families: bass, drums, guitar, piano -> keys, other + vocals -> lead.
 
 Metrics (mir_eval, onset within 50 ms, offsets ignored):
@@ -23,6 +28,7 @@ Stages (each caches under MT_DATA/transcription/; run in this order):
   python test_multitrack.py roformer      BS-RoFormer-SW stems        (venv with bs_roformer)
   python test_multitrack.py basic-pitch   Basic Pitch and ADTOF       (venv with basic_pitch, adtof)
   python test_multitrack.py yourmt3       YourMT3+ (runs yourmt3_runner.py; venv of YourMT3+)
+  python test_multitrack.py relabel       ymt3_relabel (after yourmt3, separate and basic-pitch)
   python test_multitrack.py evaluate      results/multitrack.json
 """
 
@@ -171,6 +177,47 @@ def yourmt3() -> None:
         subprocess.run([py, runner, str(WORK / method)] + args, check=True)
 
 
+def relabel() -> None:
+    for hybrid in (False, True):
+        _relabel(hybrid)
+
+
+def _relabel(hybrid: bool) -> None:
+    import librosa
+    import pretty_midi
+
+    sr, hop = 22050, 256
+    for song in songs():
+        out = WORK / ("ymt3_hybrid" if hybrid else "ymt3_relabel") / f"{song}.mid"
+        mix_midi = WORK / "ymt3_mix" / f"{song}.mid"
+        stem_dir = WORK / "stems" / "htdemucs_6s" / song
+        if out.exists() or not mix_midi.exists() or not stem_dir.exists():
+            continue
+        energy = {}
+        for stem in ("bass", "guitar", "piano", "other", "vocals"):
+            y, _ = librosa.load(str(stem_dir / f"{stem}.wav"), sr=sr)
+            energy[stem] = np.abs(librosa.cqt(y, sr=sr, hop_length=hop, fmin=librosa.midi_to_hz(24), n_bins=96, bins_per_octave=12))
+        notes: dict[str, list] = {}
+        for inst in pretty_midi.PrettyMIDI(str(mix_midi)).instruments:
+            if inst.is_drum:
+                continue
+            for n in inst.notes:
+                a = int(n.start * sr / hop)
+                b = max(a + 1, int(min(n.end, n.start + 0.2) * sr / hop))
+                def strength(stem):
+                    e = energy[stem]
+                    return sum(w * e[k, a:b].mean() for k, w in ((n.pitch - 24, 1.0), (n.pitch - 12, 0.5), (n.pitch - 5, 0.3))
+                               if 0 <= k < e.shape[0] and a < e.shape[1])
+                best = max(energy, key=strength)
+                fam = STEM_FAMILY[best]
+                if hybrid:
+                    fam = "bass" if n.pitch < 52 and best == "bass" else family(inst.program, False)
+                notes.setdefault(fam, []).append((n.start, n.end, n.pitch))
+        drums = midi_notes(WORK / "bp_demucs" / f"{song}.mid").get("drums", [])
+        _write_midi(out, notes | {"drums": drums})
+        print("relabel", song, flush=True)
+
+
 # --- evaluation ------------------------------------------------------------------------------
 
 
@@ -239,7 +286,7 @@ def drum_f(ref: np.ndarray, est: np.ndarray) -> dict[str, float]:
 
 
 def evaluate() -> None:
-    methods = ("bp_clean", "bp_demucs", "bp_roformer", "ymt3_mix", "ymt3_demucs", "ymt3_clean")
+    methods = ("bp_clean", "bp_demucs", "bp_roformer", "ymt3_mix", "ymt3_relabel", "ymt3_hybrid", "ymt3_demucs", "ymt3_clean")
     per_song: dict[str, dict] = {}
     totals: dict[str, dict] = {}
     for method in methods:
@@ -274,4 +321,4 @@ def evaluate() -> None:
 if __name__ == "__main__":
     stage = sys.argv[1]
     {"separate": separate_demucs, "roformer": separate_roformer, "basic-pitch": basic_pitch_and_adtof,
-     "yourmt3": yourmt3, "evaluate": evaluate}[stage]()
+     "yourmt3": yourmt3, "relabel": relabel, "evaluate": evaluate}[stage]()

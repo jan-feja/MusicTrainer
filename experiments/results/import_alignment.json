@@ -1,0 +1,114 @@
+{
+ "summary": {
+  "synctoolbox": {
+   "files": 8,
+   "within_100ms_mean": 0.705,
+   "within_100ms_median": 0.758,
+   "files_over_80pct": 2
+  },
+  "synctoolbox+beats": {
+   "files": 8,
+   "within_100ms_mean": 0.757,
+   "within_100ms_median": 0.785,
+   "files_over_80pct": 2
+  }
+ },
+ "per_file": {
+  "0027_blackened/Blackened.1.mid": {
+   "synctoolbox": {
+    "within_100ms": 0.757631822386679,
+    "median_ms": 42.09136131348146,
+    "coverage": 1.0
+   },
+   "synctoolbox+beats": {
+    "within_100ms": 0.7853839037927844,
+    "median_ms": 12.8503613134896,
+    "coverage": 1.0
+   }
+  },
+  "0027_blackened/Blackened.2.mid": {
+   "synctoolbox": {
+    "within_100ms": 0.757631822386679,
+    "median_ms": 42.09136131348146,
+    "coverage": 1.0
+   },
+   "synctoolbox+beats": {
+    "within_100ms": 0.7853839037927844,
+    "median_ms": 12.8503613134896,
+    "coverage": 1.0
+   }
+  },
+  "0027_blackened/Blackened.mid": {
+   "synctoolbox": {
+    "within_100ms": 0.7585568917668826,
+    "median_ms": 42.2156386870256,
+    "coverage": 1.0
+   },
+   "synctoolbox+beats": {
+    "within_100ms": 0.788159111933395,
+    "median_ms": 12.8503613134896,
+    "coverage": 1.0
+   }
+  },
+  "0065_deadandbloated/Dead & Bloated.1.mid": {
+   "synctoolbox": {
+    "within_100ms": 0.8846153846153846,
+    "median_ms": 46.76100000023098,
+    "coverage": 1.0
+   },
+   "synctoolbox+beats": {
+    "within_100ms": 0.9391025641025641,
+    "median_ms": 39.652000000003795,
+    "coverage": 1.0
+   }
+  },
+  "0065_deadandbloated/Dead & Bloated.mid": {
+   "synctoolbox": {
+    "within_100ms": 0.8846153846153846,
+    "median_ms": 46.76100000023098,
+    "coverage": 1.0
+   },
+   "synctoolbox+beats": {
+    "within_100ms": 0.9391025641025641,
+    "median_ms": 39.652000000003795,
+    "coverage": 1.0
+   }
+  },
+  "0110_girlsandboys/Girls & Boys.1.mid": {
+   "synctoolbox": {
+    "within_100ms": 0.6401384083044983,
+    "median_ms": 61.46836507938502,
+    "coverage": 1.0
+   },
+   "synctoolbox+beats": {
+    "within_100ms": 0.740484429065744,
+    "median_ms": 29.363365079404957,
+    "coverage": 1.0
+   }
+  },
+  "0110_girlsandboys/Girls & Boys.mid": {
+   "synctoolbox": {
+    "within_100ms": 0.7301038062283737,
+    "median_ms": 63.81136507939544,
+    "coverage": 1.0
+   },
+   "synctoolbox+beats": {
+    "within_100ms": 0.7577854671280276,
+    "median_ms": 29.19536507940279,
+    "coverage": 1.0
+   }
+  },
+  "0566_americanwoman/American Woman.mid": {
+   "synctoolbox": {
+    "within_100ms": 0.23003194888178913,
+    "median_ms": 251.72016623155002,
+    "coverage": 1.0
+   },
+   "synctoolbox+beats": {
+    "within_100ms": 0.3194888178913738,
+    "median_ms": 251.72016623155002,
+    "coverage": 1.0
+   }
+  }
+ }
+}

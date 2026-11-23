@@ -2,112 +2,205 @@
  "score_beats/true_notes": {
   "bass": {
    "notation_f": 0.998,
-   "position_right_of_found": 1.0
+   "position_right_of_found": 1.0,
+   "rhythm_right_of_found": 1.0
   },
   "guitar": {
    "notation_f": 0.943,
-   "position_right_of_found": 0.946
+   "position_right_of_found": 0.946,
+   "rhythm_right_of_found": 0.946
   },
   "keys": {
    "notation_f": 0.994,
-   "position_right_of_found": 0.998
+   "position_right_of_found": 0.998,
+   "rhythm_right_of_found": 0.998
   },
   "lead": {
    "notation_f": 0.994,
-   "position_right_of_found": 1.0
+   "position_right_of_found": 1.0,
+   "rhythm_right_of_found": 1.0
   }
  },
  "score_beats/ymt3_mix": {
   "bass": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.363,
+   "position_right_of_found": 0.999,
+   "rhythm_right_of_found": 0.999
   },
   "guitar": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.396,
+   "position_right_of_found": 0.911,
+   "rhythm_right_of_found": 0.911
   },
   "keys": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.288,
+   "position_right_of_found": 0.984,
+   "rhythm_right_of_found": 0.984
   },
   "lead": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.237,
+   "position_right_of_found": 0.969,
+   "rhythm_right_of_found": 0.969
   }
  },
  "score_beats/bp_demucs": {
   "bass": {
    "notation_f": 0.605,
-   "position_right_of_found": 0.967
+   "position_right_of_found": 0.967,
+   "rhythm_right_of_found": 0.967
   },
   "guitar": {
    "notation_f": 0.415,
-   "position_right_of_found": 0.874
+   "position_right_of_found": 0.874,
+   "rhythm_right_of_found": 0.874
   },
   "keys": {
    "notation_f": 0.139,
-   "position_right_of_found": 0.912
+   "position_right_of_found": 0.912,
+   "rhythm_right_of_found": 0.914
   },
   "lead": {
    "notation_f": 0.187,
-   "position_right_of_found": 0.987
+   "position_right_of_found": 0.987,
+   "rhythm_right_of_found": 0.987
   }
  },
  "detected_beats/true_notes": {
   "bass": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.65,
+   "position_right_of_found": 0.734,
+   "rhythm_right_of_found": 0.978
   },
   "guitar": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.601,
+   "position_right_of_found": 0.706,
+   "rhythm_right_of_found": 0.921
   },
   "keys": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.571,
+   "position_right_of_found": 0.617,
+   "rhythm_right_of_found": 0.979
   },
   "lead": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.931,
+   "position_right_of_found": 0.933,
+   "rhythm_right_of_found": 0.998
   },
-  "songs_with_wrong_tempo": 28
+  "songs_with_wrong_tempo": 5
  },
  "detected_beats/ymt3_mix": {
   "bass": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.254,
+   "position_right_of_found": 0.81,
+   "rhythm_right_of_found": 0.984
   },
   "guitar": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.244,
+   "position_right_of_found": 0.64,
+   "rhythm_right_of_found": 0.898
   },
   "keys": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.145,
+   "position_right_of_found": 0.533,
+   "rhythm_right_of_found": 0.94
   },
   "lead": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.202,
+   "position_right_of_found": 0.845,
+   "rhythm_right_of_found": 0.989
   },
-  "songs_with_wrong_tempo": 28
+  "songs_with_wrong_tempo": 5
  },
  "detected_beats/bp_demucs": {
   "bass": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.428,
+   "position_right_of_found": 0.727,
+   "rhythm_right_of_found": 0.962
   },
   "guitar": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.287,
+   "position_right_of_found": 0.676,
+   "rhythm_right_of_found": 0.886
   },
   "keys": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.09,
+   "position_right_of_found": 0.586,
+   "rhythm_right_of_found": 0.908
   },
   "lead": {
-   "notation_f": 0.0,
-   "position_right_of_found": 0.0
+   "notation_f": 0.188,
+   "position_right_of_found": 0.935,
+   "rhythm_right_of_found": 0.993
   },
-  "songs_with_wrong_tempo": 28
+  "songs_with_wrong_tempo": 5
+ },
+ "app_beats/true_notes": {
+  "bass": {
+   "notation_f": 0.562,
+   "position_right_of_found": 0.823,
+   "rhythm_right_of_found": 0.992
+  },
+  "guitar": {
+   "notation_f": 0.524,
+   "position_right_of_found": 0.779,
+   "rhythm_right_of_found": 0.927
+  },
+  "keys": {
+   "notation_f": 0.626,
+   "position_right_of_found": 0.822,
+   "rhythm_right_of_found": 0.978
+  },
+  "lead": {
+   "notation_f": 0.834,
+   "position_right_of_found": 0.888,
+   "rhythm_right_of_found": 0.994
+  },
+  "songs_with_wrong_tempo": 9
+ },
+ "app_beats/ymt3_mix": {
+  "bass": {
+   "notation_f": 0.227,
+   "position_right_of_found": 0.792,
+   "rhythm_right_of_found": 0.988
+  },
+  "guitar": {
+   "notation_f": 0.225,
+   "position_right_of_found": 0.753,
+   "rhythm_right_of_found": 0.914
+  },
+  "keys": {
+   "notation_f": 0.192,
+   "position_right_of_found": 0.758,
+   "rhythm_right_of_found": 0.937
+  },
+  "lead": {
+   "notation_f": 0.163,
+   "position_right_of_found": 0.789,
+   "rhythm_right_of_found": 1.0
+  },
+  "songs_with_wrong_tempo": 9
+ },
+ "app_beats/bp_demucs": {
+  "bass": {
+   "notation_f": 0.372,
+   "position_right_of_found": 0.813,
+   "rhythm_right_of_found": 0.99
+  },
+  "guitar": {
+   "notation_f": 0.259,
+   "position_right_of_found": 0.758,
+   "rhythm_right_of_found": 0.899
+  },
+  "keys": {
+   "notation_f": 0.102,
+   "position_right_of_found": 0.713,
+   "rhythm_right_of_found": 0.913
+  },
+  "lead": {
+   "notation_f": 0.156,
+   "position_right_of_found": 0.899,
+   "rhythm_right_of_found": 0.995
+  },
+  "songs_with_wrong_tempo": 9
  }
 }
