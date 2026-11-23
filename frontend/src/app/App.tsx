@@ -3,6 +3,7 @@ import { useAuth } from '../features/auth/authContext'
 import { LoginPage, RegisterPage } from '../features/auth/AuthPages'
 import { SettingsPage } from '../features/auth/SettingsPage'
 import { DownloadsProvider } from '../features/downloads/DownloadsProvider'
+import { HomePage } from '../features/home/HomePage'
 import { LibraryPage } from '../features/library/LibraryPage'
 import { FeedPage } from '../features/profile/FeedPage'
 import { FollowListPage } from '../features/profile/FollowListPage'
@@ -23,6 +24,7 @@ export function App() {
         <Header />
         <main className={styles.main}>
           <Routes>
+            <Route path={paths.home} element={<HomePage />} />
             <Route path={paths.library} element={<LibraryPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/watch/:videoId" element={<WatchPage />} />

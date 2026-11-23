@@ -246,6 +246,11 @@ export interface ProfileSettings {
   isPrivate: boolean
 }
 
+/** How long the user practiced today (UTC). */
+export interface PracticeToday {
+  seconds: number
+}
+
 /** How long a user practiced a song on one day (UTC). */
 export interface PracticeEntry {
   /** Time spent with a song that day, or a preset made of it. */

@@ -13,6 +13,7 @@ An app for practising music with songs. The idea and planned features are in [do
   - the history keeps one entry per song and day with the time the music played (opening a song ten times a day is one entry; under 30 s is not shown), and an entry for each preset made
   - **follow** other users; a **private** profile shows its songs and history only to followers its owner accepted (following it sends a request)
 - **Notifications** (the bell in the header): follow requests to accept or decline, new followers (with *Follow back*), and accepted requests; the count shows what is new since you last opened them
+- **Home** (`/`): a greeting with how long you practiced today (guests are invited to register), the latest of the feed, a few random songs from your library (`/library`) and a few from everyone else's, a few of the people you follow and a few public profiles to discover; all picked anew every visit, only full rows
 - **Feed**: what people practiced lately, from everyone with a public profile or only from the people you follow
 - **Search** YouTube, or paste a video link.
 - **Download** videos into your library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
@@ -64,7 +65,7 @@ backend/        Python server: REST API, YouTube access, video library, beats, s
     api/          HTTP routes: /api/auth, /api/me/library (the user's songs, presets, settings, stars),
                   /api/me (profile settings, notifications, followers, practice reports), /api/users/{name}
                   (profiles, following), /api/feed, /api/search,
-                  /api/library/{id} (a song: /media, /audio, /beats, /stems, /chords), /api/downloads
+                  /api/library/random (a few songs for the home page), /api/library/{id} (a song: /media, /audio, /beats, /stems, /chords), /api/downloads
     services/     accounts.py (users, passwords, login sessions), user_library.py (who has which song),
                   profiles.py (description, privacy, follows), practice_history.py (history, feed),
                   song_cleanup.py (deletes songs nobody has), youtube.py (search, download), library.py (videos on disk), downloads.py (background jobs),
@@ -81,7 +82,7 @@ frontend/       Browser UI (React + TypeScript + Vite)
     api/          typed client for the backend API
     app/          app shell: routes, header
     components/   shared UI pieces (video card, grid, progress bar, ...)
-    features/     auth/ (login, register, settings), profile/ (profiles, stars, feed), search/, library/ (your library; a guest's is in
+    features/     home/ (the home page), auth/ (login, register, settings), profile/ (profiles, stars, feed), search/, library/ (your library; a guest's is in
                   localStorage), downloads/, player/ (player, A–B loop, gapless loop audio, speed, zoom),
                   beats/ (beat grid, snapping), metronome/ (beat-synced clicks),
                   practice/ (presets, player settings kept with the song),

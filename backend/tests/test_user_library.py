@@ -240,3 +240,27 @@ class TestImport:
         assert client.get(f"/api/me/library/{VIDEO_ID}/settings").json()["volume"] == 0.5
         # the account's own presets win
         assert client.get(f"/api/me/library/{OTHER_VIDEO_ID}/presets").json() == [mine]
+
+
+class TestRandomSongs:
+    """The home page: a few songs of the user's library and a few others on the server."""
+
+    def ids(self, client: TestClient, url: str) -> set[str]:
+        response = client.get(url)
+        assert response.status_code == 200, response.text
+        return {video["videoId"] for video in response.json()}
+
+    def test_own_songs_and_the_others(self, client: TestClient, bob: TestClient) -> None:
+        download(client)
+        download(bob, OTHER_VIDEO_ID)
+        assert self.ids(client, "/api/me/library/random") == {VIDEO_ID}
+        assert self.ids(client, "/api/library/random") == {OTHER_VIDEO_ID}
+        assert self.ids(bob, "/api/library/random") == {VIDEO_ID}
+
+    def test_a_guest_sees_every_song(self, client: TestClient, guest_client: TestClient) -> None:
+        download(client)
+        download(client, OTHER_VIDEO_ID)
+        assert self.ids(guest_client, "/api/library/random") == {VIDEO_ID, OTHER_VIDEO_ID}
+        assert len(self.ids(guest_client, "/api/library/random?count=1")) == 1
+        assert len(self.ids(client, "/api/me/library/random?count=1")) == 1
+        assert guest_client.get("/api/me/library/random").status_code == 401

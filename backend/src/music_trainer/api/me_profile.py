@@ -1,6 +1,8 @@
 """/api/me: the logged-in user's profile settings, notifications, followers and practice."""
 
-from fastapi import APIRouter, HTTPException, Response, status
+from typing import Annotated
+
+from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from music_trainer.api.dependencies import (
     LibraryDependency,
@@ -10,7 +12,13 @@ from music_trainer.api.dependencies import (
     UserLibraryDependency,
     UsernameParameter,
 )
-from music_trainer.models import Notifications, PracticeReport, ProfileSettings
+from music_trainer.models import (
+    Notifications,
+    PracticeReport,
+    PracticeToday,
+    ProfileSettings,
+    UserSummary,
+)
 from music_trainer.services.profiles import ProfileOwner, Profiles
 
 router = APIRouter(prefix="/api/me", tags=["my profile"])
@@ -68,6 +76,22 @@ def remove_follower(
     """Decline a follow request, or remove a follower."""
     profiles.unfollow(_find(username, profiles).id, user.id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/following/random", response_model=list[UserSummary])
+def random_following(
+    user: RequiredUser,
+    profiles: ProfilesDependency,
+    count: Annotated[int, Query(ge=1, le=24)] = 6,
+) -> list[UserSummary]:
+    """A few of the users the user follows, picked at random (for the home page)."""
+    return profiles.random_following(user.id, count)
+
+
+@router.get("/practice/today", response_model=PracticeToday)
+def practice_today(user: RequiredUser, history: PracticeHistoryDependency) -> PracticeToday:
+    """How long the user practiced today (the day in UTC)."""
+    return PracticeToday(seconds=history.today_seconds(user.id))
 
 
 @router.post("/practice", status_code=status.HTTP_204_NO_CONTENT)

@@ -155,6 +155,29 @@ class Profiles:
             (FollowRow.follower_id == user_id, FollowRow.accepted.is_(True)),
         )
 
+    def random_public(self, viewer_id: int | None, count: int) -> list[UserSummary]:
+        """Up to `count` public profiles picked at random; not the viewer, nor the
+        users the viewer follows or asked to follow."""
+        with self._db.session() as session:
+            query = select(UserRow).where(UserRow.is_private.is_(False))
+            if viewer_id is not None:
+                followed = select(FollowRow.followed_id).where(FollowRow.follower_id == viewer_id)
+                query = query.where(UserRow.id != viewer_id, UserRow.id.not_in(followed))
+            rows = session.scalars(query.order_by(func.random()).limit(count))
+            return [UserSummary(username=row.username, description=row.description) for row in rows]
+
+    def random_following(self, user_id: int, count: int) -> list[UserSummary]:
+        """Up to `count` of the users the user follows, picked at random."""
+        with self._db.session() as session:
+            rows = session.scalars(
+                select(UserRow)
+                .join(FollowRow, UserRow.id == FollowRow.followed_id)
+                .where(FollowRow.follower_id == user_id, FollowRow.accepted.is_(True))
+                .order_by(func.random())
+                .limit(count)
+            )
+            return [UserSummary(username=row.username, description=row.description) for row in rows]
+
     def notifications(self, user_id: int, limit: int = 50) -> Notifications:
         """Follow requests first (they wait for an answer), then the rest, newest first."""
         with self._db.session() as session:

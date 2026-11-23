@@ -5,7 +5,7 @@ Guests keep their library in the browser; these routes need an account.
 
 from typing import Annotated
 
-from fastapi import APIRouter, Body, HTTPException, Response, status
+from fastapi import APIRouter, Body, HTTPException, Query, Response, status
 
 from music_trainer.api.dependencies import (
     DownloadsDependency,
@@ -33,6 +33,7 @@ from music_trainer.services.library import Library
 router = APIRouter(prefix="/api/me/library", tags=["my library"])
 
 MAX_IMPORTED_SONGS = 1000
+MAX_RANDOM_SONGS = 24
 
 
 def _not_in_library(video_id: str) -> HTTPException:
@@ -54,6 +55,23 @@ def list_my_videos(
     """The songs in the library, most recently added first (not those still downloading)."""
     starred = set(user_library.starred_ids(user.id))
     videos = (library.get_video(video_id) for video_id in user_library.video_ids(user.id))
+    return [
+        MyLibraryVideo(**to_library_video(video).model_dump(), starred=video.video_id in starred)
+        for video in videos
+        if video is not None
+    ]
+
+
+@router.get("/random", response_model=list[MyLibraryVideo])
+def random_my_videos(
+    user: RequiredUser,
+    user_library: UserLibraryDependency,
+    library: LibraryDependency,
+    count: Annotated[int, Query(ge=1, le=MAX_RANDOM_SONGS)] = 6,
+) -> list[MyLibraryVideo]:
+    """A few songs of the library, picked at random (for the home page)."""
+    starred = set(user_library.starred_ids(user.id))
+    videos = (library.get_video(video_id) for video_id in user_library.random_ids(user.id, count))
     return [
         MyLibraryVideo(**to_library_video(video).model_dump(), starred=video.video_id in starred)
         for video in videos

@@ -1,9 +1,11 @@
 """/api/library: the songs on the server, their media and thumbnails.
 
-There is no list of all songs: each user has their own library (/api/me/library,
-or the browser for guests). A song is found by its YouTube video ID.
+Each user has their own library (/api/me/library, or the browser for guests);
+here a song is found by its YouTube video ID. The only look at all the songs
+is /random, a few of them for the home page.
 """
 
+import random
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, Response, status
@@ -34,6 +36,19 @@ def to_library_video(metadata: VideoMetadata) -> LibraryVideo:
 
 def _not_found(video_id: str) -> HTTPException:
     return HTTPException(status.HTTP_404_NOT_FOUND, f"Video {video_id} is not in the library")
+
+
+@router.get("/random", response_model=list[LibraryVideo])
+def random_videos(
+    library: LibraryDependency,
+    user: OptionalUser,
+    user_library: UserLibraryDependency,
+    count: Annotated[int, Query(ge=1, le=24)] = 6,
+) -> list[LibraryVideo]:
+    """A few songs on the server, picked at random; for an account, ones not in its library."""
+    own = set(user_library.video_ids(user.id)) if user else set()
+    videos = [video for video in library.list_videos() if video.video_id not in own]
+    return [to_library_video(video) for video in random.sample(videos, min(count, len(videos)))]
 
 
 @router.get("/{video_id}", response_model=LibraryVideo)

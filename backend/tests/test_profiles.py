@@ -338,3 +338,64 @@ class TestPresetsInHistory:
         save_presets(client)
         assert guest_client.get("/api/users/alice/history").json() == []
         assert guest_client.get("/api/feed").json() == []
+
+
+class TestHomePage:
+    def test_practiced_today(self, client: TestClient, guest_client: TestClient) -> None:
+        download(client)
+        assert client.get("/api/me/practice/today").json() == {"seconds": 0}
+        practice(client, 40)
+        practice(client, 20)
+        assert client.get("/api/me/practice/today").json() == {"seconds": 60}
+        assert guest_client.get("/api/me/practice/today").status_code == 401
+
+    def test_today_leaves_out_other_days(self, tmp_path: Path) -> None:
+        db = Database(tmp_path / "db.sqlite")
+        now = [datetime(2026, 1, 1, 23, 0, tzinfo=UTC)]
+        history = PracticeHistory(db, clock=lambda: now[0])
+        user = Accounts(db, timedelta(days=1)).register("carol", PASSWORD)
+        history.record(user.id, VIDEO_ID, "Song", 60)
+        now[0] += timedelta(hours=2)  # the next day
+        history.record(user.id, OTHER_VIDEO_ID, "Other", 45)
+        assert history.today_seconds(user.id) == 45
+
+    def test_people_to_discover(
+        self, app: FastAPI, client: TestClient, bob: TestClient, guest_client: TestClient
+    ) -> None:
+        carol = TestClient(app)
+        register(carol, "carol")
+        dave = TestClient(app)
+        register(dave, "dave")
+        make_private(dave)
+
+        def people(viewer: TestClient, query: str = "") -> set[str]:
+            response = viewer.get(f"/api/users{query}")
+            assert response.status_code == 200, response.text
+            return {user["username"] for user in response.json()}
+
+        assert people(guest_client) == {"alice", "bob", "carol"}  # not the private dave
+        assert people(client) == {"bob", "carol"}  # not alice herself
+        client.put("/api/users/bob/follow")
+        assert people(client) == {"carol"}  # nor whom she follows
+        assert len(people(guest_client, "?count=1")) == 1
+
+    def test_people_followed(
+        self, app: FastAPI, client: TestClient, bob: TestClient, guest_client: TestClient
+    ) -> None:
+        carol = TestClient(app)
+        register(carol, "carol")
+        make_private(carol)
+
+        def followed(query: str = "") -> set[str]:
+            response = client.get(f"/api/me/following/random{query}")
+            assert response.status_code == 200, response.text
+            return {user["username"] for user in response.json()}
+
+        assert followed() == set()
+        client.put("/api/users/bob/follow")
+        client.put("/api/users/carol/follow")  # only a request
+        assert followed() == {"bob"}
+        carol.put("/api/me/followers/alice")  # accepted
+        assert followed() == {"bob", "carol"}
+        assert len(followed("?count=1")) == 1
+        assert guest_client.get("/api/me/following/random").status_code == 401

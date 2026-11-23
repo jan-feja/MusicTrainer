@@ -1,6 +1,7 @@
 /** URLs of the app's pages, in one place. */
 export const paths = {
-  library: '/',
+  home: '/',
+  library: '/library',
   login: '/login',
   register: '/register',
   feed: '/feed',

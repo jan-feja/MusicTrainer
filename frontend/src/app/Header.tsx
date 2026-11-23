@@ -13,20 +13,23 @@ export function Header() {
 
   const logOut = () => {
     logout().then(
-      () => void navigate(paths.library),
+      () => void navigate(paths.home),
       (error: unknown) => window.alert(`Could not log out: ${String(error)}`),
     )
   }
 
   return (
     <header className={styles.header}>
-      <Link to={paths.library} className={styles.brand}>
+      <Link to={paths.home} className={styles.brand}>
         <img src="/favicon.svg" alt="" width={28} height={28} />
         <span>Music Trainer</span>
       </Link>
       <SearchBox />
       <nav className={styles.nav} aria-label="Main">
-        <NavLink to={paths.library} end className={styles.navLink}>
+        <NavLink to={paths.home} end className={styles.navLink}>
+          Home
+        </NavLink>
+        <NavLink to={paths.library} className={styles.navLink}>
           Library
           {activeDownloads > 0 && (
             <span className={styles.badge} title={`${activeDownloads} download(s) running`}>

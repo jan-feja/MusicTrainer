@@ -96,6 +96,16 @@ class PracticeHistory:
             entries = [*map(_practiced, practiced), *map(_made, made)]
         return _newest(entries, limit)
 
+    def today_seconds(self, user_id: int) -> int:
+        """How long the music played for the user today (UTC, as the entries' days)."""
+        with self._db.session() as session:
+            total = session.scalar(
+                select(func.sum(PracticeDayRow.seconds)).where(
+                    PracticeDayRow.user_id == user_id, PracticeDayRow.day == self._clock().date()
+                )
+            )
+            return int(total or 0)
+
     def total_seconds(self, user_id: int) -> int:
         with self._db.session() as session:
             total = session.scalar(

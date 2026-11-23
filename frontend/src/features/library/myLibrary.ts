@@ -29,6 +29,8 @@ export interface MyLibrary {
   has: (videoId: string, inAccountLibrary: boolean) => boolean
   /** The songs on the server; those still downloading are the downloads' jobs. */
   list: (signal?: AbortSignal) => Promise<LibraryListing>
+  /** Up to `count` of the songs on the server, picked at random. */
+  sample: (count: number, signal?: AbortSignal) => Promise<LibraryListing['videos']>
   remove: (videoId: string) => Promise<void>
   /** A download was started; an account's library has it already. */
   downloadStarted: (videoId: string) => void
@@ -54,6 +56,7 @@ function accountLibrary(_user: User): MyLibrary {
     isGuest: false,
     has: (_videoId, inAccountLibrary) => inAccountLibrary,
     list: async (signal) => ({ videos: await api.listMyVideos(signal), removedCount: 0 }),
+    sample: (count, signal) => api.randomMyVideos(count, signal),
     remove: (videoId) => api.removeFromMyLibrary(videoId),
     downloadStarted: () => {},
     downloadIds: () => undefined,
@@ -101,6 +104,14 @@ const GUEST_LIBRARY: MyLibrary = {
     deleted.forEach((videoId) => guestStorage.remove(videoId))
     return { videos, removedCount: deleted.length }
   },
+  sample: async (count, signal) => {
+    // a few more than needed: some may be gone from the server or still downloading
+    const videoIds = shuffled(guestStorage.videoIds()).slice(0, count * 2)
+    const videos = await Promise.all(
+      videoIds.map((videoId) => api.getVideo(videoId, signal).catch(() => null)),
+    )
+    return videos.filter((video) => video !== null).slice(0, count)
+  },
   remove: async (videoId) => guestStorage.remove(videoId),
   downloadStarted: (videoId) => guestStorage.add(videoId),
   downloadIds: () => guestStorage.videoIds(),
@@ -110,4 +121,13 @@ const GUEST_LIBRARY: MyLibrary = {
   },
   savePresets: async (videoId, presets) => guestStorage.savePresets(videoId, presets),
   saveSettings: async (videoId, settings) => guestStorage.saveSettings(videoId, settings),
+}
+
+function shuffled<T>(items: readonly T[]): T[] {
+  const result = [...items]
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
 }

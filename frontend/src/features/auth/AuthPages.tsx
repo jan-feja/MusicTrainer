@@ -67,7 +67,7 @@ function CredentialsForm({
   const [busy, setBusy] = useState(false)
 
   if (user && !busy) {
-    return <Navigate to={paths.library} replace />
+    return <Navigate to={paths.home} replace />
   }
 
   const submit = async (event: FormEvent) => {
@@ -76,7 +76,7 @@ function CredentialsForm({
     setBusy(true)
     try {
       await onSubmit(username, password)
-      void navigate(paths.library, { replace: true })
+      void navigate(paths.home, { replace: true })
     } catch (reason) {
       setError(errorMessage(reason))
       setBusy(false)

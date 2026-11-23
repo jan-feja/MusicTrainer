@@ -22,6 +22,7 @@ import type {
   SearchResult,
   StemSeparationState,
   User,
+  PracticeToday,
   UserSummary,
 } from './types'
 
@@ -128,6 +129,16 @@ export const api = {
     return request(videoPath(videoId), { signal })
   },
 
+  /** A few songs on the server, picked at random; for an account, ones not in its library. */
+  randomVideos(count: number, signal?: AbortSignal): Promise<LibraryVideo[]> {
+    return request(`/library/random?count=${count}`, { signal })
+  },
+
+  /** A few songs of the logged-in user's library, picked at random. */
+  randomMyVideos(count: number, signal?: AbortSignal): Promise<MyLibraryVideo[]> {
+    return request(`/me/library/random?count=${count}`, { signal })
+  },
+
   /** The logged-in user's library, most recently added first. */
   listMyVideos(signal?: AbortSignal): Promise<MyLibraryVideo[]> {
     return request('/me/library', { signal })
@@ -145,6 +156,11 @@ export const api = {
   /** The music of a song in the library played `seconds` more (the practice history). */
   reportPractice(videoId: string, seconds: number, keepalive = false): Promise<void> {
     return request('/me/practice', { ...sendJson('POST', { videoId, seconds }), keepalive })
+  },
+
+  /** How long the logged-in user practiced today (the day in UTC). */
+  getPracticeToday(signal?: AbortSignal): Promise<PracticeToday> {
+    return request('/me/practice/today', { signal })
   },
 
   getProfileSettings(signal?: AbortSignal): Promise<ProfileSettings> {
@@ -196,6 +212,16 @@ export const api = {
     return request(`${userPath(username)}/history${query}`, { signal })
   },
 
+  /** A few public profiles picked at random, leaving out the user and whom they follow. */
+  randomUsers(count: number, signal?: AbortSignal): Promise<UserSummary[]> {
+    return request(`/users?count=${count}`, { signal })
+  },
+
+  /** A few of the users the logged-in user follows, picked at random. */
+  randomFollowing(count: number, signal?: AbortSignal): Promise<UserSummary[]> {
+    return request(`/me/following/random?count=${count}`, { signal })
+  },
+
   getFollowers(username: string, signal?: AbortSignal): Promise<UserSummary[]> {
     return request(`${userPath(username)}/followers`, { signal })
   },
@@ -215,8 +241,17 @@ export const api = {
   },
 
   /** `before`: the `lastAt` of the last entry of the previous page. */
-  getFeed(scope: FeedScope, before?: string, signal?: AbortSignal): Promise<FeedEntry[]> {
-    const query = new URLSearchParams({ scope, ...(before && { before }) })
+  getFeed(
+    scope: FeedScope,
+    before?: string,
+    signal?: AbortSignal,
+    limit?: number,
+  ): Promise<FeedEntry[]> {
+    const query = new URLSearchParams({
+      scope,
+      ...(before && { before }),
+      ...(limit && { limit: String(limit) }),
+    })
     return request(`/feed?${query}`, { signal })
   },
 

@@ -1,4 +1,5 @@
-"""/api/users/{username}: profiles, their songs and history, and following them.
+"""/api/users/{username}: profiles, their songs and history, and following them;
+/api/users: a few public profiles to discover.
 
 A private profile's songs, history and follower lists are shown only to its
 owner and accepted followers (403 for others); the profile itself (username,
@@ -56,6 +57,16 @@ def _videos(video_ids: list[str], library: Library) -> list[LibraryVideo]:
     """The songs still on the server, in the given order."""
     videos = (library.get_video(video_id) for video_id in video_ids)
     return [to_library_video(video) for video in videos if video is not None]
+
+
+@router.get("", response_model=list[UserSummary])
+def random_users(
+    viewer: OptionalUser,
+    profiles: ProfilesDependency,
+    count: Annotated[int, Query(ge=1, le=24)] = 6,
+) -> list[UserSummary]:
+    """A few public profiles picked at random, leaving out the viewer and whom they follow."""
+    return profiles.random_public(viewer.id if viewer else None, count)
 
 
 @router.get("/{username}", response_model=Profile)

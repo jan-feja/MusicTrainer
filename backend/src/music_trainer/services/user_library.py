@@ -45,6 +45,18 @@ class UserLibrary:
                 )
             )
 
+    def random_ids(self, user_id: int, count: int) -> list[str]:
+        """Up to `count` songs of the user's library, picked at random."""
+        with self._db.session() as session:
+            return list(
+                session.scalars(
+                    select(LibraryEntryRow.video_id)
+                    .where(LibraryEntryRow.user_id == user_id)
+                    .order_by(func.random())
+                    .limit(count)
+                )
+            )
+
     def count(self, user_id: int) -> int:
         with self._db.session() as session:
             return (

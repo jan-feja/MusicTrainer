@@ -196,7 +196,7 @@ function DeleteAccount() {
     setBusy(true)
     try {
       await deleteAccount(password)
-      void navigate(paths.library, { replace: true })
+      void navigate(paths.home, { replace: true })
     } catch (reason) {
       setError(errorMessage(reason))
       setBusy(false)

@@ -422,6 +422,12 @@ class FeedEntry(PracticeEntry):
     username: str
 
 
+class PracticeToday(ApiModel):
+    """How long the music played for the user today."""
+
+    seconds: int
+
+
 class PracticeReport(ApiModel):
     """The player's report: the music played this many more seconds."""
 
