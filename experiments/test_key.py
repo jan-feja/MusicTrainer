@@ -14,6 +14,7 @@ Methods:
 Metrics (mir_eval.key, MIREX): accuracy (exact key) and weighted score (fifth 0.5, relative 0.3,
 parallel 0.2). Also the share where the right key is one of the two best candidates (librosa),
 for a "pick one of two" UI.
+Estimates are cached in MT_DATA/key_estimates.json, song by song.
 
 Usage: python test_key.py     (writes results/key.json)
 """
@@ -76,39 +77,51 @@ def same_key(a: str, b: str) -> bool:
     return canon(ta) == canon(tb) and ma == mb
 
 
-def main() -> None:
-    from madmom.features.key import CNNKeyRecognitionProcessor, key_prediction_to_label
+CACHE = Path(DATA, "key_estimates.json")
+# mir_eval.key's weighted score identifies the kind of answer
+KINDS = {1.0: "correct", 0.5: "fifth", 0.3: "relative", 0.2: "parallel", 0.0: "other"}
 
-    madmom_key = CNNKeyRecognitionProcessor()
-    estimates: dict[str, list] = {}
-    refs = []
-    top2: dict[str, int] = {}
+
+def estimate_all() -> dict:
+    """{audio name: {"ref", method: [best key, second key]}}, cached song by song."""
+    cache = json.loads(CACHE.read_text()) if CACHE.exists() else {}
+    madmom_key = None
     for audio, ref in songs():
+        if audio.stem in cache:
+            continue
+        if madmom_key is None:
+            from madmom.features.key import CNNKeyRecognitionProcessor
+
+            madmom_key = CNNKeyRecognitionProcessor()
+        from madmom.features.key import key_prediction_to_label
+
         y, sr = librosa.load(str(audio), sr=22050)
         tuning = librosa.estimate_tuning(y=y, sr=sr)
-        harmonic = librosa.effects.harmonic(y)
-        for variant, signal in (("librosa", y), ("librosa_hpss", harmonic)):
+        row = {"ref": ref}
+        for variant, signal in (("librosa", y), ("librosa_hpss", librosa.effects.harmonic(y))):
             chroma = librosa.feature.chroma_cqt(y=signal, sr=sr, tuning=tuning).mean(axis=1)
-            # librosa chroma starts at C; the profiles are rotated by pitch class (C = 0)
             for profile in PROFILES:
-                ranked = key_scores(chroma, profile)
-                name = f"{variant}_{profile}"
-                estimates.setdefault(name, []).append(ranked[0][1])
-                top2[name] = top2.get(name, 0) + any(same_key(k, ref) for _, k in ranked[:2])
-        estimates.setdefault("madmom_cnn", []).append(key_prediction_to_label(madmom_key(str(audio))))
-        refs.append(ref)
+                row[f"{variant}_{profile}"] = [k for _, k in key_scores(chroma, profile)[:2]]
+        prediction = madmom_key(str(audio))
+        order = np.argsort(-prediction[0])
+        row["madmom_cnn"] = [key_prediction_to_label(np.eye(24)[i][None]) for i in order[:2]]
+        cache[audio.stem] = row
+        CACHE.write_text(json.dumps(cache))
+    return cache
+
+
+def main() -> None:
+    cache = estimate_all()
+    refs = [row["ref"] for row in cache.values()]
     result = {"songs": len(refs)}
-    for name, est in estimates.items():
-        scores = [mir_eval.key.evaluate(r, e) for r, e in zip(refs, est)]
-        result[name] = {
-            "accuracy": round(float(np.mean([s["Correct"] for s in scores])), 3),
-            "weighted": round(float(np.mean([s["Weighted Score"] for s in scores])), 3),
-            "fifth": round(float(np.mean([s["Fifth"] for s in scores])), 3),
-            "relative": round(float(np.mean([s["Relative"] for s in scores])), 3),
-            "parallel": round(float(np.mean([s["Parallel"] for s in scores])), 3),
-        }
-        if name in top2:
-            result[name]["right_in_top2"] = round(top2[name] / len(refs), 3)
+    for name in [k for k in next(iter(cache.values())) if k != "ref"]:
+        weights = [mir_eval.key.evaluate(row["ref"], row[name][0])["Weighted Score"] for row in cache.values()]
+        kinds = [KINDS[round(w, 1)] for w in weights]
+        result[name] = {"accuracy": round(kinds.count("correct") / len(kinds), 3),
+                        "weighted": round(float(np.mean(weights)), 3)}
+        result[name] |= {k: round(kinds.count(k) / len(kinds), 3) for k in ("fifth", "relative", "parallel")}
+        result[name]["right_in_top2"] = round(float(np.mean([any(same_key(k, row["ref"]) for k in row[name])
+                                                             for row in cache.values()])), 3)
         print(name, result[name])
     save_result("key", result)
 
