@@ -31,7 +31,7 @@ from test_tablature import guitarset_notes, string_accuracy
 
 ROOT = Path(DATA, "guitarset")
 CACHE = Path(DATA, "transcription", "guitarset_cqt")
-SR, HOP, BINS, PER_OCTAVE = 22050, 512, 192, 24
+SR, HOP, BINS, PER_OCTAVE = 22050, 512, 144, 24  # 6 octaves from E2 (TabCNN: 192 bins, beyond Nyquist at 22 kHz)
 CONTEXT = 9  # frames around the center frame
 FRETS = 20  # classes per string: silent, fret 0 .. FRETS
 FPS = SR / HOP

@@ -140,8 +140,10 @@ def allin1() -> None:
     links = work / "in"
     links.mkdir(parents=True, exist_ok=True)
     todo = []
+    only = os.environ.get("STRUCTURE_SONGS")  # optional file of <set>__<name> lines: run just these
+    wanted = set(Path(only).read_text().split()) if only else None
     for song in sc.load_manifest():
-        if sc.output_path("allin1", song).exists():
+        if sc.output_path("allin1", song).exists() or (wanted and f"{song.set}__{song.name}" not in wanted):
             continue
         audio = song.audio
         if audio[1] == ":":  # Windows path in the manifest

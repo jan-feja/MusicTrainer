@@ -8,12 +8,12 @@
   "excerpts": 60
  },
  "yourmt3": {
-  "note_f": 0.956,
-  "note_p": 0.957,
-  "note_r": 0.955,
-  "tab_f": 0.413,
-  "string_of_found": 0.512,
-  "excerpts": 9
+  "note_f": 0.942,
+  "note_p": 0.943,
+  "note_r": 0.941,
+  "tab_f": 0.459,
+  "string_of_found": 0.556,
+  "excerpts": 60
  },
  "true_notes": {
   "note_f": 1.0,
