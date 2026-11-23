@@ -204,8 +204,8 @@ def songformer_bars(song: sc.Song, lag: float, threshold: float, min_bars: int =
 
 def tune_songformer_bars() -> dict:
     """lag and threshold that maximize HR.5F + HR3F on the score songs (exact section starts, in no
-    model's training data). Not on Harmonix: SongFormer was trained on those songs and puts their
-    boundaries ~1.7 s early, a bias it does not have on unseen music (SALAMI: -0.17 s)."""
+    model's training data). Not on Harmonix (SongFormer's training songs). A lesson: its first 4
+    Harmonix songs suggested a 2 s lag, which over all songs is -0.09 s and would ruin SALAMI."""
     songs = [s for s in sc.load_manifest() if s.set == "score"]
     best = None
     for lag in (-1.0, -0.5, 0.0, 0.5, 1.0):
