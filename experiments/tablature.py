@@ -79,13 +79,20 @@ def _shape_cost(combo) -> tuple[float, float]:
     return cost, float(np.mean(frets))
 
 
-def assign_frets(notes: list[tuple[float, float, int]], tuning=STANDARD, max_fret=MAX_FRET) -> list[TabNote]:
-    """Strings and frets for (onset, offset, midi pitch) notes, by the fingering search."""
+def assign_frets(notes: list[tuple[float, float, int]], tuning=STANDARD, max_fret=MAX_FRET, note_cost=None) -> list[TabNote]:
+    """Strings and frets for (onset, offset, midi pitch) notes, by the fingering search.
+
+    note_cost(onset, string, fret), optional: an extra cost for playing a note there (e.g. from
+    a network that hears which string sounds); added to the playability costs."""
     if not notes:
         return []
     groups = group_chords(notes)
     options = [_fingerings([notes[i][2] for i in g], tuning, max_fret) for g in groups]
     shapes = [[_shape_cost(c) for c in opts] for opts in options]
+    if note_cost is not None:
+        shapes = [[(cost + sum(note_cost(notes[i][0], s, f) for i, (s, f) in zip(g, combo) if s >= 0), pos)
+                   for (cost, pos), combo in zip(shape, opts)]
+                  for g, shape, opts in zip(groups, shapes, options)]
     score = np.array([cost for cost, _ in shapes[0]])
     back = []
     for k in range(1, len(groups)):

@@ -1,0 +1,200 @@
+"""Which string? Let the sound decide: a TabCNN-style model + the fingering search.
+
+The same pitch sounds different on different strings (a fretted note on a thick string is darker
+than the open thin string). TabCNN (Wiggins & Kim, ISMIR 2019) learns this from GuitarSet: CQT
+frames in, for each of the six strings the fret it plays (or silence) out.
+
+Here: the same kind of network, trained on guitarists 00-04 (validation: 10 % of their excerpts),
+tested on guitarist 05 like test_tablature.py / test_guitar_tabs.py. Its use for tabs: every note
+(from a transcription) gets, for each place it can be played, the network's mean log-probability
+over the note's first 100 ms; tablature.assign_frets adds that (times a weight tuned on 00-04) to
+its playability costs.
+
+Metrics: string accuracy on the true notes (= test_tablature.py, which reached 0.577 without
+the network), and tab F from Basic Pitch / YourMT3+ notes (= test_guitar_tabs.py).
+
+Usage: python test_string_model.py      (writes results/string_model.json; GPU recommended)
+"""
+
+import json
+from pathlib import Path
+
+import librosa
+import numpy as np
+import torch
+from torch import nn
+
+import tablature as tab
+from common import DATA, DEVICE, save_result
+from test_guitar_tabs import basic_pitch, scores, yourmt3
+from test_tablature import guitarset_notes, string_accuracy
+
+ROOT = Path(DATA, "guitarset")
+CACHE = Path(DATA, "transcription", "guitarset_cqt")
+SR, HOP, BINS, PER_OCTAVE = 22050, 512, 192, 24
+CONTEXT = 9  # frames around the center frame
+FRETS = 20  # classes per string: silent, fret 0 .. FRETS
+FPS = SR / HOP
+
+
+def features(name: str) -> np.ndarray:
+    path = CACHE / f"{name}.npy"
+    if not path.exists():
+        y, _ = librosa.load(str(ROOT / "audio_mono-mic" / f"{name}_mic.wav"), sr=SR)
+        cqt = np.abs(librosa.cqt(y, sr=SR, hop_length=HOP, fmin=librosa.note_to_hz("E2"), n_bins=BINS, bins_per_octave=PER_OCTAVE))
+        CACHE.mkdir(parents=True, exist_ok=True)
+        np.save(path, librosa.amplitude_to_db(cqt, ref=np.max).astype(np.float32).T)  # (frames, bins)
+    return np.load(path)
+
+
+def labels(name: str, frames: int) -> np.ndarray:
+    """(frames, 6): 0 = silent, 1 + fret otherwise (low E string = 0)."""
+    out = np.zeros((frames, 6), dtype=np.int64)
+    for onset, offset, pitch, string in guitarset_notes(ROOT / "annotation" / f"{name}.jams"):
+        fret = pitch - tab.STANDARD[string]
+        if 0 <= fret <= FRETS:
+            out[int(onset * FPS): max(int(offset * FPS), int(onset * FPS) + 1), string] = 1 + fret
+    return out
+
+
+class TabCNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(1, 32, 3), nn.ReLU(), nn.Conv2d(32, 64, 3), nn.ReLU(), nn.Conv2d(64, 64, 3), nn.ReLU(),
+            nn.MaxPool2d(2), nn.Dropout(0.25))
+        with torch.no_grad():
+            n = self.conv(torch.zeros(1, 1, CONTEXT, BINS)).numel()
+        self.head = nn.Sequential(nn.Flatten(), nn.Linear(n, 128), nn.ReLU(), nn.Dropout(0.5), nn.Linear(128, 6 * (FRETS + 2)))
+
+    def forward(self, x):  # x: (batch, CONTEXT, BINS)
+        return self.head(self.conv(x[:, None])).view(-1, 6, FRETS + 2)
+
+
+def windows(feat: np.ndarray) -> np.ndarray:
+    pad = np.pad(feat, ((CONTEXT // 2, CONTEXT // 2), (0, 0)), constant_values=feat.min())
+    return np.lib.stride_tricks.sliding_window_view(pad, CONTEXT, axis=0).transpose(0, 2, 1)
+
+
+def train(names: list[str], epochs: int = 8) -> TabCNN:
+    rng = np.random.default_rng(0)
+    val = set(rng.choice(names, size=len(names) // 10, replace=False))
+    def stack(subset):
+        xs, ys = [], []
+        for n in subset:
+            f = features(n)
+            xs.append(windows(f))
+            ys.append(labels(n, len(f)))
+        return np.concatenate(xs), np.concatenate(ys)
+    x_tr, y_tr = stack([n for n in names if n not in val])
+    x_va, y_va = stack(sorted(val))
+    mean, std = x_tr.mean(), x_tr.std()
+    model = TabCNN().to(DEVICE)
+    model.norm = (float(mean), float(std))
+    opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+    loss_fn = nn.CrossEntropyLoss()
+    best = (np.inf, None)
+    for epoch in range(epochs):
+        model.train()
+        order = rng.permutation(len(x_tr))
+        for i in range(0, len(order), 256):
+            idx = order[i: i + 256]
+            xb = torch.from_numpy((x_tr[idx] - mean) / std).to(DEVICE)
+            yb = torch.from_numpy(y_tr[idx]).to(DEVICE)
+            loss = loss_fn(model(xb).reshape(-1, FRETS + 2), yb.reshape(-1))
+            opt.zero_grad()
+            loss.backward()
+            opt.step()
+        model.eval()
+        with torch.no_grad():
+            losses = []
+            for i in range(0, len(x_va), 2048):
+                xb = torch.from_numpy((x_va[i: i + 2048] - mean) / std).to(DEVICE)
+                yb = torch.from_numpy(y_va[i: i + 2048]).to(DEVICE)
+                losses.append(float(loss_fn(model(xb).reshape(-1, FRETS + 2), yb.reshape(-1))))
+        val_loss = float(np.mean(losses))
+        print(f"epoch {epoch}: validation loss {val_loss:.4f}", flush=True)
+        if val_loss < best[0]:
+            best = (val_loss, {k: v.detach().clone() for k, v in model.state_dict().items()})
+    model.load_state_dict(best[1])
+    return model.eval()
+
+
+def log_probs(model: TabCNN, name: str) -> np.ndarray:
+    """(frames, 6, FRETS + 2) log-probabilities."""
+    mean, std = model.norm
+    w = windows(features(name))
+    out = []
+    with torch.no_grad():
+        for i in range(0, len(w), 2048):
+            xb = torch.from_numpy((w[i: i + 2048] - mean) / std).to(DEVICE)
+            out.append(torch.log_softmax(model(xb), dim=-1).cpu().numpy())
+    return np.concatenate(out)
+
+
+def audio_cost(lp: np.ndarray, weight: float):
+    """A note_cost for tablature.assign_frets: -weight * mean log P(string plays fret) over 100 ms."""
+    span = max(1, int(0.1 * FPS))
+
+    def cost(onset: float, string: int, fret: int) -> float:
+        a = min(int(onset * FPS), len(lp) - 1)
+        if fret > FRETS:
+            return 0.0
+        return -weight * float(lp[a: a + span, string, 1 + fret].mean())
+
+    return cost
+
+
+def main() -> None:
+    tuned = json.loads(Path(__file__).with_name("results").joinpath("tablature.json").read_text())["tuned_costs"]
+    tab.MOVE_COST, tab.HEIGHT_COST, tab.OPEN_BONUS = tuned["move"], tuned["height"], tuned["open_bonus"]
+    names = sorted(p.stem for p in (ROOT / "annotation").glob("*.jams"))
+    train_names = [n for n in names if not n.startswith("05")]
+    test_names = [n for n in names if n.startswith("05")]
+    model = train(train_names)
+    lps = {n: log_probs(model, n) for n in names}
+
+    def with_audio(weight, name):
+        return lambda notes: tab.assign_frets(notes, note_cost=audio_cost(lps[name], weight))
+
+    def accuracy(weight, subset):
+        right = total = 0
+        for n in subset:
+            truth = guitarset_notes(ROOT / "annotation" / f"{n}.jams")
+            acc = string_accuracy(with_audio(weight, n), [truth])
+            right += acc * len(truth)
+            total += len(truth)
+        return right / total
+
+    tune_subset = train_names[::3]  # a third of guitarists 00-04 (the network saw them: optimistic)
+    weights = (0.0, 0.5, 1.0, 2.0, 4.0, 8.0)
+    tune = {w: round(accuracy(w, tune_subset), 3) for w in weights}
+    best = max(tune, key=tune.get)
+    print("weight tuning (train):", tune, "->", best)
+    result = {"weight_tuning_train": tune, "weight": best,
+              "string_accuracy_test05": {"search_only": round(accuracy(0.0, test_names), 3),
+                                         "network_only": round(accuracy(1000.0, test_names), 3),
+                                         "search_plus_network": round(accuracy(best, test_names), 3)}}
+    for method, fn in (("basic_pitch", basic_pitch), ("yourmt3", yourmt3)):
+        rows = []
+        for n in test_names:
+            est = fn(n)
+            if est is None:
+                continue
+            truth = guitarset_notes(ROOT / "annotation" / f"{n}.jams")
+            saved = tab.assign_frets
+            tab.assign_frets = lambda notes, *a, _n=n, **k: saved(notes, note_cost=audio_cost(lps[_n], best))
+            try:
+                rows.append(scores(truth, est))
+            finally:
+                tab.assign_frets = saved
+        if rows:
+            result[f"tab_f_{method}"] = {"tab_f": round(float(np.mean([r["tab"][2] for r in rows])), 3),
+                                         "string_of_found": round(sum(r["string_ok"] for r in rows) / max(1, sum(r["matched"] for r in rows)), 3),
+                                         "excerpts": len(rows)}
+    print(json.dumps(result, indent=1))
+    save_result("string_model", result)
+
+
+if __name__ == "__main__":
+    main()
