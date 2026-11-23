@@ -2,11 +2,13 @@
 
 An app for practising music with songs. The idea and planned features are in [docs/use-cases.md](docs/use-cases.md) and [docs/functionalities.md](docs/functionalities.md).
 
+Documentation: [User Guide](docs/user-guide.md) · [Developer Guide](docs/developer-guide.md).
+
 **Current state:** a small YouTube client in the spirit of NewPipe, with practice loops that snap to the beat, songs separated into instruments, and chords.
 
 - **Accounts**: register with a username and password, log in and out; *Settings* change the profile description, privacy and password, or delete the account.
   - each account has **its own library**, with its own presets, player settings and beat grid fixes per song; one downloaded song serves everyone who has it
-  - **guests** (not logged in) can do everything too; their library, presets and settings are saved in the browser and move into the account on login or registration
+  - **guests** (not logged in) can use the player; their library, presets and settings are saved in the browser and move into the account on login or registration. Features such as following, starring and writing comments require an account
   - the detected beat grid is shared; each user's fixes of it are their own
   - a song is deleted from the server once nobody has it: when the last account removes it, unless a guest opened it in the last 7 days (checked at startup and every hour)
 - **Profiles** (`/u/<username>`): the description, followers and following, total practice time, **starred** songs (star them in the library or the player), the first songs of the library, and the **history**
@@ -20,7 +22,7 @@ An app for practising music with songs. The idea and planned features are in [do
 - **Download** videos into your library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
 - **Play** from the library:
   - speed 0.25–2× in steps of 0.05, keeping the pitch
-  - an **A–B loop**: set A / B at the playhead, drag the handles on the timeline, nudge each point by 50 ms, turn it on or off. The jump back to A has no gap, at any speed
+  - an **A–B loop**: set A / B at the playhead, drag the handles on the timeline, nudge each point by 50 ms, turn it on or off. Supported browsers play eligible loops without a gap; otherwise the player falls back to seeking
   - **beat-synced loops**:
     - beats and bar starts are detected automatically after each download; every bar has the same number of beats
     - switch *Snap loop* to **Beats** or **Bars**, and A / B snap to the grid when set or dragged; the nudge buttons and ← → on a handle step one beat or bar
@@ -97,15 +99,18 @@ data/           downloaded videos, model weights and music_trainer.db (created a
 ## Requirements
 
 - **Python 3.11+**
+- A Python installation with the standard-library `lzma` module; `python -c "import lzma"` checks it. Chord analysis needs this module.
 - **Node.js 22+** (LTS)
 - **ffmpeg** on `PATH`, to merge the video and audio streams
 - **Deno**, recommended: yt-dlp needs a JavaScript runtime for YouTube. Install it with `winget install DenoLand.Deno`, or point `MUSIC_TRAINER_DENO_PATH` at `deno.exe`. Without it, some videos may fail to download.
 - **Disk space for beat detection:**
-  - PyTorch is installed with the backend: about 200 MB for the CPU build, which PyPI ships on Windows and macOS. On Linux, add `--extra-index-url https://download.pytorch.org/whl/cpu` to get it instead of the large CUDA build.
+  - PyTorch is installed with the backend. On Linux, to select a CPU build, first install compatible CPU versions of `torch` and `torchaudio` from the [PyTorch CPU index](https://download.pytorch.org/whl/cpu), then install the backend dependencies. Using an extra index alone does not guarantee selection of CPU wheels.
   - The first analysis downloads the 78 MB Beat This! model into `data/models/` and checks its checksum; the first separation downloads the ~80 MB Demucs model there too.
   - Stems take 5–70 MB per song (FLAC).
 
 ## Setup
+
+From the repository root, on Windows PowerShell:
 
 ```powershell
 cd backend
@@ -116,9 +121,24 @@ cd ..\frontend
 npm install
 ```
 
+For Linux/macOS setup and a full step-by-step guide, see the
+[Developer Guide](docs/developer-guide.md#setup-and-running).
+
+For pip users, the backend dependencies are also available through
+`backend/requirements.txt`. From the `backend` directory, run
+`pip install -r requirements.txt` using the virtual environment's pip.
+The dependency list itself is maintained in `backend/pyproject.toml`.
+
 ## Running
 
+**Before starting with existing data:** the server automatically deletes
+unclaimed songs at startup and hourly. Older downloads without ownership or
+recent guest-use records can be deleted. Back up `data/` first; see
+[Data and backups](docs/developer-guide.md#data-and-backups).
+
 **Development** (auto-reload), in two terminals:
+
+On Windows PowerShell:
 
 ```powershell
 # terminal 1: API on http://127.0.0.1:8000
@@ -129,6 +149,23 @@ cd backend
 cd frontend
 npm run dev
 ```
+
+On Linux/macOS, start two terminals in the repository root:
+
+```bash
+# terminal 1
+cd backend
+.venv/bin/uvicorn music_trainer.app:create_app --factory --reload
+```
+
+```bash
+# terminal 2
+cd frontend
+npm run dev
+```
+
+Open http://localhost:5173 and leave both terminals running. Stop each with
+Ctrl+C. Node.js must be on the second terminal's `PATH`.
 
 **Single server**: build the UI once, and the backend serves it:
 
@@ -195,8 +232,8 @@ Environment variables, or a `.env` file in the folder you start the backend from
   2. Demucs runs in its own process (`stem_worker.py`), so its 1–2 GB of memory is freed afterwards and deleting the video stops it. Stems are written to `stems.partial/` and moved to `stems/` when complete.
   3. When turned on, the browser downloads and decodes all stems (~500 MB of memory for a 4-minute song) and plays them like the gapless loop: one buffer source and gain per stem (mute, solo, volume), one Signalsmith node for the speed. The muted video follows the sound.
 - **Chords** (`services/chords.py`): chroma from librosa, averaged between beats, matched with major and minor triads, and smoothed with a Viterbi pass, so a chord changes only on a beat. Kept per beat grid (`chords-<grid>.json`): users with the same fixes share them. With stems, only the pitched ones are used (no drums or vocals). A few seconds per song.
-- **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, `stems/` (a FLAC per stem and `stems.json`), `chords.json`, and once the video was played `loops.json` (saved loops) and `player.json` (how the player was left, incl. the mixer).
-- **Saved loops and settings:** the player loads them with the video (`GET /api/library/<id>/loops` and `/settings`) and stores changes a moment later (`PUT`, the whole list or settings at once; whatever is pending is sent when the page is left).
+- **Library on disk:** `data/library/<video-id>/` holds `meta.json`, `video.mp4`, optional `thumbnail.jpg`, `analysis.json`, `beat_activations.npz`, `stems/` (a FLAC per stem and `stems.json`) and cached `chords-<grid>.json` files. Account data is in `data/music_trainer.db`; guest settings are in browser storage.
+- **Presets and settings:** account data is read and saved through `/api/me/library/<id>/presets` and `/settings`; guests use browser storage. The player delays saves briefly and attempts to send pending changes when the page is left.
 - **Player:** the browser's `<video>` element. Speed uses `playbackRate` with `preservesPitch`.
 - **Metronome:** synthesized Web Audio clicks are scheduled ahead on the audio clock using the
   detected beat and bar times: every 25 ms, the clicks of the next 0.2 s. It follows the gapless
