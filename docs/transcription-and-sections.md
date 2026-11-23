@@ -220,7 +220,7 @@ Also tried ([test_chords.py](../experiments/test_chords.py)):
 ## Recommendations
 
 **Song sections**
-- Run SongFormer as a background job after the beat analysis, in a worker process like the stem separation ([songformer_patch.py](../experiments/songformer_patch.py) makes it fit a 6 GB GPU: ~1–1.5 min per song).
+- Run SongFormer as a background job after the beat analysis, in a worker process like the stem separation ([songformer_patch.py](../experiments/songformer_patch.py) makes it fit a 6 GB GPU: ~1–2 min per song).
 - Decide section starts at the app's bar starts from SongFormer's frame outputs (`songformer_bars`), so sections line up with loops.
 - Show them as a lane of named, coloured blocks the user can rename, move by a bar, split and merge; keep the user's edits. Even two experts agree on only 64 % of section starts, so editing is part of the feature, not a fallback.
 - Licence: SongFormer needs MuQ, whose weights are CC BY-NC 4.0 (fine for personal use). All-In-One (MIT) is the permissive alternative, but clearly weaker (0.31 vs 0.56 HR.5F); without SongFormer, manual markers snapped to bars are the honest fallback.
@@ -228,10 +228,10 @@ Also tried ([test_chords.py](../experiments/test_chords.py)):
 **Notes and tabs**
 - Present transcription as a draft to correct by ear. On full mixes 40–60 % of the notes per instrument come out right (synthetic songs), drums ~95 %.
 - Pipeline:
-  1. Separate (already in the app).
+  1. Separate (already in the app; BS-RoFormer instead of htdemucs_6s added ~8 points on bass and leads in a small test).
   2. Transcribe: Basic Pitch on the bass and guitar stems, YourMT3+ for keys and leads (it is the only one that gets them at all), ADTOF on the drum stem.
   3. Quantize to the app's beat grid, after the user has checked the grid.
-  4. Strings and frets: the fingering search, plus the string network once it holds up on other guitars.
+  4. Strings and frets: the fingering search plus the string network, trained on several guitars (83 % right strings on an unseen electric guitar, 89 % on the acoustic test guitarist).
   5. Write Guitar Pro 5 in the backend (pyguitarpro). Render and play with alphaTab in the frontend.
 - One tab per instrument, with a "show notation / tab" toggle and a loop-synced cursor (alphaTab's player follows the recording through sync points from the beat grid).
 - Test MuScriptor (Hugging Face token needed; CC BY-NC 4.0). Its reported multi-instrument scores are about twice YourMT3+'s.
