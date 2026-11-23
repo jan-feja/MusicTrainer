@@ -61,9 +61,37 @@ describe('api client', () => {
     expect(api.stemUrl('jNQXAC9IVRw', 'drums')).toBe('/api/library/jNQXAC9IVRw/stems/drums')
   })
 
+  it("keeps loops and settings in the user's own library", async () => {
+    const fetchMock = mockFetch(Response.json([]))
+    await api.getLoops('jNQXAC9IVRw')
+    expect(fetchMock.mock.calls[0][0]).toBe('/api/me/library/jNQXAC9IVRw/loops')
+    fetchMock.mockResolvedValue(Response.json({}))
+    await api.savePlayerSettings('jNQXAC9IVRw', {} as never, true)
+    expect(fetchMock.mock.calls[1][0]).toBe('/api/me/library/jNQXAC9IVRw/settings')
+    expect(fetchMock.mock.calls[1][1]).toMatchObject({ method: 'PUT', keepalive: true })
+  })
+
+  it("lists the downloads of a guest's songs by their IDs", async () => {
+    const fetchMock = mockFetch(Response.json([]))
+    await api.listDownloads(['jNQXAC9IVRw', 'dQw4w9WgXcQ'])
+    expect(fetchMock.mock.calls[0][0]).toBe('/api/downloads?ids=jNQXAC9IVRw&ids=dQw4w9WgXcQ')
+    fetchMock.mockResolvedValue(Response.json([]))
+    await api.listDownloads()
+    expect(fetchMock.mock.calls[1][0]).toBe('/api/downloads')
+  })
+
+  it('logs in with a JSON body', async () => {
+    const fetchMock = mockFetch(Response.json({ id: 1, username: 'alice' }))
+    await api.login('alice', 'secret password')
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('/api/auth/login')
+    expect(init.method).toBe('POST')
+    expect(JSON.parse(init.body)).toEqual({ username: 'alice', password: 'secret password' })
+  })
+
   it('returns nothing for 204 responses', async () => {
     mockFetch(new Response(null, { status: 204 }))
-    await expect(api.deleteVideo('jNQXAC9IVRw')).resolves.toBeUndefined()
+    await expect(api.removeFromMyLibrary('jNQXAC9IVRw')).resolves.toBeUndefined()
   })
 
   it('throws ApiError with the server message', async () => {
@@ -76,6 +104,6 @@ describe('api client', () => {
 
   it('falls back to the status text when the body is not JSON', async () => {
     mockFetch(new Response('oops', { status: 500, statusText: 'Internal Server Error' }))
-    await expect(api.listVideos()).rejects.toThrow('Request failed (500 Internal Server Error)')
+    await expect(api.listMyVideos()).rejects.toThrow('Request failed (500 Internal Server Error)')
   })
 })

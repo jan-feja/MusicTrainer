@@ -21,6 +21,9 @@ dependencies = [
     "demucs>=4.1",
     # chords: chroma (constant-Q transform) of the song
     "librosa>=0.10",
+    # user accounts and their libraries (SQLite), password hashing
+    "sqlalchemy>=2.0",
+    "argon2-cffi>=23",
 ]
 
 [project.optional-dependencies]

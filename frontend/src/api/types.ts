@@ -7,7 +7,10 @@ export interface SearchResult {
   durationSeconds: number | null
   viewCount: number | null
   thumbnailUrl: string | null
+  /** On the server (someone has it): adding it to a library is instant. */
   isDownloaded: boolean
+  /** In the logged-in user's library; always false for a guest (theirs is in the browser). */
+  inLibrary: boolean
 }
 
 export interface LibraryVideo {
@@ -170,4 +173,16 @@ export interface MixerSettings {
   muted: string[]
   /** When not empty, only these stems are heard. */
   solo: string[]
+}
+
+export interface User {
+  id: number
+  username: string
+}
+
+/** A song from a guest's library in the browser, moved into the account on login. */
+export interface GuestImportEntry {
+  videoId: string
+  loops?: SavedLoop[]
+  settings?: PlayerSettings
 }

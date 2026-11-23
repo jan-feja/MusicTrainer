@@ -2,3 +2,27 @@
   margin: 0 0 20px;
   font-size: 1.5rem;
 }
+
+.guestNote {
+  margin: -8px 0 20px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.download {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.downloadError {
+  color: var(--color-error);
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

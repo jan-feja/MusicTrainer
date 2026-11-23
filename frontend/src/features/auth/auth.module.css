@@ -1,0 +1,70 @@
+.stack {
+  display: grid;
+  gap: 24px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.card {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+}
+
+.card h2 {
+  margin: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.input {
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 400;
+}
+
+.help,
+.note,
+.footer {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.footer {
+  font-size: 0.875rem;
+}
+
+.error,
+.success {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.error {
+  color: var(--color-error);
+}
+
+.success {
+  color: var(--color-success);
+}

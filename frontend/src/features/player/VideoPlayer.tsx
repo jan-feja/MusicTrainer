@@ -84,7 +84,8 @@ type LoopPoint = 'start' | 'end'
 /** A video's saved loops and player settings, and where to report changes to store them. */
 export interface PlayerPractice {
   loops: SavedLoop[]
-  settings: PlayerSettings
+  /** null: never opened; the player starts from its defaults. */
+  settings: PlayerSettings | null
   onLoopsChange: (loops: SavedLoop[]) => void
   onSettingsChange: (settings: PlayerSettings) => void
   /** The last save failed with this message. */

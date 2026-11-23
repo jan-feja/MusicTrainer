@@ -29,6 +29,9 @@ class SearchResult(ApiModel):
     view_count: int | None = None
     thumbnail_url: str | None = None
     is_downloaded: bool = False
+    """On the server (someone has it): adding it to a library is instant."""
+    in_library: bool = False
+    """In the logged-in user's library (a guest's library is in the browser: always False)."""
 
 
 class VideoMetadata(ApiModel):
@@ -279,3 +282,44 @@ class MixerSettings(ApiModel):
 
 
 PlayerSettings.model_rebuild()
+
+
+USERNAME_PATTERN = r"^[A-Za-z0-9_.-]{3,30}$"
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_LENGTH = 128
+MAX_LOOPS = 200
+
+
+class User(ApiModel):
+    """A user account as the API returns it."""
+
+    id: int
+    username: str
+
+
+class RegisterRequest(ApiModel):
+    username: str = Field(pattern=USERNAME_PATTERN)
+    """3-30 letters, digits, '.', '_' or '-'; unique regardless of case."""
+    password: str = Field(min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH)
+
+
+class LoginRequest(ApiModel):
+    username: str = Field(max_length=100)
+    password: str = Field(max_length=MAX_PASSWORD_LENGTH)
+
+
+class ChangePasswordRequest(ApiModel):
+    current_password: str = Field(max_length=MAX_PASSWORD_LENGTH)
+    new_password: str = Field(min_length=MIN_PASSWORD_LENGTH, max_length=MAX_PASSWORD_LENGTH)
+
+
+class DeleteAccountRequest(ApiModel):
+    password: str = Field(max_length=MAX_PASSWORD_LENGTH)
+
+
+class GuestImportEntry(ApiModel):
+    """A song from a guest's library in the browser, moved into the account on login."""
+
+    video_id: str = Field(pattern=VIDEO_ID_PATTERN)
+    loops: list[SavedLoop] | None = Field(default=None, max_length=MAX_LOOPS)
+    settings: PlayerSettings | None = None

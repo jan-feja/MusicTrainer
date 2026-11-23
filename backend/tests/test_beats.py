@@ -238,7 +238,7 @@ class TestBeatsApi:
     ) -> None:
         download(client)
         wait_for_beats(client, VIDEO_ID)
-        client.delete(f"/api/library/{VIDEO_ID}")
+        client.delete(f"/api/me/library/{VIDEO_ID}")
         assert client.get(f"/api/library/{VIDEO_ID}/beats").status_code == 404
 
         download(client)  # downloading again detects again

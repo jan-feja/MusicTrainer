@@ -1,13 +1,18 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { api } from '../../api/client'
 import type { DownloadJob } from '../../api/types'
+import { useMyLibrary } from '../library/myLibrary'
 import { DownloadsContext, type DownloadsContextValue } from './downloadsContext'
 import { INITIAL_DOWNLOADS_STATE, downloadsReducer, isActiveStatus } from './downloadsState'
 
 const POLL_INTERVAL_MS = 1000
 
-/** Keeps track of downloads and polls the server while any of them is running. */
+/**
+ * Keeps track of the downloads of the user's songs and polls the server while
+ * any of them is running. Give it a `key` per user.
+ */
 export function DownloadsProvider({ children }: { children: ReactNode }) {
+  const library = useMyLibrary()
   const [state, dispatch] = useReducer(downloadsReducer, INITIAL_DOWNLOADS_STATE)
   const hasActiveJobs = useMemo(
     () => [...state.jobs.values()].some((job) => isActiveStatus(job.status)),
@@ -21,24 +26,26 @@ export function DownloadsProvider({ children }: { children: ReactNode }) {
   // pick up downloads that were started before the page was (re)loaded
   useEffect(() => {
     const controller = new AbortController()
-    api.listDownloads(controller.signal).then(receiveJobs, () => {})
+    api.listDownloads(library.downloadIds(), controller.signal).then(receiveJobs, () => {})
     return () => controller.abort()
-  }, [receiveJobs])
+  }, [receiveJobs, library])
 
   useEffect(() => {
     if (!hasActiveJobs) return
     const timer = window.setInterval(() => {
       // if the server is unreachable, try again on the next tick
-      api.listDownloads().then(receiveJobs, () => {})
+      api.listDownloads(library.downloadIds()).then(receiveJobs, () => {})
     }, POLL_INTERVAL_MS)
     return () => window.clearInterval(timer)
-  }, [hasActiveJobs, receiveJobs])
+  }, [hasActiveJobs, receiveJobs, library])
 
   const startDownload = useCallback(
     async (videoId: string, title?: string) => {
-      receiveJobs([await api.startDownload(videoId, title)])
+      const job = await api.startDownload(videoId, title)
+      library.downloadStarted(videoId)
+      receiveJobs([job])
     },
-    [receiveJobs],
+    [receiveJobs, library],
   )
 
   const forgetDownload = useCallback(

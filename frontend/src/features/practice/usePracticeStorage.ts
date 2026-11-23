@@ -1,14 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { api } from '../../api/client'
 import type { PlayerSettings, SavedLoop } from '../../api/types'
 import { errorMessage } from '../../lib/format'
 import { type AsyncResult, useAsync } from '../../lib/useAsync'
 import { useLatest } from '../../lib/useLatest'
-
-export interface PracticeData {
-  loops: SavedLoop[]
-  settings: PlayerSettings
-}
+import { type PracticeData, useMyLibrary } from '../library/myLibrary'
 
 export interface PracticeStorage {
   data: AsyncResult<PracticeData>
@@ -23,21 +18,20 @@ const LOOPS_SAVE_DELAY_MS = 300
 // settings change often (volume drags, the position while playing)
 const SETTINGS_SAVE_DELAY_MS = 1000
 
-/** Loads a video's saved loops and player settings, and stores changes to them. */
+/**
+ * Adds the video to the user's library, loads the user's saved loops and
+ * player settings for it, and stores changes to them (on the server for an
+ * account, in this browser for a guest).
+ */
 export function usePracticeStorage(videoId: string): PracticeStorage {
-  const data = useAsync(async (signal) => {
-    const [loops, settings] = await Promise.all([
-      api.getLoops(videoId, signal),
-      api.getPlayerSettings(videoId, signal),
-    ])
-    return { loops, settings }
-  }, videoId)
+  const library = useMyLibrary()
+  const data = useAsync((signal) => library.openSong(videoId, signal), videoId)
   const loops = useDelayedSave<SavedLoop[]>(
-    (value, keepalive) => api.saveLoops(videoId, value, keepalive),
+    (value, keepalive) => library.saveLoops(videoId, value, keepalive),
     LOOPS_SAVE_DELAY_MS,
   )
   const settings = useDelayedSave<PlayerSettings>(
-    (value, keepalive) => api.savePlayerSettings(videoId, value, keepalive),
+    (value, keepalive) => library.saveSettings(videoId, value, keepalive),
     SETTINGS_SAVE_DELAY_MS,
   )
   return {

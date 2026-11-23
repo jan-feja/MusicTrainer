@@ -5,11 +5,12 @@
     <library>/<video_id>/thumbnail.jpg   optional
     <library>/<video_id>/analysis.json   BeatAnalysis (beats and bar starts), once detected
     <library>/<video_id>/beat_activations.npz  beat network output, to decode again with new hints
-    <library>/<video_id>/loops.json      the user's saved loops (list of SavedLoop)
-    <library>/<video_id>/player.json     how the player was left (PlayerSettings, with the mixer)
     <library>/<video_id>/stems/          separated instruments: stems.json (StemSet), one FLAC each
     <library>/<video_id>/chords.json     ChordAnalysis (chords on the beat grid), once detected
     <library>/.staging/<video_id>/       downloads in progress, moved into place when done
+
+What belongs to a user (their library, saved loops, player settings) is in the
+database instead (see db.py): one song folder serves everyone who has the song.
 
 Stems are FLAC, lossless: AAC or Opus would shift them in time against each
 other. They are written to stems.partial/ and renamed to stems/ when complete.
@@ -25,13 +26,11 @@ from pathlib import Path
 from typing import TypeVar
 
 import numpy as np
-from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic import BaseModel, ValidationError
 
 from music_trainer.models import (
     BeatAnalysis,
     ChordAnalysis,
-    PlayerSettings,
-    SavedLoop,
     StemSet,
     VideoMetadata,
 )
@@ -43,7 +42,6 @@ logger = logging.getLogger(__name__)
 ModelT = TypeVar("ModelT", bound=BaseModel)
 DELETE_ATTEMPTS = 5
 DELETE_RETRY_SECONDS = 0.1
-_LOOP_LIST = TypeAdapter(list[SavedLoop])
 
 
 class LibraryError(Exception):
@@ -59,8 +57,6 @@ class Library:
     METADATA_FILE = "meta.json"
     ANALYSIS_FILE = "analysis.json"
     ACTIVATIONS_FILE = "beat_activations.npz"
-    LOOPS_FILE = "loops.json"
-    SETTINGS_FILE = "player.json"
     STEMS_DIR = "stems"
     STEMS_STAGING_DIR = "stems.partial"
     STEMS_FILE = "stems.json"
@@ -108,26 +104,6 @@ class Library:
 
     def write_beat_analysis(self, video_id: str, analysis: BeatAnalysis) -> None:
         self._write_text(video_id, self.ANALYSIS_FILE, analysis.model_dump_json())
-
-    def read_loops(self, video_id: str) -> list[SavedLoop]:
-        """The saved loops; empty if there are none (or the file is unreadable)."""
-        path = self._video_dir(video_id) / self.LOOPS_FILE
-        if not path.is_file():
-            return []
-        try:
-            return _LOOP_LIST.validate_json(path.read_text(encoding="utf-8"))
-        except (OSError, ValidationError) as error:
-            logger.warning("Ignoring unreadable %s: %s", path, error)
-            return []
-
-    def write_loops(self, video_id: str, loops: list[SavedLoop]) -> None:
-        self._write_text(video_id, self.LOOPS_FILE, _LOOP_LIST.dump_json(loops, indent=2).decode())
-
-    def read_player_settings(self, video_id: str) -> PlayerSettings | None:
-        return self._read_json(self._video_dir(video_id) / self.SETTINGS_FILE, PlayerSettings)
-
-    def write_player_settings(self, video_id: str, settings: PlayerSettings) -> None:
-        self._write_text(video_id, self.SETTINGS_FILE, settings.model_dump_json(indent=2))
 
     def read_beat_activations(self, video_id: str) -> BeatActivations | None:
         """The stored beat network output, or None if missing or unreadable."""

@@ -4,8 +4,13 @@ An app for practising music with songs. The idea and planned features are in [do
 
 **Current state:** a small YouTube client in the spirit of NewPipe, with practice loops that snap to the beat, songs separated into instruments, and chords.
 
+- **Accounts**: register with a username and password, log in and out; the profile page changes the password or deletes the account.
+  - each account has **its own library**, with its own saved loops and player settings per song; one downloaded song serves everyone who has it
+  - **guests** (not logged in) can do everything too; their library, loops and settings are saved in the browser and move into the account on login or registration
+  - fixing a song's beat grid needs an account: the grid is shared by everyone who has the song
+  - a song is deleted from the server once nobody has it: when the last account removes it, unless a guest opened it in the last 7 days (checked at startup and every hour)
 - **Search** YouTube, or paste a video link.
-- **Download** videos into a local library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
+- **Download** videos into your library: up to 720p H.264 + AAC MP4, with thumbnail and metadata. Progress is shown live.
 - **Play** from the library:
   - speed 0.25–2× in steps of 0.05, keeping the pitch
   - an **A–B loop**: set A / B at the playhead, drag the handles on the timeline, nudge each point by 50 ms, turn it on or off. The jump back to A has no gap, at any speed
@@ -13,7 +18,7 @@ An app for practising music with songs. The idea and planned features are in [do
     - beats and bar starts are detected automatically after each download; every bar has the same number of beats
     - switch *Snap loop* to **Beats** or **Bars**, and A / B snap to the grid when set or dragged; the nudge buttons and ← → on a handle step one beat or bar
     - the loop length shows in beats or bars
-    - fix the grid when the music is ambiguous (saved with the video):
+    - fix the grid when the music is ambiguous (saved with the video, for everyone; needs an account):
       - **½× / 2×**: the tempo was detected an octave off (e.g. 150 instead of 75 BPM)
       - **beats per bar**: Auto (detected), or 2-9 / 12
       - **‹ Bar start ›**: the bar starts are on the wrong beat from here on (e.g. after a 2/4 bar)
@@ -22,7 +27,7 @@ An app for practising music with songs. The idea and planned features are in [do
   - **metronome**: switch it on once beats are detected to hear a synthesized click on each beat,
     with a higher click on bar starts. It follows playback speed, seeks and loops; its volume is
     separate from the video's volume. It starts off for each video and does not save its settings.
-  - **saved loops**, kept with the video, as many as you like:
+  - **saved loops**, kept with the video in your library, as many as you like:
     - **+ Save loop** (S) keeps the current loop with its snap and speed; it gets a name (double-click to rename)
     - pick one (or press 1–9): its snap and speed are set, playback goes to its start and the timeline zooms to it
     - changing the picked loop (moving A / B, speed, snap) saves it; **New loop** starts another one
@@ -42,19 +47,22 @@ An app for practising music with songs. The idea and planned features are in [do
   - volume and full screen; the video reloads by itself if the browser fails to decode it
   - keyboard shortcuts
 
-Opening a video that isn't downloaded yet starts the download and plays it when done.
+Opening a video adds it to your library; one that isn't downloaded yet is downloaded first and played when done.
 
 ## Project structure
 
 ```
 backend/        Python server: REST API, YouTube access, video library, beats, stems, chords (FastAPI + yt-dlp + Beat This! + Demucs + librosa)
   src/music_trainer/
-    api/          HTTP routes: /api/search, /api/library (incl. /beats, /audio, /stems, /chords), /api/downloads
-    services/     youtube.py (search, download), library.py (videos on disk), downloads.py (background jobs),
+    api/          HTTP routes: /api/auth, /api/me/library (the user's songs, loops, settings), /api/search,
+                  /api/library/{id} (a song: /media, /audio, /beats, /stems, /chords), /api/downloads
+    services/     accounts.py (users, passwords, login sessions), user_library.py (who has which song),
+                  song_cleanup.py (deletes songs nobody has), youtube.py (search, download), library.py (videos on disk), downloads.py (background jobs),
                   beats.py + beat_analysis.py (beat detection and its background job),
                   beat_decoding.py (beat grid from the network output), audio.py (ffmpeg decoding),
                   stems.py + stem_worker.py + stem_separation.py (Demucs in its own process, queue),
                   chords.py + chord_detection.py (chords on the beat grid and their background job)
+    db.py         the SQLite database (SQLAlchemy): users, sessions, library entries
     config.py     settings, read from MUSIC_TRAINER_* environment variables
     models.py     data models shared by services and API
   tests/          pytest; tests/integration use the real YouTube and beat model (opt-in)
@@ -63,14 +71,15 @@ frontend/       Browser UI (React + TypeScript + Vite)
     api/          typed client for the backend API
     app/          app shell: routes, header
     components/   shared UI pieces (video card, grid, progress bar, ...)
-    features/     search/, library/, downloads/, player/ (player, A–B loop, gapless loop audio, speed, zoom),
+    features/     auth/ (login, register, profile), search/, library/ (your library; a guest's is in
+                  localStorage), downloads/, player/ (player, A–B loop, gapless loop audio, speed, zoom),
                   beats/ (beat grid, snapping), metronome/ (beat-synced clicks),
                   practice/ (saved loops, player settings kept with the video),
                   stems/ (stem player, mixer, track lanes), chords/ (chord lane)
     lib/          small helpers and hooks
 docs/           planning documents, app survey, implementation report
 experiments/    feasibility tests from the research phase (independent of the app)
-data/           downloaded videos and model weights (created at runtime, not in git)
+data/           downloaded videos, model weights and music_trainer.db (created at runtime, not in git)
 ```
 
 ## Requirements
@@ -134,7 +143,7 @@ Environment variables, or a `.env` file in the folder you start the backend from
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `MUSIC_TRAINER_DATA_DIR` | `data/` in the repository | where the library is stored |
+| `MUSIC_TRAINER_DATA_DIR` | `data/` in the repository | where the songs and the database are stored |
 | `MUSIC_TRAINER_MAX_VIDEO_HEIGHT` | `720` | highest resolution to download |
 | `MUSIC_TRAINER_MAX_PARALLEL_DOWNLOADS` | `2` | downloads that run at the same time |
 | `MUSIC_TRAINER_DENO_PATH` | look up on `PATH` | Deno executable for yt-dlp |
@@ -147,6 +156,9 @@ Environment variables, or a `.env` file in the folder you start the backend from
 | `MUSIC_TRAINER_STEM_MODEL` | `htdemucs_6s` | Demucs model: `htdemucs_6s` (6 stems) or `htdemucs` (drums, bass, vocals, other; slightly cleaner) |
 | `MUSIC_TRAINER_SEPARATION_DEVICE` | `cpu` | `cuda` to separate on an NVIDIA GPU (~10× faster) |
 | `MUSIC_TRAINER_SEPARATE_STEMS_AFTER_DOWNLOAD` | `true` | separate right after each download; otherwise when a video is first opened |
+| `MUSIC_TRAINER_SESSION_DAYS` | `30` | how long a login lasts unused; using it extends it |
+| `MUSIC_TRAINER_SESSION_COOKIE_SECURE` | `false` | send the login cookie over HTTPS only; turn on when serving over HTTPS |
+| `MUSIC_TRAINER_GUEST_SONG_DAYS` | `7` | a song no account has is deleted once no guest opened it for this long |
 
 ## How it works
 

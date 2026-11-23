@@ -1,6 +1,9 @@
 /** URLs of the app's pages, in one place. */
 export const paths = {
   library: '/',
+  login: '/login',
+  register: '/register',
+  profile: '/profile',
   search: (query: string) => `/search?${new URLSearchParams({ q: query })}`,
   watch: (videoId: string) => `/watch/${encodeURIComponent(videoId)}`,
 }

@@ -3,11 +3,13 @@ import type {
   BeatTrackingState,
   ChordDetectionState,
   DownloadJob,
+  GuestImportEntry,
   LibraryVideo,
   PlayerSettings,
   SavedLoop,
   SearchResult,
   StemSeparationState,
+  User,
 } from './types'
 
 const API_BASE = '/api'
@@ -25,6 +27,11 @@ export class ApiError extends Error {
 
 export function isNotFoundError(error: unknown): boolean {
   return error instanceof ApiError && error.status === 404
+}
+
+/** The request needs an account (the user is a guest, or the login has expired). */
+export function isUnauthorizedError(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 401
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -60,33 +67,77 @@ function videoPath(videoId: string): string {
   return `/library/${encodeURIComponent(videoId)}`
 }
 
+/** A song in the logged-in user's own library. */
+function myVideoPath(videoId: string): string {
+  return `/me/library/${encodeURIComponent(videoId)}`
+}
+
 export const api = {
   search(query: string, signal?: AbortSignal): Promise<SearchResult[]> {
     return request(`/search?${new URLSearchParams({ q: query })}`, { signal })
   },
 
-  listVideos(signal?: AbortSignal): Promise<LibraryVideo[]> {
-    return request('/library', { signal })
+  /** The logged-in user; null for a guest. */
+  me(signal?: AbortSignal): Promise<User | null> {
+    return request('/auth/me', { signal })
   },
 
+  /** Create an account and log in to it (409: the username is taken). */
+  register(username: string, password: string): Promise<User> {
+    return request('/auth/register', sendJson('POST', { username, password }))
+  },
+
+  /** 401: wrong username or password. */
+  login(username: string, password: string): Promise<User> {
+    return request('/auth/login', sendJson('POST', { username, password }))
+  },
+
+  logout(): Promise<void> {
+    return request('/auth/logout', { method: 'POST' })
+  },
+
+  /** 403: the current password is wrong. Other browsers are logged out. */
+  changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    return request('/auth/password', sendJson('POST', { currentPassword, newPassword }))
+  },
+
+  /** 403: the password is wrong. */
+  deleteAccount(password: string): Promise<void> {
+    return request('/auth/account', sendJson('DELETE', { password }))
+  },
+
+  /** A song on the server, whoever has it. */
   getVideo(videoId: string, signal?: AbortSignal): Promise<LibraryVideo> {
     return request(videoPath(videoId), { signal })
   },
 
-  deleteVideo(videoId: string): Promise<void> {
-    return request(videoPath(videoId), { method: 'DELETE' })
+  /** The logged-in user's library, most recently added first. */
+  listMyVideos(signal?: AbortSignal): Promise<LibraryVideo[]> {
+    return request('/me/library', { signal })
+  },
+
+  addToMyLibrary(videoId: string): Promise<void> {
+    return request(myVideoPath(videoId), { method: 'PUT' })
+  },
+
+  /** The song is deleted from the server if nobody else has it. */
+  removeFromMyLibrary(videoId: string): Promise<void> {
+    return request(myVideoPath(videoId), { method: 'DELETE' })
+  },
+
+  /** Move a guest's library from the browser into the account. */
+  importGuestLibrary(entries: GuestImportEntry[]): Promise<void> {
+    return request('/me/library/import', sendJson('POST', entries))
   },
 
   startDownload(videoId: string, title?: string): Promise<DownloadJob> {
-    return request('/downloads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ videoId, title }),
-    })
+    return request('/downloads', sendJson('POST', { videoId, title }))
   },
 
-  listDownloads(signal?: AbortSignal): Promise<DownloadJob[]> {
-    return request('/downloads', { signal })
+  /** The downloads of the user's songs; a guest names theirs in `ids`. */
+  listDownloads(ids?: readonly string[], signal?: AbortSignal): Promise<DownloadJob[]> {
+    const query = ids ? `?${new URLSearchParams(ids.map((id) => ['ids', id]))}` : ''
+    return request(`/downloads${query}`, { signal })
   },
 
   getBeats(videoId: string, signal?: AbortSignal): Promise<BeatTrackingState> {
@@ -136,17 +187,18 @@ export const api = {
     return request(`${videoPath(videoId)}/chords${query}`, { method: 'POST' })
   },
 
+  /** The user's loops for a song in their library. */
   getLoops(videoId: string, signal?: AbortSignal): Promise<SavedLoop[]> {
-    return request(`${videoPath(videoId)}/loops`, { signal })
+    return request(`${myVideoPath(videoId)}/loops`, { signal })
   },
 
   /** `keepalive` lets the request finish while the page is being closed. */
   saveLoops(videoId: string, loops: SavedLoop[], keepalive = false): Promise<SavedLoop[]> {
-    return request(`${videoPath(videoId)}/loops`, putJson(loops, keepalive))
+    return request(`${myVideoPath(videoId)}/loops`, putJson(loops, keepalive))
   },
 
   getPlayerSettings(videoId: string, signal?: AbortSignal): Promise<PlayerSettings> {
-    return request(`${videoPath(videoId)}/settings`, { signal })
+    return request(`${myVideoPath(videoId)}/settings`, { signal })
   },
 
   savePlayerSettings(
@@ -154,15 +206,14 @@ export const api = {
     settings: PlayerSettings,
     keepalive = false,
   ): Promise<PlayerSettings> {
-    return request(`${videoPath(videoId)}/settings`, putJson(settings, keepalive))
+    return request(`${myVideoPath(videoId)}/settings`, putJson(settings, keepalive))
   },
 }
 
+function sendJson(method: string, body: unknown): RequestInit {
+  return { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+}
+
 function putJson(body: unknown, keepalive: boolean): RequestInit {
-  return {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-    keepalive,
-  }
+  return { ...sendJson('PUT', body), keepalive }
 }

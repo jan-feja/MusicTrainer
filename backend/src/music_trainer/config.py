@@ -58,6 +58,20 @@ class Settings(BaseSettings):
     """Separate every new download into stems right away (about 2 CPU minutes per song);
     otherwise only when the player opens the song."""
 
+    session_days: float = Field(default=30, gt=0)
+    """How long a login lasts without being used; using it extends it."""
+
+    session_cookie_secure: bool = False
+    """Send the login cookie over HTTPS only; turn on when the app is served over HTTPS."""
+
+    guest_song_days: float = Field(default=7, ge=0)
+    """A song no account has is deleted once no guest has opened it for this long."""
+
+    @property
+    def database_path(self) -> Path:
+        """User accounts and their libraries (SQLite)."""
+        return self.data_dir / "music_trainer.db"
+
     @property
     def library_dir(self) -> Path:
         return self.data_dir / "library"
