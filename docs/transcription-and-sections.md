@@ -78,8 +78,16 @@ Note F-measure: right pitch, onset within 50 ms. Drums: onset F per drum (kick, 
 | YourMT3+ on the mix | **0.57** | 0.38 | 0.45 | 0.29 | 0.23 | 0.63 |
 | YourMT3+, notes moved to the loudest Demucs stem | 0.57 | 0.33 | 0.36 | 0.10 | 0.21 | 0.95 |
 | YourMT3+ labels, ADTOF drums, low notes to bass if the bass stem dominates | 0.57 | 0.41 | 0.42 | **0.32** | **0.23** | 0.95 |
-| BS-RoFormer-SW → Basic Pitch / ADTOF | *pending* | | | | | |
-| htdemucs_6s → YourMT3+ per stem | *pending* | | | | | |
+| YourMT3+ on the true stems (27 songs; best case) | – | 0.54 | 0.47 | **0.73** | 0.52 | 0.84 |
+
+**A better separator** (8 songs only: BS-RoFormer-SW ran ~5 min per song while the CPU was busy, so it was stopped early). Basic Pitch / ADTOF on the stems of each separator, same 8 songs:
+
+| Separator | Bass | Guitar | Keys | Lead | Drums |
+|---|---|---|---|---|---|
+| htdemucs_6s (the app's) | 0.48 | 0.47 | 0.02 | 0.15 | 0.97 |
+| [BS-RoFormer-SW](https://github.com/openmirlab/bs-roformer-infer) (6 stems) | **0.56** | **0.50** | 0.00 | **0.23** | 0.97 |
+
+The cleaner stems help bass and leads by 8 points. Keys fail with both separators: the piano stem is the weak link. Yet YourMT3+ transcribes keys well from a clean keys stem (0.73), so a better piano separation would unlock keys. BS-RoFormer's weights licence is unclear, and it is slower than Demucs.
 
 - **YourMT3+ finds more notes, but often names the wrong instrument.** Over all pitched notes it beats separation + Basic Pitch (0.57 vs 0.43). Per instrument it finds 60 % of the guitar notes and 73 % of the keys notes (Demucs + Basic Pitch: 48 % / 46 %), but labels a third to half of them as another instrument: a third of the bass notes come out as "keys". Separation keeps the bass label right 98 % of the time.
 - **Drums:** ADTOF on the Demucs drum stem (0.95) is far better than YourMT3+'s drums (0.63; cymbals and toms 0.3). Synthetic drums are easy; the ADTOF authors report ~0.88 on real recordings.
