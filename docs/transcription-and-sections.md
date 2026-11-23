@@ -2,7 +2,7 @@
 
 Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](implementation-report.md): notes and tabs for each instrument, key, chords, tuning, imported notation, and song sections (verse, chorus, solo, ...). Experiments: [../experiments/](../experiments/) (scripts named below); numbers: [../experiments/results/](../experiments/results/).
 
-> **Status (23 November 2026):** draft. The laptop ran on battery during this work, which caps its GPU at 20 W (210 MHz); the GPU-bound runs (SongFormer on all test songs, YourMT3+ on the test songs, All-In-One, the string network) are queued for when it is plugged in. Sections marked *pending* are filled in then.
+> **Status (23 November 2026):** experiments done on the branch `experiment/transcription-and-sections`; nothing is in the app yet. Some runs were cut short to fit one 6 GB laptop GPU: SongFormer ran on 156 of the 223 test songs (all songs with two annotations), All-In-One on 58, BS-RoFormer on 8.
 
 ## Summary
 
@@ -57,12 +57,13 @@ SALAMI: the 80 songs with two annotations (the same songs for every row). Score 
 | SongFormer, as published | 0.47 | 0.54 | **0.70** | **0.61** | 0.77 | 0.77 |
 | SongFormer, nearest bar start within 2 s | 0.49 | 0.54 | 0.70 | 0.61 | – | – |
 | **SongFormer, decided at bar starts** (`songformer_bars`) | **0.56** | **0.60** | 0.69 | 0.60 | **0.79** | **0.80** |
-| All-In-One | *pending* | | | | | |
+| All-In-One (one of its 8 models; 30 of the 80 songs) | 0.31 | 0.45 | 0.58 | 0.46 | 0.31 | 0.43 |
 | Second human annotator | 0.64 | 0.72 | 0.77 | 0.70 | – | – |
 
 - **The ceiling is low:** two experts agree on only 64 % of section starts (within 0.5 s) and 70 % of the labels.
 - **SongFormer reaches most of it on music it never saw:** 87 % of the human level for section starts (decided at bar starts), 91 % for grouping repeated parts, 86 % for labels. The classic method gets less than half as many starts right.
 - **Deciding at bar starts** (`songformer_bars` in [test_structure.py](../experiments/test_structure.py)): the boundary probability is read at each bar start of the app's grid, a bar start becomes a section start when the probability is above a threshold and the largest within 2 bars, and each section takes the label with the highest mean probability. The lag (0.5 s) and threshold (0.4) were tuned on the score songs only. +9 points on SALAMI, and every section starts on a bar line, ready for loops.
+- **All-In-One** (MIT licence) is the weaker model here: on the same 30 SALAMI songs SongFormer gets 0.47 / 0.55 / 0.69 / 0.62 (0.56 HR.5F at bar starts) against its 0.31 / 0.45 / 0.58 / 0.46, and on the score songs 0.77 vs 0.31. It ran with one fold model on the CPU (NATTEN without CUDA), probably a few points below its 8-model ensemble, which would not change the ranking. It calls many verses and choruses "intro".
 - **Labels** (SALAMI, share of each true label's time): instrumental 88 %, intro 75 %, chorus 71 %, verse 65 %, outro 27 %, bridge 18 %. Bridges are mostly called instrumental (34 %) or verse (27 %); outros instrumental (41 %) or chorus (23 %). The "silence" of live recordings (applause, talking) becomes intro or outro.
 - **Harmonix** (48 songs, in SongFormer's training data): HR.5F 0.45, HR3F 0.60, ACC 0.66 as published; 0.46 / 0.63 / 0.65 decided at bar starts. Not much better than on unseen SALAMI, so the training-set advantage is small here (our YouTube copies differ from the CDs it was trained on).
 - **A false lead worth recording:** the first 4 Harmonix songs had every boundary ~1.7 s early, and a 2 s lag correction looked like a big gain. Over all 48 songs the median lag is −0.09 s (SALAMI −0.17 s, score songs −0.05 s); applied to SALAMI, the 2 s correction would have dropped HR.5F to 0.01. Hence the decoder's lag was tuned on the score songs only.
@@ -217,11 +218,11 @@ Also tried ([test_chords.py](../experiments/test_chords.py)):
 
 ## Recommendations
 
-**Song sections** — *numbers pending the full SongFormer and All-In-One runs.*
+**Song sections**
 - Run SongFormer as a background job after the beat analysis, in a worker process like the stem separation ([songformer_patch.py](../experiments/songformer_patch.py) makes it fit a 6 GB GPU: ~1–1.5 min per song).
 - Decide section starts at the app's bar starts from SongFormer's frame outputs (`songformer_bars`), so sections line up with loops.
 - Show them as a lane of named, coloured blocks the user can rename, move by a bar, split and merge; keep the user's edits. Even two experts agree on only 64 % of section starts, so editing is part of the feature, not a fallback.
-- Licence: SongFormer needs MuQ, whose weights are CC BY-NC 4.0 (fine for personal use). All-In-One (MIT) is the permissive alternative.
+- Licence: SongFormer needs MuQ, whose weights are CC BY-NC 4.0 (fine for personal use). All-In-One (MIT) is the permissive alternative, but clearly weaker (0.31 vs 0.56 HR.5F); without SongFormer, manual markers snapped to bars are the honest fallback.
 
 **Notes and tabs**
 - Present transcription as a draft to correct by ear. On full mixes 40–60 % of the notes per instrument come out right (synthetic songs), drums ~95 %.
