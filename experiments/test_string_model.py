@@ -16,6 +16,8 @@ the network), and tab F from Basic Pitch / YourMT3+ notes (= test_guitar_tabs.py
 Usage: python test_string_model.py        (writes results/string_model.json; GPU recommended)
        python test_string_model.py idmt   (the same network on IDMT-SMT-Guitar's electric guitars:
                                            results/string_model_idmt.json)
+       python test_string_model.py cross-guitar   (trained on GuitarSet + two IDMT electrics + Ibanez,
+                                           tested on the IDMT Les Paul and GuitarSet guitarist 05)
 """
 
 import json
@@ -78,17 +80,19 @@ def windows(feat: np.ndarray) -> np.ndarray:
     return np.lib.stride_tricks.sliding_window_view(pad, CONTEXT, axis=0).transpose(0, 2, 1)
 
 
-def train(names: list[str], epochs: int = 8) -> TabCNN:
+def train(names: list[str], epochs: int = 8, extra: list[tuple[np.ndarray, np.ndarray]] = ()) -> TabCNN:
+    """Train on GuitarSet excerpts `names` (+ `extra` (features, labels) pairs); 10 % validation."""
     rng = np.random.default_rng(0)
-    val = set(rng.choice(names, size=len(names) // 10, replace=False))
-    def stack(subset):
+    items = [(features(n), None, n) for n in names] + [(f, l, None) for f, l in extra]
+    val = set(rng.choice(len(items), size=max(1, len(items) // 10), replace=False).tolist())
+    def stack(idx):
         xs, ys = [], []
-        for n in subset:
-            f = features(n)
+        for i in idx:
+            f, lab, name = items[i]
             xs.append(windows(f))
-            ys.append(labels(n, len(f)))
+            ys.append(labels(name, len(f)) if lab is None else lab)
         return np.concatenate(xs), np.concatenate(ys)
-    x_tr, y_tr = stack([n for n in names if n not in val])
+    x_tr, y_tr = stack([i for i in range(len(items)) if i not in val])
     x_va, y_va = stack(sorted(val))
     mean, std = x_tr.mean(), x_tr.std()
     model = TabCNN().to(DEVICE)
@@ -225,6 +229,87 @@ def idmt_notes(xml: Path) -> list[tuple[float, float, int, int]]:
     return sorted(out)
 
 
+def idmt_files(guitars: set[str] | None = None) -> list[tuple[Path, Path, str]]:
+    """(xml, wav, group) of the usable IDMT recordings; guitars: dataset2 prefixes (AR, FS, LP) or 'Ibanez'."""
+    root = Path(DATA, "idmt", "IDMT-SMT-GUITAR_V2")
+    out = []
+    for ds in ("dataset2", "dataset3"):
+        for xml in sorted((root / ds / "annotation").glob("*.xml")):
+            if any(k in xml.stem for k in ("NH_", "muted", "V_vibrato", "_DN", "dead")):
+                continue
+            wav = root / ds / "audio" / f"{xml.stem}.wav"
+            guitar = xml.stem.split("_")[0] if ds == "dataset2" else "Ibanez"
+            if wav.exists() and (guitars is None or guitar in guitars):
+                kind = "scales" if "fret" in xml.stem else ("licks" if "Lick" in xml.stem else ds)
+                out.append((xml, wav, f"{kind}/{guitar}"))
+    return out
+
+
+def idmt_features(wav: Path) -> np.ndarray:
+    path = CACHE / "idmt" / f"{wav.stem}.npy"
+    if not path.exists():
+        y, _ = librosa.load(str(wav), sr=SR)
+        cqt = np.abs(librosa.cqt(y, sr=SR, hop_length=HOP, fmin=librosa.note_to_hz("E2"), n_bins=BINS, bins_per_octave=PER_OCTAVE))
+        path.parent.mkdir(parents=True, exist_ok=True)
+        np.save(path, librosa.amplitude_to_db(cqt, ref=np.max).astype(np.float32).T)
+    return np.load(path)
+
+
+def idmt_labels(xml: Path, frames: int) -> np.ndarray:
+    out = np.zeros((frames, 6), dtype=np.int64)
+    for onset, offset, pitch, string in idmt_notes(xml):
+        fret = pitch - tab.STANDARD[string]
+        if 0 <= string < 6 and 0 <= fret <= FRETS:
+            out[int(onset * FPS): max(int(offset * FPS), int(onset * FPS) + 1), string] = 1 + fret
+    return out
+
+
+def cross_guitar() -> None:
+    """Train on GuitarSet 00-04 + IDMT Aristides, Stratocaster and Ibanez; test on the IDMT Les Paul
+    (held out: humbucker pickups, the most different sound) and on GuitarSet guitarist 05."""
+    tuned = json.loads(Path(__file__).with_name("results").joinpath("tablature.json").read_text())["tuned_costs"]
+    tab.MOVE_COST, tab.HEIGHT_COST, tab.OPEN_BONUS = tuned["move"], tuned["height"], tuned["open_bonus"]
+    weight = json.loads(Path(__file__).with_name("results").joinpath("string_model.json").read_text())["weight"]
+    names = sorted(p.stem for p in (ROOT / "annotation").glob("*.jams"))
+    model_path = Path(DATA, "transcription", "tabcnn_multi_guitar.pt")
+    if model_path.exists():
+        state = torch.load(model_path, map_location=DEVICE)
+        model = TabCNN().to(DEVICE)
+        model.load_state_dict(state["weights"])
+        model.norm = tuple(state["norm"])
+        model.eval()
+    else:
+        extra = []
+        for xml, wav, _ in idmt_files({"AR", "FS", "Ibanez"}):
+            f = idmt_features(wav)
+            extra.append((f, idmt_labels(xml, len(f))))
+        model = train([n for n in names if not n.startswith("05")], extra=extra)
+        torch.save({"weights": model.state_dict(), "norm": list(model.norm)}, model_path)
+    result = {}
+    for xml, wav, group in idmt_files({"LP"}):
+        truth = idmt_notes(xml)
+        if len(truth) < 3:
+            continue
+        lp = log_probs(model, xml.stem, idmt_features(wav))
+        for method, cost in (("search_only", None), ("search_plus_network", audio_cost(lp, weight))):
+            acc = string_accuracy(lambda notes, c=cost: tab.assign_frets(notes, note_cost=c), [truth])
+            row = result.setdefault(f"{group}/{method}", [0.0, 0])
+            row[0] += acc * len(truth)
+            row[1] += len(truth)
+    right = total = 0
+    for n in (n for n in names if n.startswith("05")):
+        truth = guitarset_notes(ROOT / "annotation" / f"{n}.jams")
+        lp = log_probs(model, n)
+        acc = string_accuracy(lambda notes: tab.assign_frets(notes, note_cost=audio_cost(lp, weight)), [truth])
+        right += acc * len(truth)
+        total += len(truth)
+    out = {k: {"right_string": round(v[0] / v[1], 3), "notes": v[1]} for k, v in sorted(result.items())}
+    out["guitarset_05/search_plus_network"] = {"right_string": round(right / total, 3), "notes": total}
+    for k, v in out.items():
+        print(k, v)
+    save_result("string_model_cross_guitar", out)
+
+
 def idmt() -> None:
     """Generalization: the network trained on GuitarSet (one acoustic guitar) on IDMT-SMT-Guitar's
     electric guitars (dataset2: Aristides, Stratocaster, Les Paul; scales on every string up to
@@ -263,4 +348,4 @@ def idmt() -> None:
 if __name__ == "__main__":
     import sys
 
-    idmt() if len(sys.argv) > 1 and sys.argv[1] == "idmt" else main()
+    {"idmt": idmt, "cross-guitar": cross_guitar, "guitarset": main}[sys.argv[1] if len(sys.argv) > 1 else "guitarset"]()

@@ -8,9 +8,9 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 
 | Function | Today in the app | Best option found | Measured | Recommendation |
 |---|---|---|---|---|
-| Song sections | none | SongFormer (2025) | *pending* (human agreement ceiling: 64 % of section starts within 0.5 s) | *pending* |
+| Song sections | none | SongFormer (2025), decided at the app's bar starts (written here) | unseen live recordings: 56 % of section starts within 0.5 s, labels right 60 % of the time; two human experts agree on 64 % / 70 % | use it, editable; GPU recommended |
 | Notes per instrument | none | YourMT3+ (one model, all instruments) and Demucs + Basic Pitch + ADTOF, combined per instrument | note F on full mixes: bass 0.47, guitar 0.49 (Demucs + Basic Pitch), keys 0.32, leads 0.23 (YourMT3+), drums 0.95 (ADTOF) | combine; present as a draft to correct; test MuScriptor |
-| Tabs (strings and frets) | none | fingering search + a network that hears the string (written here) | real guitar: 89 % of notes on the guitarist's string (search alone 58 %, lowest fret 33 %); tab F 0.83 from YourMT3+ notes | use both; check the network on other guitars first |
+| Tabs (strings and frets) | none | fingering search + a network that hears the string (written here) | real guitar: 89 % of notes on the guitarist's string (search alone 58 %, lowest fret 33 %); tab F 0.82 from YourMT3+ notes | use both; check the network on other guitars first |
 | Notation (bars, rhythm) | none | beat-grid quantization → Guitar Pro 5 → alphaTab (written here) | correctly found notes: 87–100 % at the exact score position with the true beats; rhythm within the beat right for 89–100 % with the app's own grid | use it, after the user has checked the grid |
 | Chords | chroma templates | madmom CNN + CRF | real guitar recordings: 58 % → 76 % of the time right | switch |
 | Key | none | madmom CNN | real recordings: 64 % exact, 78 % among the best two (librosa templates: 49 % / 70 %) | madmom; show the two best keys |
@@ -49,16 +49,23 @@ Follow-up to features 4, 5, 11, 12, 15, 16 and 17 of [implementation-report.md](
 ### Song sections
 Metrics (mir_eval): **HR.5F / HR3F** = section starts found within 0.5 s / 3 s (F-measure); **PWF** = are repeated parts grouped alike; **ACC** = share of time with the right label (intro, verse, chorus, bridge, instrumental, outro, silence).
 
-| Method | SALAMI HR.5F | HR3F | PWF | ACC | Harmonix HR.5F | HR3F |
-|---|---|---|---|---|---|---|
-| Laplacian (librosa) | 0.17 | 0.38 | 0.56 | – | 0.24 | 0.44 |
-| Laplacian, snapped to bars | 0.25 | 0.39 | 0.56 | – | 0.25 | 0.46 |
-| SongFormer | *pending* | | | | | |
-| All-In-One | *pending* | | | | | |
-| Second human annotator | **0.64** | **0.72** | **0.77** | **0.70** | – | – |
+SALAMI: the 80 songs with two annotations (the same songs for every row). Score songs: exact section starts; their labels are partly ad hoc ("a", "groove"), so only boundaries count.
 
-- The second annotator shows the ceiling: two experts agree on only 64 % of section starts (within 0.5 s) and 70 % of the labels.
-- First SongFormer outputs (2 songs) had musically sensible sections but every boundary ~2 s early; decided at bar starts with a 2 s lag correction, one song went from 0.00 to 0.67 HR.5F. The lag correction is tuned on Harmonix only and tested on SALAMI and the score songs (*pending*).
+| Method | SALAMI HR.5F | HR3F | PWF | ACC | Score songs HR.5F | HR3F |
+|---|---|---|---|---|---|---|
+| Laplacian (librosa), snapped to bars | 0.25 | 0.39 | 0.54 | – | 0.37 | 0.42 |
+| SongFormer, as published | 0.47 | 0.54 | **0.70** | **0.61** | 0.77 | 0.77 |
+| SongFormer, nearest bar start within 2 s | 0.49 | 0.54 | 0.70 | 0.61 | – | – |
+| **SongFormer, decided at bar starts** (`songformer_bars`) | **0.56** | **0.60** | 0.69 | 0.60 | **0.79** | **0.80** |
+| All-In-One | *pending* | | | | | |
+| Second human annotator | 0.64 | 0.72 | 0.77 | 0.70 | – | – |
+
+- **The ceiling is low:** two experts agree on only 64 % of section starts (within 0.5 s) and 70 % of the labels.
+- **SongFormer reaches most of it on music it never saw:** 87 % of the human level for section starts (decided at bar starts), 91 % for grouping repeated parts, 86 % for labels. The classic method gets less than half as many starts right.
+- **Deciding at bar starts** (`songformer_bars` in [test_structure.py](../experiments/test_structure.py)): the boundary probability is read at each bar start of the app's grid, a bar start becomes a section start when the probability is above a threshold and the largest within 2 bars, and each section takes the label with the highest mean probability. The lag (0.5 s) and threshold (0.4) were tuned on the score songs only. +9 points on SALAMI, and every section starts on a bar line, ready for loops.
+- **Labels** (SALAMI, share of each true label's time): instrumental 88 %, intro 75 %, chorus 71 %, verse 65 %, outro 27 %, bridge 18 %. Bridges are mostly called instrumental (34 %) or verse (27 %); outros instrumental (41 %) or chorus (23 %). The "silence" of live recordings (applause, talking) becomes intro or outro.
+- **Harmonix is not a fair test:** SongFormer was trained on these songs and puts their boundaries ~1.7 s early, a bias it does not have on unseen music (SALAMI: −0.17 s). The unsupervised Laplacian method has no such lag on our Harmonix copies (−0.04 s), so it is the model, not the audio. It looks like memorized boundaries from its own copies of the songs. The bar decoder's lag was therefore tuned on the score songs, not on Harmonix (with the Harmonix lag, SALAMI would drop to 0.01).
+- **Cost:** ~1–2 min per song on this laptop's 6 GB GPU after [songformer_patch.py](../experiments/songformer_patch.py) (the stock script pages GPU memory: ~3–4 min). Weights: MuQ 1.3 GB + MusicFM 1.3 GB + SongFormer 0.1 GB.
 
 ### Notes per instrument (score songs)
 Note F-measure: right pitch, onset within 50 ms. Drums: onset F per drum (kick, snare, hi-hat, toms, cymbals), averaged.
@@ -94,10 +101,18 @@ Note F-measure: right pitch, onset within 50 ms. Drums: onset F per drum (kick, 
 |---|---|---|---|
 | fingering search alone | 0.58 | 0.38 | 0.46 |
 | network alone | 0.88 | – | – |
-| **search + network** | **0.89** | **0.71** | **0.83** |
+| **search + network** | **0.89** | **0.70** | **0.82** |
 
 - The network nearly doubles the share of right strings. The search still matters for playability (it keeps chord shapes possible), but the sound decides.
-- **Caveat:** all of GuitarSet was played on one acoustic guitar with the same microphone. The network may have learned *that* guitar. Before relying on it, test it on other guitars (IDMT-SMT-Guitar, EGDB: electric, other instruments) and on Demucs guitar stems from band mixes, and train on a mix of them.
+- **Other guitars:** all of GuitarSet was played on one acoustic guitar with the same microphone, so the network may have learned *that* guitar. On [IDMT-SMT-Guitar](https://zenodo.org/records/7544110)'s electric guitars (true notes, string annotations):
+
+  | Right string | Licks: Aristides / Stratocaster / Les Paul (1146 notes each) | Pieces, Ibanez (90 notes) | Scales up to fret 20 on one string |
+  |---|---|---|---|
+  | fingering search alone | 0.50 / 0.51 / 0.54 | 0.49 | 0.36 |
+  | + network trained on GuitarSet only | **0.65 / 0.68 / 0.65** | **0.67** | 0.41–0.43 |
+
+  The network still helps a lot (+12 to +18 points), but much less than on the guitar it was trained on (0.89). Training on several guitars: see *cross-guitar* below (*pending*). The scales are a deliberate worst case: chromatic runs up one string, which no fingering rule would choose.
+- Still to check: Demucs guitar stems from band mixes (separation artifacts, distortion, several guitars).
 
 ### Notation
 [notation.py](../experiments/notation.py) places notes on the beat grid (sixteenths or triplets per beat), fills short gaps, splits notes at bar lines with ties, and writes Guitar Pro 5 (tab + notation for guitar and bass, percussion for drums). alphaTab renders it ([render_notation.py](../experiments/render_notation.py)).

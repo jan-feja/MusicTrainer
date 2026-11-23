@@ -1,0 +1,122 @@
+{
+ "dataset2/AR/network_only": {
+  "right_string": 1.0,
+  "notes": 10
+ },
+ "dataset2/AR/search_only": {
+  "right_string": 0.0,
+  "notes": 10
+ },
+ "dataset2/AR/search_plus_network": {
+  "right_string": 1.0,
+  "notes": 10
+ },
+ "dataset2/FS/network_only": {
+  "right_string": 1.0,
+  "notes": 10
+ },
+ "dataset2/FS/search_only": {
+  "right_string": 0.0,
+  "notes": 10
+ },
+ "dataset2/FS/search_plus_network": {
+  "right_string": 1.0,
+  "notes": 10
+ },
+ "dataset2/LP/network_only": {
+  "right_string": 1.0,
+  "notes": 10
+ },
+ "dataset2/LP/search_only": {
+  "right_string": 0.0,
+  "notes": 10
+ },
+ "dataset2/LP/search_plus_network": {
+  "right_string": 1.0,
+  "notes": 10
+ },
+ "dataset3/Ibanez/network_only": {
+  "right_string": 0.64,
+  "notes": 90
+ },
+ "dataset3/Ibanez/search_only": {
+  "right_string": 0.493,
+  "notes": 90
+ },
+ "dataset3/Ibanez/search_plus_network": {
+  "right_string": 0.673,
+  "notes": 90
+ },
+ "licks/AR/network_only": {
+  "right_string": 0.642,
+  "notes": 1146
+ },
+ "licks/AR/search_only": {
+  "right_string": 0.503,
+  "notes": 1146
+ },
+ "licks/AR/search_plus_network": {
+  "right_string": 0.651,
+  "notes": 1146
+ },
+ "licks/FS/network_only": {
+  "right_string": 0.657,
+  "notes": 1146
+ },
+ "licks/FS/search_only": {
+  "right_string": 0.51,
+  "notes": 1146
+ },
+ "licks/FS/search_plus_network": {
+  "right_string": 0.675,
+  "notes": 1146
+ },
+ "licks/LP/network_only": {
+  "right_string": 0.654,
+  "notes": 1146
+ },
+ "licks/LP/search_only": {
+  "right_string": 0.541,
+  "notes": 1146
+ },
+ "licks/LP/search_plus_network": {
+  "right_string": 0.654,
+  "notes": 1146
+ },
+ "scales/AR/network_only": {
+  "right_string": 0.413,
+  "notes": 126
+ },
+ "scales/AR/search_only": {
+  "right_string": 0.357,
+  "notes": 126
+ },
+ "scales/AR/search_plus_network": {
+  "right_string": 0.429,
+  "notes": 126
+ },
+ "scales/FS/network_only": {
+  "right_string": 0.405,
+  "notes": 126
+ },
+ "scales/FS/search_only": {
+  "right_string": 0.357,
+  "notes": 126
+ },
+ "scales/FS/search_plus_network": {
+  "right_string": 0.413,
+  "notes": 126
+ },
+ "scales/LP/network_only": {
+  "right_string": 0.421,
+  "notes": 126
+ },
+ "scales/LP/search_only": {
+  "right_string": 0.357,
+  "notes": 126
+ },
+ "scales/LP/search_plus_network": {
+  "right_string": 0.429,
+  "notes": 126
+ }
+}

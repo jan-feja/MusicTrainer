@@ -1,11 +1,11 @@
 {
  "weight_tuning_train": {
   "0.0": 0.704,
-  "0.5": 0.919,
-  "1.0": 0.944,
-  "2.0": 0.956,
-  "4.0": 0.962,
-  "8.0": 0.963
+  "0.5": 0.925,
+  "1.0": 0.947,
+  "2.0": 0.96,
+  "4.0": 0.964,
+  "8.0": 0.965
  },
  "weight": 8.0,
  "string_accuracy_test05": {
@@ -14,13 +14,13 @@
   "search_plus_network": 0.89
  },
  "tab_f_basic_pitch": {
-  "tab_f": 0.706,
-  "string_of_found": 0.875,
+  "tab_f": 0.701,
+  "string_of_found": 0.873,
   "excerpts": 60
  },
  "tab_f_yourmt3": {
-  "tab_f": 0.83,
-  "string_of_found": 0.893,
+  "tab_f": 0.824,
+  "string_of_found": 0.891,
   "excerpts": 60
  }
 }
